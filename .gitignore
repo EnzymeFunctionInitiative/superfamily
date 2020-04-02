@@ -1,2 +1,5 @@
 conf/settings.inc.php
+/vendor
+/html/vendor
+composer.lock
 
