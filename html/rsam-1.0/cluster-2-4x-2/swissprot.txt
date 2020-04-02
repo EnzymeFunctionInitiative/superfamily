@@ -1,0 +1,8 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	A0A1C7D1B7	tRNA uridine(34) acetyltransferase ||2.3.1.-
+1	D5VRB9	tRNA uridine(34) acetyltransferase ||2.3.1.-;tRNA uridine(34) acetyltransferase ||2.3.1.-
+1	Q02908	Elongator complex protein 3 ||2.3.1.-
+1	Q23651	Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-
+1	Q93ZR1	Elongator complex protein 3 ||2.3.1.-
+1	Q9H9T3	Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-
+1	Q9VQZ6	elongator complex protein 3||2.3.1.-;Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-;Elongator complex protein 3 ||2.3.1.-

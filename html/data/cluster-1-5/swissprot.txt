@@ -1,0 +1,7 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	D5VRM1	FeMo cofactor biosynthesis protein NifB 
+1	P10390	FeMo cofactor biosynthesis protein NifB
+1	P11067	FeMo cofactor biosynthesis protein NifB
+1	P20627	FeMo cofactor biosynthesis protein NifB
+1	P27714	FeMo cofactor biosynthesis protein NifB
+1	Q8KC85	FeMo cofactor biosynthesis protein NifB 

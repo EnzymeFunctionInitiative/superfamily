@@ -1,0 +1,3 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	O29996	Uncharacterized protein AF_0243
+1	Q57722	Uncharacterized protein MJ0274

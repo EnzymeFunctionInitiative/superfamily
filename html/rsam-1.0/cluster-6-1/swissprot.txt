@@ -1,0 +1,4 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	P9WL78	Uncharacterized protein Mb2609c;Uncharacterized protein MT2655;Uncharacterized protein Rv2578c
+1	Q3V4R6	Uncharacterized protein ORF301
+1	Q58096	Uncharacterized protein MJ0683

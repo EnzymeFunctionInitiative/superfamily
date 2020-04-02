@@ -1,0 +1,80 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	A0L3M0	Biotin synthase ||2.8.1.6
+1	A0LJA8	Biotin synthase ||2.8.1.6
+1	A0PYU9	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A0QX70	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase 1 ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A1KU01	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A3DBD3	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A4J1M3	Biotin synthase ||2.8.1.6
+1	A5D4Y6	Biotin synthase ||2.8.1.6
+1	A5GS37	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A6GW77	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A6LD84	Biotin synthase ||2.8.1.6
+1	A6TT61	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A6UPN7	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A6W0Y1	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A7FVS6	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A7GSD8	Biotin synthase ||2.8.1.6
+1	A7HG97	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A8FGR8	Biotin synthase ||2.8.1.6
+1	A8ZUS9	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A9A5K6	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A9EXH2	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A9HRF2	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	A9WL37	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B0CC69	Biotin synthase ||2.8.1.6
+1	B0TE53	Biotin synthase ||2.8.1.6
+1	B0U0S3	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B1GYW9	Biotin synthase ||2.8.1.6
+1	B1I4G4	Biotin synthase ||2.8.1.6
+1	B1WTI3	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B2RH08	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B2SBF0	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B2TL73	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B2UNW0	Biotin synthase ||2.8.1.6;Biotin synthase 2 ||2.8.1.6
+1	B3DV36	Biotin synthase ||2.8.1.6
+1	B5ECN1	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B5YK85	Biotin synthase ||2.8.1.6
+1	B6J725	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B7MGN3	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	B8J0C6	Biotin synthase ||2.8.1.6
+1	B9MP50	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	C0QR28	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	C0QVM0	Biotin synthase ||2.8.1.6
+1	C6C0T2	Biotin synthase ||2.8.1.6
+1	O59778	Biotin synthase||2.8.1.6
+1	O67104	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	P32451	Biotin synthase, mitochondrial||2.8.1.6
+1	P46396	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase 1 ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	P54967	Biotin synthase, mitochondrial||2.8.1.6
+1	Q0BUV5	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q0IBC8	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q0TQ59	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q1LS73	Biotin synthase 1 ||2.8.1.6;Biotin synthase 2 ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase 1 ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q2GDF4	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q2J5A7	Biotin synthase ||2.8.1.6;Biotin synthase 2 ||2.8.1.6
+1	Q2LY09	Biotin synthase ||2.8.1.6
+1	Q2S4I8	Biotin synthase ||2.8.1.6
+1	Q3ADP5	Biotin synthase ||2.8.1.6
+1	Q3B169	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q3INU3	Biotin synthase ||2.8.1.6
+1	Q3YRG6	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q481G0	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q4FQJ9	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q4L9U7	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q6A7V7	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q6AK48	Biotin synthase ||2.8.1.6
+1	Q728P5	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q72RG8	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q74CT7	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q7VBJ0	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q7VVF1	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q81MB3	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q82SL7	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase 2 ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q89AK5	Biotin synthase ||2.8.1.6
+1	Q8D2A1	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q8DL38	Biotin synthase ||2.8.1.6
+1	Q8E6Q1	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q8KZM7	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6
+1	Q97MI6	Biotin synthase ||2.8.1.6
+1	Q9Z6L5	Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6;Biotin synthase ||2.8.1.6

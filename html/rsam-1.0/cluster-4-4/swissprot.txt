@@ -1,0 +1,3 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	P30140	2-iminoacetate synthase||4.1.99.19
+1	Q9S498	2-iminoacetate synthase||4.1.99.19

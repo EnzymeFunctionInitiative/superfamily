@@ -1,0 +1,4 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	O35008	Uncharacterized protein YtqA 
+1	P0ADW7	Protein YhcC ,Uncharacterized protein YhcC 
+1	Q57910	Uncharacterized protein MJ0486 

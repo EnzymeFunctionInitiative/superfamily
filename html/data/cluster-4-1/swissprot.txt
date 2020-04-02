@@ -1,0 +1,21 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	A7IAF4	7,8-didemethyl-8-hydroxy-5-deazariboflavin synthase 
+1	B8GI94	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase,5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 
+1	O26911	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 
+1	O29460	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 
+1	Q0W6V4	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 
+1	Q113H3	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 
+1	Q57888	7,8-didemethyl-8-hydroxy-5-deazariboflavin synthase,7,8-didemethyl-8-hydroxy-5-deazariboflavin synthase 
+1	Q58826	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase,5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase ,5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 1 ,5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 2 
+1	Q5SK48	Aminodeoxyfutalosine synthase 
+1	Q5UXN0	7,8-didemethyl-8-hydroxy-5-deazariboflavin synthase 
+1	Q7NIT2	7,8-didemethyl-8-hydroxy-5-deazariboflavin synthase 
+1	Q7NMI9	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 
+1	Q8CJT5	Aminodeoxyfutalosine synthase 
+1	Q8PU53	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase ,5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 2 
+1	Q8PU55	7,8-didemethyl-8-hydroxy-5-deazariboflavin synthase 
+1	Q8TQQ1	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 1 ,5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 2 
+1	Q8TWY3	7,8-didemethyl-8-hydroxy-5-deazariboflavin synthase 
+1	Q9HNU8	5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase,5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase 
+1	Q9K864	Cyclic dehypoxanthine futalosine synthase 
+1	Q9XAP2	Cyclic dehypoxanthine futalosine synthase 

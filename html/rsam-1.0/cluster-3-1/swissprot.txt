@@ -1,0 +1,15 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	A0A069AMK2	Trans-4-hydroxy-L-proline dehydratase activating enzyme ||1.97.1.-
+1	O68575	Pyruvate formate-lyase-activating enzyme ||1.97.1.4
+1	O87941	Benzylsuccinate synthase activating enzyme||1.97.1.-
+1	P0A443	Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4
+1	P32675	Pyruvate formate-lyase 2-activating enzyme||1.97.1.4
+1	P39409	Putative glycyl-radical enzyme activating enzyme YjjW ||1.97.1.-
+1	P43751	Pyruvate formate-lyase 1-activating enzyme||1.97.1.4;Pyruvate formate-lyase 1-activating enzyme||1.97.1.4;Pyruvate formate-lyase 1-activating enzyme||1.97.1.4;Pyruvate formate-lyase 1-activating enzyme||1.97.1.4;Pyruvate formate-lyase 1-activating enzyme||1.97.1.4
+1	P44743	Putative glycyl-radical enzyme activating enzyme HI_0520 ||1.97.1.-
+1	P75794	Putative pyruvate formate-lyase 3-activating enzyme||1.97.1.4
+1	Q30W71	Choline trimethylamine-lyase activating enzyme ||1.97.1.-
+1	Q38HX2	4-hydroxyphenylacetate decarboxylase activating enzyme ||1.97.1.-
+1	Q46267	Pyruvate formate-lyase-activating enzyme ||1.97.1.4
+1	Q5HKI0	Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4;Pyruvate formate-lyase-activating enzyme ||1.97.1.4
+1	Q84F14	4-hydroxyphenylacetate decarboxylase activating enzyme ||1.97.1.-;4-hydroxyphenylacetate decarboxylase activating enzyme ||1.97.1.-;4-hydroxyphenylacetate decarboxylase activating enzyme ||1.97.1.-;4-hydroxyphenylacetate decarboxylase activating enzyme ||1.97.1.-

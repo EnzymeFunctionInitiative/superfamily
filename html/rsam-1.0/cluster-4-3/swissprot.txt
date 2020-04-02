@@ -1,0 +1,3 @@
+Cluster Number	Metanode UniProt ID	SwissProt Annotations
+1	Q46E78	3-methylornithine synthase||5.4.99.58;3-methylornithine synthase||5.4.99.58
+1	Q9X0Z6	[FeFe] hydrogenase maturase subunit HydE ||1.8.-.-

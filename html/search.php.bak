@@ -1,0 +1,62 @@
+<?php
+
+require(__DIR__ . "/../libs/settings.class.inc.php");
+require(__DIR__ . "/../libs/functions.class.inc.php");
+
+//TODO:
+// Parse output
+// Return output to UI
+//
+//
+// Design output structure to handle errors, etc
+
+$seq = isset($_POST["sequence"]) ? $_POST["sequence"] : "";
+$seq = trim($seq);
+
+if (strlen($seq) == 0) {
+    print json_encode(array("status" => false, "message" => "Invalid sequence"));
+    exit(0);
+}
+if (substr($seq, 0, 1) == ">") {
+    $seq = preg_replace("/>.*?[\r\n]+/", "", $seq);
+}
+
+$id = functions::get_id();
+
+$out_dir = settings::get_tmpdir_path() . "/" . $id;
+mkdir($out_dir);
+
+$seq = ">SEQUENCE\n$seq";
+$seq_file = "$out_dir/sequence.txt";
+file_put_contents($seq_file, $seq);
+
+
+$hmmscan = settings::get_hmmscan_path();
+$hmmdb = settings::get_hmmdb_path();
+$out_path = "$out_dir/output.txt";
+$table_path = "$out_dir/results.txt";
+
+$cmd = "$hmmscan -o $out_path --tblout $table_path $hmmdb $seq_file";
+$cmd_output = "";
+$cmd_results = 0;
+exec($cmd, $cmd_output, $cmd_result);
+
+if ($cmd_result !== 0) {
+    print json_encode(array("status" => false, "message" => "Unknown error"));
+    exit(0);
+}
+
+$lines = file($table_path);
+
+$matches = array();
+
+for ($i = 0; $i < count($lines); $i++) {
+    if (!strlen($lines[$i]) || $lines[$i][0] == "#")
+        continue;
+    $parts = preg_split("/\s+/", $lines[$i]);
+    if (count($parts) >= 5)
+        array_push($matches, array($parts[0], $parts[4]));
+}
+
+print json_encode(array("status" => true, "matches" => $matches));
+
