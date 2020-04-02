@@ -1,5 +1,22 @@
-# superfamily
+# Superfamily
 
 ![Travis](https://api.travis-ci.com/EnzymeFunctionInitiative/superfamily.svg?branch=master)
 
 superfamily
+
+## Installation
+
+* git clone https://github.com/EnzymeFunctionInitiative/superfamily.git or download tagged tar.gz
+```
+git clone https://github.com/EnzymeFunctionInitiative/superfamily.git superfamily
+```
+* Run composer install to install dependencies from the root folder
+```
+composer install
+```
+* Copy conf/settings.inc.php.dist to conf/setttings.inc.php
+```
+cp conf/settings.inc.php.dist conf/settings.inc.php
+```
+* Edit conf/settings.inc.php for your environment
+

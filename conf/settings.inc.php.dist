@@ -1,0 +1,9 @@
+<?php
+
+define("SF_HMMSCAN","");
+define("SF_HMMDB","");
+define("SF_CLUSTERDB","");
+define("SF_TMPDIR","");
+define("SF_SUBMIT_EMAIL","");
+define("SF_","");
+
