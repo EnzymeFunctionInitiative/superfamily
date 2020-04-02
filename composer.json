@@ -1,0 +1,12 @@
+{
+	"require": {
+		"php":	">=7.2",
+		"phpoffice/phpspreadsheet": "1.11.0",
+		"components/jquery": "3.4.1",
+                "components/jqueryui": "1.12.1",
+		"twbs/bootstrap": "4.4.1",
+		"fortawesome/font-awesome": "5.12.1",
+		"twig/twig": "^3.0"
+    }
+}
+
