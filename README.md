@@ -1,6 +1,6 @@
 # Superfamily
 
-![Travis](https://api.travis-ci.com/EnzymeFunctionInitiative/superfamily.svg?branch=master)
+[![Build Status](https://www.travis-ci.com/EnzymeFunctionInitiative/superfamily.svg?branch=master)](https://www.travis-ci.com/EnzymeFunctionInitiative/superfamily)
 
 superfamily
 
