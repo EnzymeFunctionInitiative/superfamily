@@ -11,7 +11,7 @@
             approval, these annotation will be included on results pages for individual clusters.
             </p>
             <div class="mt-5">
-                <form class="needs-validation" action="submit.php" method="POST" novalidate>
+                <form class="needs-validation" action="submit_result.php" method="POST" novalidate>
                     <div class="w-auto mt-5">
                         <div class="form-group w-50">
                             <label for="inputName">Your name</label>
