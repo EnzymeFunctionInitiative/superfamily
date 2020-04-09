@@ -23,6 +23,12 @@ require_once __DIR__ . "/main.inc.php";
     <script src="js/popper.min.js"></script>
     <script src="js/network.js?v=2"></script>
     <script src="js/search.js?v=4"></script>
+
+<?php 
+	if (file_exists(__DIR__ . "/../../conf/custom_header.html")) {
+		readfile(__DIR__ . "/../../conf/custom_header.html");
+	} 
+?>
 </head>
 <body>
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">

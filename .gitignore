@@ -1,4 +1,5 @@
 conf/settings.inc.php
+conf/custom_header.html
 /vendor
 /html/vendor
 composer.lock
