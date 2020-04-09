@@ -1,34 +1,4 @@
-﻿<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <title></title>
-    <link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
-    <link href="css/custom.css?v=3" rel="stylesheet" />
-    <link href="css/font/css/all.css" rel="stylesheet" />
-</head>
-<body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <div class="mx-auto order-0">
-            <a class="navbar-brand mx-auto" href="index.html">RadicalSAM.org</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavItems" aria-controls="navbarNavItems" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-
-        <div class="navbar-collapse collapse w-100 order-3" id="navbarNavItems">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link active" href="explore.html">Explore</a></li>
-                <li class="nav-item"><a class="nav-link" href="search.html">Search</a></li>
-                <li class="nav-item"><a class="nav-link" href="roadmap.html">Roadmap</a></li>
-                <li class="nav-item"><a class="nav-link" href="submit.html">Submit</a></li>
-                <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
+﻿<?php require_once 'includes/header.inc.php'; ?>
 
     <main role="main">
         <div class="container">
