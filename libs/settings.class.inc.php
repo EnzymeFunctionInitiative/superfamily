@@ -1,6 +1,5 @@
 <?php
 
-require(__DIR__ . "/../conf/settings.inc.php");
 
 class settings {
     public static function get_hmmscan_path() {

@@ -1,6 +1,5 @@
 <?php
 
-require_once(__DIR__ . "/settings.class.inc.php");
 
 class functions {
     public static function get_id() {
