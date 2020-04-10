@@ -124,10 +124,7 @@
             radicalSAM.org <span class="pl-4"></span> Gerlt, Mitchell, Firouzbakht, and Oberg, 2020 <span class="pl-4"></span> <a href="https://efi.igb.illinois.edu">EFI</a> at <a href="https://igb.illinois.edu">Institute for Genomic Biology, University of Illinois</a>
         </div>
     </footer>
-    <script src="js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
     <script src="js/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <!--<script src="data/data.js?v=15"></script>-->
     <script src="js/network.js?v=1"></script>
     <script src="js/app.js?v=16"></script>
     <script src="js/imageMapResizer.min.js"></script>
