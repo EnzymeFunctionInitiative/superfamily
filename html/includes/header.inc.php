@@ -9,7 +9,7 @@ require_once __DIR__ . "/main.inc.php";
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="">
-        <title>About</title>
+        <title><?php echo settings::get_title(); ?></title>
 
 	
 	<link rel='stylesheet' href='vendor/twbs/bootstrap/dist/css/bootstrap.min.css'>
@@ -33,7 +33,7 @@ require_once __DIR__ . "/main.inc.php";
 <body>
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
                 <div class="mx-auto order-0">
-                        <a class="navbar-brand mx-auto" href="index.php">RadicalSAM.org</a>
+                        <a class="navbar-brand mx-auto" href="index.php"><?php echo settings::get_title(); ?></a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavItems" aria-controls="navbarNavItems" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon"></span>
                         </button>

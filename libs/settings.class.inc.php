@@ -2,6 +2,10 @@
 
 
 class settings {
+
+    public static function get_title() {
+        return defined("SF_TITLE") ? SF_TITLE : "Superfamily";
+    }
     public static function get_hmmscan_path() {
         return defined("SF_HMMSCAN") ? SF_HMMSCAN : "";
     }

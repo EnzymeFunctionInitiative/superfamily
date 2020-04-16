@@ -1,5 +1,6 @@
 <?php
 
+define("SF_TITLE","");
 define("SF_HMMSCAN","");
 define("SF_HMMDB","");
 define("SF_CLUSTERDB","");
