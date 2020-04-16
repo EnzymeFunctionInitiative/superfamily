@@ -21,5 +21,13 @@ class settings {
     public static function get_submit_email() {
         return defined("SF_SUBMIT_EMAIL") ? SF_SUBMIT_EMAIL : "";
     }
+
+	public static function get_version() {
+		return defined("VERSION") ? VERSION : "";
+	}
+	public static function get_twig_dir() {
+		$twig_dir = __DIR__ . "/../" . TWIG_DIR;
+		return realpath($twig_dir);
+	}
 }
 

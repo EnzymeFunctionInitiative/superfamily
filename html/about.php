@@ -1,19 +1,22 @@
-﻿<?php require_once 'includes/header.inc.php'; ?>
+﻿<?php 
 
-	<main role="main">
-		<div class="container">
-			<h1 class="text-center">About</h1>
-		</div>
+require_once 'includes/header.inc.php';
 
-		<div class="container">
-			<h4>Principal Investigators</h4>
-			<p>John Gerlt, Douglas Mitchell</p>
-			<h4>Data Sources</h4>
-			<p>Sources of the data we use.</p>
-			<h4>Cite Us</h4>
-			<p>Citation for this website.</p>
-		</div>
-	</main>
+$twig_variables = array();
 
-<?php require_once 'includes/footer.inc.php'; ?>
+$loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
+$twig = new \Twig\Environment($loader);
+
+$about_html = "";
+if (file_exists(settings::get_twig_dir() . "/custom/about.html.twig")) {
+	$about_html = $twig->render("custom/about.html.twig",$twig_variables);
+}
+else {
+	$about_html = $twig->render("default/about.html.twig",$twig_variables);
+}
+
+echo $about_html;
+require_once 'includes/footer.inc.php'; i
+
+?>
 

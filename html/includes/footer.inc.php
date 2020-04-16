@@ -1,8 +1,23 @@
-<footer class="container">
-                <hr class="w-25" />
-                <div class="text-center">
-                        radicalSAM.org <span class="pl-4"></span> Gerlt, Mitchell, Firouzbakht, and Oberg, 2020 <span class="pl-4"></span> <a href="https://efi.igb.illinois.edu">EFI</a> at <a href="https://igb.illinois.edu">Institute for Genomic Biology, University of Illinois</a>
-                </div>
-</footer>
+<?php
+
+$twig_footer_variables = array(
+	'title'=>settings::get_title()
+	);
+
+$footer_loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
+$footer_twig = new \Twig\Environment($footer_loader);
+
+$footer_html = "";
+if (file_exists(settings::get_twig_dir() . "/custom/footer.html.twig")) {
+        $footer_html = $footer_twig->render("custom/footer.html.twig",$twig_footer_variables);
+}
+else {
+        $footer_html = $footer_twig->render("default/footer.html.twig",$twig_footer_variables);
+}
+
+
+echo $footer_html;
+?>
+
 </body>
 </html>
