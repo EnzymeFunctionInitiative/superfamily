@@ -1,7 +1,6 @@
 <?php
 
-require(__DIR__ . "/../libs/settings.class.inc.php");
-require(__DIR__ . "/../libs/functions.class.inc.php");
+require_once 'includes/main.inc.php';
 
 // Design output structure to handle errors, etc
 
