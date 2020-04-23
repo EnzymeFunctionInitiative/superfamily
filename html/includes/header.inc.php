@@ -43,8 +43,7 @@ require_once __DIR__ . "/main.inc.php";
                         <ul class="navbar-nav ml-auto">
                                 <li class="nav-item"><a class="nav-link" href="explore.php">Explore</a></li>
                                 <li class="nav-item"><a class="nav-link" href="search.php">Search</a></li>
-                                <li class="nav-item"><a class="nav-link" href="roadmap.php">Roadmap</a></li>
-                <li class="nav-item"><a class="nav-link" href="submit.php">Submit</a></li>
+                		<li class="nav-item"><a class="nav-link" href="submit.php">Submit</a></li>
                                 <li class="nav-item"><a class="nav-link active" href="about.php">About</a></li>
                                 <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
                         </ul>
