@@ -1,26 +1,23 @@
-﻿<?php require_once 'includes/header.inc.php'; ?>
+﻿<?php require_once 'includes/header.inc.php'; 
 
-	<main role="main">
-		<div class="container">
-			<h1 class="text-center">Contact</h1>
-		</div>
+$twig_contact_variables = array();
 
-		<div class="container">
-			<p>
-				Feedback, questions, or requests can be submitted to the team below.
-			</p>
-			<div class="mt-5">
-				<div class="w-auto mt-5">
-					<div>
-						<textarea rows="6" cols="60"></textarea>
-					</div>
-					<div class="mt-3">
-						<button type="button" class="btn btn-primary">Submit</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</main>
+$twig_contact_loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
+$twig_contact = new \Twig\Environment($twig_contact_loader);
 
-<?php require_once 'includes/footer.inc.php'; ?>
+$contact_html = "";
+if (file_exists(settings::get_twig_dir() . "/custom/contact.html.twig")) {
+        $contact_html = $twig_contact->render("custom/contact.html.twig",$twig_contact_variables);
+}
+else {
+        $contact_html = $twig_contact->render("default/contact.html.twig",$twig_contact_variables);
+}
+
+echo $contact_html;
+
+
+
+require_once 'includes/footer.inc.php';
+
+?>
 
