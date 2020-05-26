@@ -81,13 +81,21 @@ footer {
 }
 
 #clusterSize {
-    text-transform: uppercase;
-/*    font-size: 0.8em;*/
     margin-top: 10px;
+}
+.cluster-size {
+    text-transform: uppercase;
+}
+.cluster-size-sm {
+    font-size: 0.9em;
 }
 
 .display-img-width {
-    width: 100%;
+    max-width: 100%;
+}
+
+#clusterImg {
+    max-height: 650px;
 }
 
 h3.explore-heading {
@@ -118,10 +126,94 @@ ul.expandable li:before {
     margin-left: 30px;
 }
 
-#progressLoader {
-    position: absolute;
+.progress-loader {
+    position: fixed;
     top:  50%;
     left: 50%;
     transform: translate(-50%,-50%);
     font-size: 4em;
-} 
+}
+
+.progress-loader-sm {
+    font-size: 2em;
+}
+
+.modal-sunburst {
+    height: 700px;
+    max-height: 700px;
+}
+
+.nav-intro-tabs {
+    border-bottom: 1px solid #999;
+}
+.nav-intro-tabs li {
+    text-transform: uppercase;
+    font-size: 0.87em;
+    font-weight: bold;
+}
+.nav-intro-tabs li a {
+/*    padding: 0.5rem 0.5rem;*/
+}
+.nav-intro-tabs .nav-link:focus, .nav-intro-tabs .nav-link:hover {
+    border-color: #999;
+}
+.nav-intro-tabs .nav-link.active {
+    border-color: #999;
+}
+
+.tab-pane h5, .tab-pane h4, .tab-pane h3 {
+    margin-top: 15px;
+}
+
+.tab-pane h6 {
+    font-weight: 600;
+}
+
+.intro-img {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.dicing-info {
+    font-weight: bold;
+}
+
+.as-warning {
+    color: red;
+}
+div.as-warning {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+td.file-header-row {
+    font-weight: bold;
+    height: 40px;
+    font-size: 1.15em;
+    border: 0;
+    background-color: white;
+}
+
+.child-tab-pane {
+    padding: 20px 5px;
+}
+
+.diced-cluster-size {
+    font-size: 0.90em;
+    text-transform: uppercase;
+}
+
+.btn a {
+    color: white;
+}
+.btn a:hover {
+    text-decoration: none;
+}
+
+
+.link-dl {
+    color: #007bff !important;
+    text-decoration: none;
+    font-size: 0.90em;
+}
+

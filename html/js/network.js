@@ -19,10 +19,21 @@ function Network(networkId, networkData) {
     this.sfld_map = networkData.sfld_map;
     this.sfld_desc = networkData.sfld_desc;
     this.enzymecodes = networkData.enzymecodes;
+    this.dataDir = this.data.dir;
     if (typeof this.data.public === "undefined")
         this.data.public = {};
     if (typeof this.data.families === "undefined")
         this.data.families = {};
+}
+Network.prototype.getAlignmentScore = function() {
+    //DEBUG:
+    //this.data.alignment_score = "22";
+    return typeof this.data.alignment_score !== "undefined" ? this.data.alignment_score : "";
+}
+Network.prototype.getDefaultAlignmentScore = function() {
+    //DEBUG:
+    //this.data.default_alignment_score = "11";
+    return typeof this.data.default_alignment_score !== "undefined" ? this.data.default_alignment_score : "";
 }
 Network.prototype.getPageTitle = function() {
     return typeof this.data.title !== "undefined" ? this.data.title : "Title";
@@ -45,14 +56,35 @@ Network.prototype.getRegions = function() {
 Network.prototype.getTigr = function() {
     return Array.isArray(this.data.families.tigr) ? this.data.families.tigr : [];
 }
+Network.prototype.getDicedParent = function() {
+    return (typeof this.data.dicing !== "undefined" && typeof this.data.dicing.parent !== "undefined") ? this.data.dicing.parent : "";
+}
+Network.prototype.getDicedChildren = function() {
+    return (typeof this.data.dicing !== "undefined" && Array.isArray(this.data.dicing.children)) ? this.data.dicing.children : [];
+}
+Network.prototype.getAltSsns = function() {
+    return (typeof this.data.alt_ssn !== "undefined" && Array.isArray(this.data.alt_ssn)) ? this.data.alt_ssn : [];
+}
+Network.prototype.getConsensusResidues = function() {
+    return (typeof this.data.cons_res !== "undefined" && Array.isArray(this.data.cons_res)) ? this.data.cons_res : [];
+}
+Network.prototype.getDataDir = function() {
+    return typeof this.dataDir !== "undefined" ? this.dataDir : "data";
+}
 // Since there are potentially many KEGG IDs, we get the list of IDs async.
-Network.prototype.getKeggCount = function() {
+Network.prototype.hasKeggIds = function() {
     // The number of KEGG IDs is returned with the network JSON, but not the ID list.
-    return typeof this.data.public.kegg_count !== "undefined" ? this.data.public.kegg_count : 0;
+    return typeof this.data.public.has_kegg !== "undefined" ? this.data.public.has_kegg : false;
 }
 // ASYNC
-Network.prototype.getKeggIds = function(addKeggIdFn, finishFn) {
-    $.get("getdata.php", {a: "kegg", cid: this.Id}, function(dataStr) {
+Network.prototype.getKeggIds = function(version, addKeggIdFn, finishFn) {
+    var parms = {a: "kegg", cid: this.Id};
+    var ascore = this.getAlignmentScore();
+    if (ascore)
+        parms.as = ascore;
+    if (version)
+        parms.v = version;
+    $.get("getdata.php", parms, function(dataStr) {
         var data = false;
         try {
             data = JSON.parse(dataStr);
@@ -95,7 +127,13 @@ Network.prototype.getDownloadFeatures = function () {
     return Array.isArray(this.data.download) ? this.data.download : [];
 }
 Network.prototype.getNetworkMapName = function (networkId) {
-    return typeof this.network_map[networkId] !== "undefined" ? this.network_map[networkId].name : "";
+    return typeof this.network_map[networkId] !== "undefined" ? this.network_map[networkId].name : networkId;
+}
+Network.prototype.getNetworkSfldTitle = function (networkId) {
+    if (typeof this.network_map[networkId] !== "undefined" && typeof this.network_map[networkId].sfld_title !== "undefined")
+        return this.network_map[networkId].sfld_title;
+    else
+        return "";
 }
 Network.prototype.getSfldDesc = function (id) {
     return typeof this.sfld_desc[id] !== "undefined" ? this.sfld_desc[id].desc : "";
