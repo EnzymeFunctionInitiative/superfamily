@@ -361,7 +361,7 @@
                         <p>
                         The <b>Taxonomy</b> button
                         opens a sunburst display similar to that provided by Pfam
-                        (<a href="https://pfam.xfam.org/">https://pfam.xfam.org/</a>)
+                        (<a target="_blank" href="https://pfam.xfam.org/">https://pfam.xfam.org/</a>)
                         for its families.  Each node in the SSN is displayed as an arc, arranged radially with
                         the superkingdoms at the center and species in the outermost ring.  Clicking on a taxonomic
                         group expands that part of the taxonomic hierarchy.  Clicking on the center circle will zoom
@@ -545,7 +545,8 @@
 
                         <p>
                         <a name="sup1"></a>
-                        <sup>1</sup> 
+                        <sup>1</sup>
+                        <a target="_blank" href="http://dx.doi.org/10.1128/JB.00040-11">doi: 10.1128/JB.00040-11</a><br>
                         <a target="_blank" href="http://dx.doi.org/10.1074/jbc.R114.581249">doi: 10.1074/jbc.R114.581249</a><br>
                         <a target="_blank" href="http://dx.doi.org/10.1016/j.bbamcr.2015.01.002">doi: 10.1016/j.bbamcr.2015.01.002</a><br>
                         <a target="_blank" href="http://dx.doi.org/10.1074/jbc.RA118.005369">doi: 10.1074/jbc.RA118.005369</a><br>
@@ -624,7 +625,7 @@
                         the numbers of the clusters (if &ge;3 nodes/UniRef50 IDs) in each Color SSN are identified that 
                         contain the five most significant HMM matches to the sequence .  The clusters are links to <a href="explore.html" target="_blank">Explore</a> 
                         pages that provide the same information/downloads provided for the cluster <a href="explore.html" target="_blank">Explore</a> pages described 
-                        in the <a href="#searchId">Find by UniProt ID</a> section (<i>vide supra</i>).
+                        in the Find by UniProt ID section (<i>vide supra</i>).
 
                         <p>
                         As the alignment score used to generate the Color SSNs increases, the e-value for the most 
@@ -730,7 +731,7 @@
                         <p>
                         SwissProt annotations are incomplete and sometimes vague or incorrect; experimentally verified 
                         annotations provided by the community are expected to be both more reliable and precise.  On the 
-                        <a href="submit.html">Submit</a> page, we provide a "Community Annotation Submission" form for users to submit 
+                        <a target="_blank" href="submit.html">Submit</a> page, we provide a "Community Annotation Submission" form for users to submit 
                         experimentally determined functions as well as publications that document/describe these 
                         functions.  After review, these will be  included on the cluster pages using the "Pubs" 
                         and "Anno" buttons.
@@ -750,7 +751,20 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script>
-    </script>
+<!-- Matomo -->
+<script type="text/javascript">
+   var _paq = window._paq || [];
+      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      _paq.push(['trackPageView']);
+         _paq.push(['enableLinkTracking']);
+            (function() {
+                  var u="https://www-app.igb.illinois.edu/analytics/";
+                       _paq.push(['setTrackerUrl', u+'matomo.php']);
+                            _paq.push(['setSiteId', '6']);
+                                 var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                                      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+                                         })();
+</script>
+<!-- End Matomo Code -->
 </body>
 </html>

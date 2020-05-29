@@ -28,7 +28,7 @@ $title = isset($_GET["title"]) ? $_GET["title"] : "";
 <html>
 <head>
 <meta charset="utf-8">
-<link rel="stylesheet" type="text/css" href="../css/hmm_logo.min.css">
+<link rel="stylesheet" type="text/css" href="css/hmm_logo.min.css">
 <script src="js/jquery-3.4.1.min.js" type="text/javascript"></script>
 <script src="js/hmm_logo.js" type="text/javascript"></script>
     <title>Logo</title>
@@ -42,7 +42,6 @@ $title = isset($_GET["title"]) ? $_GET["title"] : "";
 
 <script>
 $(document).ready(function () {
-    var data = <?php echo $json; ?>;
     $("#logo").hmm_logo({height_toggle: true}).toggle_scale("obs");
 });
 </script>
