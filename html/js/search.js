@@ -1,4 +1,10 @@
 
+const STATE_HOME = 1;
+const STATE_SEQ = 2;
+const STATE_ID = 3;
+const STATE_TAX = 4;
+
+
 $(document).ready(function() {
     var searchApp = "dosearch.php";
 
@@ -6,6 +12,21 @@ $(document).ready(function() {
         var v = $("#version").val();
         return v;
     };
+
+    history.replaceState({state: STATE_HOME}, null, "");
+    var historyFn = function(type, id) { history.pushState({state: type}, null, "#"+type+id); };
+    $(window).on("popstate", function (e) {
+        var state = e.originalEvent.state;
+        console.log(state);
+        if (state.state == STATE_HOME) {
+            $("#searchResults").hide();
+            $("#searchUi").show();
+        } else {
+            $("#searchResults").show();
+            $("#searchUi").hide();
+        }
+    });
+
 
     var getNetInfo = function(version, onFinish) {
         $.get("getdata.php", {a: "netinfo", v: version}, function (netDataStr) {
@@ -22,12 +43,17 @@ $(document).ready(function() {
         });
     }
 
-    var searchSeqFn = function() {
+    var searchSeqFn = function(id = "") {
         var seq = $("#searchSeq").val();
         var version = getVersion();
         var progress = new Progress($("#progressLoader"));
         progress.start();
-        $.post(searchApp, {t: "seq", query: seq, v: version}, function(dataStr) {
+        var parms = {t: "seq", v: version};
+        if (typeof id !== "function")
+            parms.id = id;
+        else
+            parms.query = seq;
+        $.post(searchApp, parms, function(dataStr) {
             var data = JSON.parse(dataStr);
             if (data.status !== true) {
                 $("#searchSeqErrorMsg").text(data.message).show();
@@ -38,80 +64,60 @@ $(document).ready(function() {
     		        table.append('<thead><tr><th>Cluster</th><th>E-Value</th></thead>');
     		        var body = $('<tbody>');
             		table.append(body);
-                    console.log(matches);
                     for (var i = 0; i < matches.length; i++) {
                         var netName = typeof network !== 'undefined' ? network.getNetworkMapName(matches[i][0]) : matches[i][0];
-                        console.log(netName);
                         body.append('<tr><td><a href="explore.html?v=' + version + '&id=' + matches[i][0] + ascoreUrl + '">' + netName + '</a></td><td>' + matches[i][1] + '</td></tr>');
                     }
                     if (parentCluster && ascore) {
                         var div = $("<div><h3>" + parentCluster + " AS " + ascore + "</h3></div>");
                         $("#searchResults").append(div);
-                    } else {
-                        $("#searchResults").empty();
                     }
-                    if (matches.length > 0)
-                        $("#searchResults").append(table).show();
-                    $("#searchUi").hide();
-                    progress.stop();
+                    if (matches.length > 0) {
+                        $("#searchResults").append(table);
+                    }
+                    return matches.length;
                 };
 
                 var netInfoFn = function(network) {
-                   processFn(network, data.matches);
-                   var dicedClusters = Object.keys(data.diced_matches);
-                   if (dicedClusters.length > 0) {
-                       for (var i = 0; i < dicedClusters.length; i++) {
-                           var parentCluster = dicedClusters[i];
-                           var ascores = Object.keys(data.diced_matches[parentCluster]);
-                           for (var ai = 0; ai < ascores.length; ai++) {
-                               var ascore = ascores[ai];
-                               var matches = data.diced_matches[parentCluster][ascore];
-                               //console.log(matches);
-                               //for (var mi = 0; mi < matches.length; mi++) {
-                                   processFn(network, matches, parentCluster, ascore);
-                               //}
-                           }
-                       }
-                   }
+                    var numMatches = processFn(network, data.matches);
+                    var dicedClusters = Object.keys(data.diced_matches);
+                    if (dicedClusters.length > 0) {
+                        for (var i = 0; i < dicedClusters.length; i++) {
+                            var parentCluster = dicedClusters[i];
+                            var ascores = Object.keys(data.diced_matches[parentCluster]);
+                            for (var ai = 0; ai < ascores.length; ai++) {
+                                var ascore = ascores[ai];
+                                var matches = data.diced_matches[parentCluster][ascore];
+                                numMatches += processFn(network, matches, parentCluster, ascore);
+                            }
+                        }
+                    }
+                    if (numMatches > 0) {
+                        $("#searchUi").hide();
+                        $("#searchResults").show();
+                        if (typeof id === "function")
+                            id(data.id);
+                    } else {
+                        $("#searchSeqErrorMsg").text("No matching sequences or clusters found.").show();
+                    }
+                    progress.stop();
                 };
 
+                $("#searchResults").empty();
                 getNetInfo(version, netInfoFn);
-//                $.get("getdata.php", {a: "netinfo", v: version}, function (netDataStr) {
-//                    var netData = parseNetworkJson(netDataStr);
-//                    var network;
-//                    if (netData !== false) {
-//                        if (netData.valid) {
-//                            network = new Network("", netData);
-//                        }
-//                    }
-//                    if (network) {
-//                        processFn(network, data.matches);
-//                        var dicedClusters = Object.keys(data.diced_matches);
-//                        if (dicedClusters.length > 0) {
-//                            for (var i = 0; i < dicedClusters.length; i++) {
-//                                var parentCluster = dicedClusters[i];
-//                                var ascores = Object.keys(data.diced_matches[parentCluster]);
-//                                for (var ai = 0; ai < ascores.length; ai++) {
-//                                    var ascore = ascores[ai];
-//                                    var matches = data.diced_matches[parentCluster][ascore];
-//                                    console.log(matches);
-//                                    //for (var mi = 0; mi < matches.length; mi++) {
-//                                        processFn(network, matches, parentCluster, ascore);
-//                                    //}
-//                                }
-//                            }
-//                        }
-//                    }
-//                });
             }
         });
     };
-    var searchIdFn = function() {
+    var searchIdFn = function(id = "") {
         var idVal = $("#searchId").val();
         var version = getVersion();
-        $.post(searchApp, {t: "id", query: idVal, v: version}, function(dataStr) {
+        var parms = {t: "id", v: version};
+        if (typeof id !== "function")
+            parms.id = id;
+        else
+            parms.query = idVal;
+        $.post(searchApp, parms, function(dataStr) {
             var data = JSON.parse(dataStr);
-            console.log(data.status);
             if (data.status !== true) {
                 $("#searchIdErrorMsg").text(data.message).show();
             } else {
@@ -130,6 +136,8 @@ $(document).ready(function() {
                         }
                         $("#searchResults").empty().append(table).show();
                         $("#searchUi").hide();
+                        if (typeof id === "function")
+                            id(data.id);
                     };
                     getNetInfo(version, addClusterTableFn);
                 } else {
@@ -141,13 +149,20 @@ $(document).ready(function() {
     var getSearchTaxType = function() {
         return $("#searchTaxTypeGenus").prop("checked") ? "genus" : ($("#searchTaxTypeFamily").prop("checked") ? "family" : "species");
     };
-    var searchTaxFn = function() {
+    var searchTaxFn = function(id = "") {
         var termVal = $("#searchTaxTerm").val();
         var termType = getSearchTaxType();
         var version = getVersion();
         var progress = new Progress($("#progressLoader"));
         progress.start();
-        $.post(searchApp, {t: "tax", query: termVal, type: termType, v: version}, function(dataStr) {
+        var parms = {t: "tax", v: version};
+        if (typeof id !== "function") {
+            parms.id = id;
+        } else {
+            parms.query = termVal;
+            parms.type = termType;
+        }
+        $.post(searchApp, parms, function(dataStr) {
             var data = JSON.parse(dataStr);
             if (data.status !== true) {
                 $("#searchTaxTermErrorMsg").text(data.message).show();
@@ -176,6 +191,8 @@ $(document).ready(function() {
                         $("#searchResults").empty();
                     $("#searchResults").append(table).show();
                     $("#searchUi").hide();
+                    if (typeof id === "function")
+                        id(data.id);
                 };
 
                 $.get("getdata.php", {a: "netinfo", v: version}, function (netDataStr) {
@@ -196,35 +213,31 @@ $(document).ready(function() {
         });
     };
 
-    var historyFn = function(type = "") {
-        history.pushState({type: type}, "Search " + type);
-    };
-    $(window).on("popstate", function (e) {
-        var state = e.originalEvent.state;
-        if (state === null) {
-            $("#searchResults").hide();
-            $("#searchUi").show();
-        } else {
-            $("#searchResults").show();
-            $("#searchUi").hide();
-        }
-    });
+    var id = window.location.hash.substr(1);
+    if (id) {
+        var t = id.substr(0, 1);
+        var jid = id.substr(1);
+        if (t == STATE_ID)
+            searchIdFn(jid);
+        else if (t == STATE_SEQ)
+            searchSeqFn(jid);
+        else if (t == STATE_TAX)
+            searchTaxFn(jid);
+        $("#searchResults").show();
+        $("#searchUi").hide();
+    }
 
     $("#searchIdBtn").click(function() {
         $("#searchIdErrorMsg").hide();
-        historyFn("ID");
-        searchIdFn();
+        searchIdFn(function(jid) { historyFn(STATE_ID, jid); });
     });
-
     $("#searchSeqBtn").click(function() {
         $("#searchSeqErrorMsg").hide();
-        historyFn("Sequence");
-        searchSeqFn();
+        searchSeqFn(function(jid) { historyFn(STATE_SEQ, jid); });
     });
     $("#searchTaxTermBtn").click(function() {
         $("#searchTaxTermErrorMsg").hide();
-        historyFn("Taxonomy");
-        searchTaxFn();
+        searchTaxFn(function(jid) { historyFn(STATE_TAX, jid); });
     });
 
 
@@ -245,5 +258,14 @@ $(document).ready(function() {
         source: taxSearch,
         limit: 100,
     });
+
+
+    //if (id) {//searchState.state != STATE_HOME) {
+    //    $("#searchResults").show();
+    //    $("#searchUi").hide();
+    //} else {
+    //    $("#searchResults").hide();
+    //    $("#searchUi").show();
+    //}
 });
 
