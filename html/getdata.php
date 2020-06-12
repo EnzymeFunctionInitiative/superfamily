@@ -266,6 +266,8 @@ function get_display($db, $cluster_id, $version = "", $ascore = "", $child_id = 
         array_push($feat, "weblogo");
     if (file_exists("$cpath/length_histogram_lg.png"))
         array_push($feat, "length_histogram");
+    if (file_exists("$cpath/gnd.sqlite"))
+        array_push($feat, "gnd");
     return $feat;
 }
 
@@ -303,6 +305,8 @@ function get_download($db, $cluster_id, $version = "", $ascore = "", $child_id =
         array_push($feat, "msa");
     if (file_exists("$cpath/hmm.hmm") || $show_child_feat)
         array_push($feat, "hmm");
+//    if (file_exists("$cpath/gnd.sqlite"))
+//        array_push($feat, "gnd");
     if (file_exists("$cpath/ssn.zip") || $show_child_feat)
         array_push($feat, "ssn");
     else if ($parent_path && (file_exists("$parent_path/ssn.zip") || $show_child_feat))

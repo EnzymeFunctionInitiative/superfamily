@@ -1,5 +1,5 @@
 
-const DEFAULT_VERSION = "2.1";
+const DEFAULT_VERSION = "2.2";
 
 // Extend the jQuery API for data available buttons
 $(document).ready(function () {
@@ -159,6 +159,7 @@ App.prototype.initLeafData = function() {
         $("#displayFeatures").show();
         $("#dataAvailable").show();
         this.addSunburstFeature();
+        this.addGndFeature();
     }
     $("#submitAnnoLink").attr("href", $("#submitAnnoLink").attr("href") + "?id=" + this.network.Id);
 }
@@ -493,6 +494,16 @@ App.prototype.addDownloadFeatures = function (containerId, hideTabStuff = false)
                 var logoBtn = '<button class="btn btn-primary btn-sm hmm-logo" data-logo="' + logoParms + '">View HMM</button>';
                 body.append('<tr><td>' + logoBtn + '</td><td>View HMM in SkyLign</td><td></td></tr>');
             }
+//        } else if (feat[i] == "gnd" && !hideTabStuff) {
+//            var gndParms = 'rs-id=' + this.network.Id;
+//            if (this.alignmentScore)
+//                gndParms += ":" + this.alignmentScore;
+//            if (false) // check if this is a parent and provide the child ID here
+//                gndParms += ":" + this.network.Id;
+//            if (this.version)
+//                gndParms += '&rs-ver=' + this.version;
+//            var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
+//            body.append('<tr><td>' + viewBtn + '</td><td>View Genome Neighborhood Diagrams</td><td></td></tr>');
         } else if (feat[i] == "id_fasta") {
             var t = [
                 { "key": "uniprot_id", "desc": "UniProt ID list" },
@@ -837,6 +848,23 @@ function triggerDownload (imgURI) {
 }
 
 
+
+App.prototype.addGndFeature = function() {
+    var feat = this.network.getDisplayFeatures();
+    var hasData = feat.length > 0;
+    if (!hasData || !feat.includes("gnd"))
+        return;
+
+    var that = this;
+    $("#dataAvailableGnd").click(function() {
+        var gndParms = 'rs-id=' + that.network.Id;
+        if (that.alignmentScore)
+            gndParms += ":" + that.alignmentScore;
+        if (that.version)
+            gndParms += '&rs-ver=' + that.version;
+        window.open('https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms);
+    }).enableDataAvailableButton();
+}
 
 App.prototype.addSunburstFeature = function() {
     var hasData = this.network.getDisplayFeatures().length > 0;

@@ -20,9 +20,7 @@
 
         <div class="navbar-collapse collapse w-100 order-3" id="navbarNavItems">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link active" href="explore.html?v=2.1">Explore</a></li>
-                <!--                <li class="nav-item"><a class="nav-link" href="explore.html?v=2.0">Explore 2.0</a></li>-->
-                <!--                <li class="nav-item"><a class="nav-link" href="explore.html?v=1.0">Explore 1.0</a></li>-->
+                <li class="nav-item"><a class="nav-link active" href="explore.html">Explore</a></li>
                 <li class="nav-item"><a class="nav-link" href="search.html">Search</a></li>
                 <li class="nav-item"><a class="nav-link" href="submit.html">Submit</a></li>
                 <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
@@ -55,6 +53,7 @@
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailablePubs">Pubs</button>
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableAnno">Anno</button>
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableSunburst">Taxonomy</button>
+                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableGnd" data-toggle="tooltip" title="Genome Neighborhood Diagram">Genome Neighborhood Diagram</button>
                         </div>
                         <div style="clear:both"></div>
                         <div id="clusterSizeContainer" style="display: none">
@@ -251,7 +250,7 @@
     <!--<script src="data/data.js?v=15"></script>-->
     <script src="js/network.js?v=8"></script>
     <script src="js/progress.js?v=2"></script>
-    <script src="js/app.js?v=30"></script>
+    <script src="js/app.js?v=31"></script>
     <script src="js/imageMapResizer.min.js"></script>
     <script src="js/jquery.maphilight.min.js"></script>
     <script src="js/jquery.lazy.min.js" type="text/javascript"></script>
@@ -260,7 +259,7 @@
             var progress = new Progress($("#progressLoader"));
             progress.start();
 
-            initApp("2.1");
+            initApp("2.2");
             $('.lazy').Lazy();
     
             $('[data-toggle="tooltip"]').tooltip();

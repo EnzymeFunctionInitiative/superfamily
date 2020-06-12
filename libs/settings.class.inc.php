@@ -14,9 +14,10 @@ class settings {
             return SF_HMMDB_V1;
         } else if ($version == "2.0" && defined("SF_HMMDB_V2")) {
             return SF_HMMDB_V2;
-        } else if ($version == "2.1" && defined("SF_HMMDB_V2_1")) {
+        } else if (($version == "2.1" && defined("SF_HMMDB_V2_1")) || ($version == "2.2" && defined("SF_HMMDB_V2_2"))) {
             //TODO: handle dicing in subsequent versions
-            $dir = SF_HMMDB_V2_1 . "/hmm";
+            //HACK: make this flexible
+            $dir = ($version == "2.1" ? SF_HMMDB_V2_1 : SF_HMMDB_V2_2) . "/hmm";
             if (!$type || $type == "all" || !preg_match("/^[a-z]+$/", $type) || !file_exists("$dir/$type.txt"))
                 return array("$dir/all.hmm");
             $lines = file("$dir/$type.txt");
@@ -32,7 +33,6 @@ class settings {
                 }
             }
             return $db_list;
-            //return SF_HMMDB_V2_1;
         }
         return defined("SF_HMMDB") ? SF_HMMDB : "";
     }
@@ -46,6 +46,8 @@ class settings {
             return SF_CLUSTERDB_V2;
         else if ($version == "2.1" && defined("SF_CLUSTERDB_V2_1"))
             return SF_CLUSTERDB_V2_1;
+        else if ($version == "2.2" && defined("SF_CLUSTERDB_V2_2"))
+            return SF_CLUSTERDB_V2_2;
         return defined("SF_CLUSTERDB") ? SF_CLUSTERDB : "";
     }
     public static function get_data_dir($version = "") {
@@ -55,6 +57,8 @@ class settings {
             return SF_DATA_DIR_V2;
         else if ($version == "2.1" && defined("SF_DATA_DIR_V2_1"))
             return SF_DATA_DIR_V2_1;
+        else if ($version == "2.2" && defined("SF_DATA_DIR_V2_2"))
+            return SF_DATA_DIR_V2_2;
         return defined("SF_DATA_DIR") ? SF_DATA_DIR : "data";
     }
     public static function get_submit_email() {

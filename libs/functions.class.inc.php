@@ -35,13 +35,13 @@ class functions {
         }
         return $dir;
     }
-    public static function validate_version($version) {
+    public static function validate_version($version = "") {
         return self::filter_version($version);
     }
-    public static function filter_version($version) {
-        if (!isset($version))
+    public static function filter_version($version = "") {
+        if (!$version)
             $version = $_GET["v"];
-        if ($version === "1.0" || $version === "2.0" || $version === "2.1")
+        if ($version === "1.0" || $version === "2.0" || $version === "2.1" || $version === "2.2")
             return $version;
         return "";
     }
