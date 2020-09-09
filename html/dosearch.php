@@ -3,6 +3,8 @@
 require(__DIR__ . "/../libs/settings.class.inc.php");
 require(__DIR__ . "/../libs/functions.class.inc.php");
 
+const MAX_RESULTS = 3;
+
 // Design output structure to handle errors, etc
 
 $type = filter_input(INPUT_GET, "t", FILTER_SANITIZE_STRING);
@@ -22,7 +24,7 @@ if (!$query && !$id && $type != "tax-prefetch") {
     print json_encode(array("status" => false, "message" => "Invalid input"));
     exit(0);
 }
-$version = functions::validate_version($_POST["v"]);
+$version = functions::validate_version(isset($_POST["v"]) ? $_POST["v"] : "");
 
 
 if ($type == "seq") {
@@ -297,6 +299,8 @@ function hmmscan($out_dir, $hmmdb, $seq_file) {
             $evalue = floatval($parts[4]);
             if ($evalue < 1e-10)
                 array_push($matches, array($parts[0], $parts[4]));
+            if (count($matches) == MAX_RESULTS)
+                break;
         }
     }
     return $matches;

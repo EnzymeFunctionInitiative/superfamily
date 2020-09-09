@@ -217,3 +217,16 @@ td.file-header-row {
     font-size: 0.90em;
 }
 
+.diced-nav button {
+    margin-right: 20px;
+}
+
+.btn-tiny {
+    padding: 0.10rem 0.5rem;
+    line-height: 1;
+}
+
+.h-70px {
+    height: 70px;
+}
+

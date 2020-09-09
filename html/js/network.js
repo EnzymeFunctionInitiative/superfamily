@@ -24,6 +24,7 @@ function Network(networkId, networkData) {
         this.data.public = {};
     if (typeof this.data.families === "undefined")
         this.data.families = {};
+    console.log(networkData.timing);
 }
 Network.prototype.getAlignmentScore = function() {
     //DEBUG:
@@ -61,6 +62,19 @@ Network.prototype.getDicedParent = function() {
 }
 Network.prototype.getDicedChildren = function() {
     return (typeof this.data.dicing !== "undefined" && Array.isArray(this.data.dicing.children)) ? this.data.dicing.children : [];
+}
+Network.prototype.getDicedNav = function(isParent = false) {
+    var nav = {};
+    if (isParent) {
+        nav.ascores = this.data.alt_ssn;
+        nav.siblings = {};
+    } else {
+        if (typeof this.data.dicing.parent_ascores === "undefined" || typeof this.data.dicing.siblings === "undefined")
+            return {};
+        nav.ascores = this.data.dicing.parent_ascores;
+        nav.siblings = this.data.dicing.siblings;
+    }
+    return nav;
 }
 Network.prototype.getAltSsns = function() {
     return (typeof this.data.alt_ssn !== "undefined" && Array.isArray(this.data.alt_ssn)) ? this.data.alt_ssn : [];
@@ -101,10 +115,14 @@ Network.prototype.getKeggIds = function(version, addKeggIdFn, finishFn) {
         finishFn();
     });
 }
-Network.prototype.getSizes = function (netId = "") {
+Network.prototype.getSizes = function(netId) {
     if (netId) {
         return this.network_map[netId].size;
+    } else {
+        return 0;
     }
+}
+Network.prototype.getCurrentSizes = function() {
     if (typeof this.data.size !== "undefined" && this.data.size.uniprot > 0) {
         return this.data.size;
     } else {
@@ -126,6 +144,7 @@ Network.prototype.getDisplayFeatures = function () {
 Network.prototype.getDownloadFeatures = function () {
     return Array.isArray(this.data.download) ? this.data.download : [];
 }
+// Needed for breadcrumb and other things
 Network.prototype.getNetworkMapName = function (networkId) {
     return typeof this.network_map[networkId] !== "undefined" ? this.network_map[networkId].name : networkId;
 }
@@ -135,12 +154,15 @@ Network.prototype.getNetworkSfldTitle = function (networkId) {
     else
         return "";
 }
+// Needed for display of clusters that have children
 Network.prototype.getSfldDesc = function (id) {
     return typeof this.sfld_desc[id] !== "undefined" ? this.sfld_desc[id].desc : "";
 }
+// Needed for display of clusters that have children
 Network.prototype.getSfldColor = function (id) {
     return typeof this.sfld_desc[id] !== "undefined" ? this.sfld_desc[id].color : "";
 }
+// Needed for display of clusters that have children
 Network.prototype.getSfldIds = function (cid) {
     return typeof this.sfld_map[cid] !== "undefined" ? this.sfld_map[cid] : [];
 }

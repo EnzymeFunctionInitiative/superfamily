@@ -46,17 +46,32 @@ if ($action == "kegg") {
         $data["kegg"] = $kegg;
     }
 } else if ($action == "cluster") {
-    $cluster = get_cluster($db, $cluster_id, $ascore, $version);
+    $timings = array();
+    $all_start = microtime(true);
+    $cluster = get_cluster($db, $cluster_id, $ascore, $version, $timings);
     if ($cluster === false) {
         $data["valid"] = false;
         $data["message"] = "Cluster error.";
     } else {
         $data["cluster"] = $cluster;
-        $data["network_map"] = get_all_network_names($db);
-        $data["sfld_map"] = get_sfld_map($db);
-        $data["sfld_desc"] = get_sfld_desc($db);
-        $data["enzymecodes"] = get_enzyme_codes($db);
+        $start = microtime(true);
+        if (count($cluster["regions"]) || count($cluster["subgroups"]) || count($cluster["dicing"]["children"])) {
+            $data["network_map"] = get_all_network_names($db);
+            $data["sfld_map"] = get_sfld_map($db);
+            $data["sfld_desc"] = get_sfld_desc($db);
+            $data["enzymecodes"] = get_enzyme_codes($db);
+        } else {
+            $data["network_map"] = get_breadcrumb_network_names($db, $cluster_id);
+            $data["sfld_map"] = array();
+            $data["sfld_desc"] = array();
+            $data["enzymecodes"] = array();
+        }
+        $dur = microtime(true) - $start;
+        $timings["netname"] = $dur;
     }
+    $total_time = microtime(true) - $all_start;
+    $timings["total"] = $total_time;
+    $data["timing"] = $timings;
 } else if ($action == "tax") {
     $tax = get_tax_data($db, $cluster_id, $ascore);
     if ($tax  === false) {
@@ -78,7 +93,7 @@ echo json_encode($data);
 
 
 
-function get_cluster($db, $cluster_id, $ascore, $version) {
+function get_cluster($db, $cluster_id, $ascore, $version, &$timings) {
     $data = array(
         "size" => array(
             "uniprot" => 0,
@@ -114,9 +129,29 @@ function get_cluster($db, $cluster_id, $ascore, $version) {
         "dir" => "",
     );
 
-    $data["dicing"]["parent"] = functions::get_dicing_parent($db, $cluster_id, $ascore);
+    $start = microtime(true); //TIMING
+    $parent_cluster_id = functions::get_dicing_parent($db, $cluster_id, $ascore);
+
+    $data["dicing"]["parent"] = $parent_cluster_id;
+    $timings["get_dicing_parent"] = microtime(true) - $start;//TIMING
+    $start = microtime(true);//TIMING
     $data["dicing"]["children"] = get_dicing_children($db, $cluster_id, $ascore);
-    $parent_cluster_id = $data["dicing"]["parent"];
+    $timings["get_dicing_children"] = microtime(true) - $start;//TIMING
+    $start = microtime(true);//TIMING
+    if ($parent_cluster_id || count($data["dicing"]["children"])) {
+        if ($parent_cluster_id) {
+            $ascores = get_alt_ssns($db, $parent_cluster_id);
+            $data["dicing"]["parent_ascores"] = $ascores;
+            $data["dicing"]["siblings"] = get_siblings($db, $cluster_id, $ascore);
+        } else {
+            $ascores = get_alt_ssns($db, $cluster_id);
+            if (isset($ascores[0][0])) {
+                $data["REDIRECT"]["as"] = $ascores[0][0];
+                $data["REDIRECT"]["cluster_id"] = $cluster_id . "-" . $data["dicing"]["children"][0];
+            }
+        }
+    }
+$timings["get_alt_sibs"] = microtime(true) - $start;
     $child_cluster_id = "";
     $is_child = $parent_cluster_id ? true : false;
     if ($is_child) {
@@ -125,21 +160,43 @@ function get_cluster($db, $cluster_id, $ascore, $version) {
         $parent_cluster_id = $cluster_id;
     }
 
+$start = microtime(true);
     $info = get_network_info($db, $cluster_id, $is_child, $parent_cluster_id);
+$timings["get_network_info"] = microtime(true) - $start;
     $data["name"] = $info["name"];
     $data["title"] = $info["title"];
     $data["desc"] = $info["desc"];
     $data["image"] = $cluster_id;
+$start = microtime(true);
     $data["public"]["has_kegg"] = get_kegg($db, $cluster_id, $ascore, true);
+$timings["get_kegg"] = microtime(true) - $start;
+$start = microtime(true);
     $data["size"] = get_sizes($db, $cluster_id, $ascore, $is_child);
-    $data["public"]["swissprot"] = get_swissprot($db, $cluster_id, $ascore);
-    $data["public"]["pdb"] = get_pdb($db, $cluster_id, $ascore);
+$timings["get_sizes"] = microtime(true) - $start;
+$start = microtime(true);
+    //$data["public"]["swissprot"] = get_swissprot($db, $cluster_id, $ascore);
+$timings["get_swissprot"] = microtime(true) - $start;
+$start = microtime(true);
+    //$data["public"]["pdb"] = get_pdb($db, $cluster_id, $ascore);
+$timings["get_pdb"] = microtime(true) - $start;
+$start = microtime(true);
     $data["families"]["tigr"] = get_tigr($db, $cluster_id);
+$timings["get_tigr"] = microtime(true) - $start;
+$start = microtime(true);
     $data["display"] = get_display($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
+$timings["get_display"] = microtime(true) - $start;
+$start = microtime(true);
     $data["download"] = get_download($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
+$timings["get_download"] = microtime(true) - $start;
+$start = microtime(true);
     $data["regions"] = get_regions($db, $cluster_id);
+$timings["get_regions"] = microtime(true) - $start;
+$start = microtime(true);
     $data["alt_ssn"] = get_alt_ssns($db, $cluster_id);
+$timings["get_alt_ssns"] = microtime(true) - $start;
+$start = microtime(true);
     $data["cons_res"] = get_consensus_residues($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
+$timings["get_consensus_residues"] = microtime(true) - $start;
 
     $data["dir"] = functions::get_rel_data_dir_path($parent_cluster_id, $version, $ascore, $child_cluster_id);
     if ($ascore)
@@ -226,6 +283,22 @@ function get_all_network_names($db) {
     $data = array();
     $sfld_only = true;
     while ($row = $sth->fetch()) {
+        $sfld_title = get_network_info_title($row, $sfld_only);
+        $data[$row["cluster_id"]] = array("name" => $row["name"], "sfld_title" => $sfld_title, "size" => array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]));
+    }
+    return $data;
+}
+function get_breadcrumb_network_names($db, $cluster_id) {
+    $data = array();
+    $sfld_only = true;
+    $prim_sql = get_network_info_sfld_sql("uniprot, uniref50, uniref90", "LEFT JOIN size ON network.cluster_id = size.cluster_id");
+    $parts = explode("-", $cluster_id);
+    for ($i = count($parts)-2; $i > 0; $i--) {
+        $cid = implode("-", array_slice($parts, 0, $i+1));
+        $sql = "$prim_sql WHERE network.cluster_id = '$cid'";
+        $sth = $db->prepare($sql);
+        $sth->execute();
+        $row = $sth->fetch();
         $sfld_title = get_network_info_title($row, $sfld_only);
         $data[$row["cluster_id"]] = array("name" => $row["name"], "sfld_title" => $sfld_title, "size" => array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]));
     }
@@ -416,6 +489,7 @@ function get_dicing_children($db, $cluster_id, $ascore = "") {
     $ascore_col = ASCORE_COL;
     $diced_net_table = DICED_NETWORK;
     $diced_size_table = DICED_SIZE;
+    /*
     $sql = <<<SQL
     SELECT $diced_net_table.cluster_id AS cluster_id,
         $diced_size_table.uniprot AS uniprot,
@@ -425,23 +499,32 @@ function get_dicing_children($db, $cluster_id, $ascore = "") {
     LEFT JOIN $diced_size_table ON $diced_net_table.cluster_id = $diced_size_table.cluster_id
     WHERE $diced_net_table.parent_id = :id
 SQL;
+     */
+    $sql = <<<SQL
+    SELECT $diced_net_table.cluster_id AS cluster_id
+    FROM $diced_net_table
+    WHERE $diced_net_table.parent_id = :id
+SQL;
     //DEBUG TODO
     $has_legacy_bug = false;
     //$has_legacy_bug = USE_UNIPROT_ID_JOIN == false;
-    if ($ascore)
-        $sql .= " AND $diced_net_table.$ascore_col = :ascore"
-            . " AND $diced_size_table.$ascore_col = :ascore";
+//    if ($ascore)
+//        $sql .= " AND $diced_net_table.$ascore_col = :ascore"
+//            . " AND $diced_size_table.$ascore_col = :ascore";
+//    die($sql);
     $sth = $db->prepare($sql);
     if (!$sth)
         return array();
     $row_fn = function($row) {
-        return array("id" => $row["cluster_id"],
-            "size" => array("uniprot" => $row["uniprot"], "uniref50" => $row["uniref50"], "uniref90" => $row["uniref90"]));
+        $parts = explode("-", $row["cluster_id"]);
+        return $parts[count($parts)-1];
+        //return array("id" => $row["cluster_id"],
+        //    "size" => array("uniprot" => $row["uniprot"], "uniref50" => $row["uniref50"], "uniref90" => $row["uniref90"]));
     };
 
     $sth->bindValue("id", $cluster_id);
-    if (!$has_legacy_bug && $ascore)
-        $sth->bindValue("$ascore_col", $ascore);
+//    if (!$has_legacy_bug && $ascore)
+//        $sth->bindValue("$ascore_col", $ascore);
     $sth->execute();
     $data = array();
     while ($row = $sth->fetch()) {
@@ -478,10 +561,33 @@ SQL;
 //}
 
 
+function get_siblings($db, $cluster_id, $ascore) {
+    $parts = explode("-", $cluster_id);
+    $num = $parts[count($parts)-1];
+    $sibs["prev"] = $num > 1 ? $num - 1 : 0;
+    $sibs["next"] = $num + 1;
+    
+    $ascore_col = ASCORE_COL;
+    $parent_id = implode("-", array_slice($parts, 0, count($parts)-1));
+    $sql = "SELECT DISTINCT cluster_id FROM diced_network WHERE parent_id = :id AND $ascore_col = '$ascore'";
+    $row_fn = function($row) {
+        return $row["cluster_id"];
+    };
+    $ids = get_generic_fetch($db, $parent_id, $sql, $row_fn);
+    $sib_ids = array();
+    for ($i = 0; $i < count($ids); $i++) {
+        $parts = explode("-", $ids[$i]);
+        $id = $parts[count($parts)-1];
+        array_push($sib_ids, $id);
+    }
+    $sibs["ids"] = $sib_ids;
+    return $sibs;
+}
 function get_alt_ssns($db, $cluster_id) {
     $table = DICED_SSN;
     $ascore_col = ASCORE_COL;
-    $sql = "SELECT * FROM $table WHERE cluster_id = :id AND $ascore_col != ''";
+    //$sql = "SELECT * FROM $table WHERE cluster_id = :id AND $ascore_col != ''";
+    $sql = "SELECT DISTINCT $ascore_col FROM diced_network WHERE parent_id = :id AND $ascore_col != '' ORDER BY $ascore_col";
     $row_fn = function($row) {
         return array($row[ASCORE_COL]);
     };

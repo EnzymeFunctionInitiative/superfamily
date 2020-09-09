@@ -34,8 +34,12 @@ function initApp(version) {
         var data = parseNetworkJson(dataStr);
         if (data !== false) {
             if (data.valid) {
-                var network = new Network(requestId, data);
-                app.init(network);
+                if (typeof data.cluster !== "undefined" && typeof data.cluster.REDIRECT !== "undefined") {
+                    goToUrlFn(data.cluster.REDIRECT.cluster_id, version, data.cluster.REDIRECT.as);
+                } else {
+                    var network = new Network(requestId, data);
+                    app.init(network);
+                }
             } else {
                 app.responseError(data.message);
             }
@@ -95,18 +99,20 @@ App.prototype.init = function(network) {
         var dlDivId = "downloads";
         var hideTabStuff = false;
         if (this.alignmentScore) {
-            this.initTabPages();
-            dlDivId = "childDownload";
-            hideTabStuff = true;
+            //this.initTabPages();
+            //dlDivId = "childDownload";
+            //hideTabStuff = true;
             $("#altSsnSecondary").show();
-        } else {
+        }
+        //} else {
             $("#downloadContainer").show();
             $("#altSsnPrimary").show();
             $(".alt-cluster-ascores").text(this.network.getAltSsns().join(", "));
             $(".alt-cluster-id").text(this.network.getName());
             $(".alt-cluster-default-as").text(network.getDefaultAlignmentScore());
-        }
+        //}
         this.addDownloadFeatures(dlDivId, hideTabStuff);
+        this.addDicedNav(true); // true = this is a parent diced cluster
     } else {
         this.initStandard(isLeaf);
         if (this.network.Id != "fullnetwork")
@@ -117,6 +123,26 @@ App.prototype.init = function(network) {
         if (this.network.Id != "fullnetwork") {
             this.addDownloadFeatures("downloads")
             $("#downloadContainer").show();
+        }
+        // If this is a diced network...
+        var dicedParent = this.network.getDicedParent();
+        if (dicedParent) {
+            this.addDicedNav();
+            $("#dicedParentImg").show();
+            $("#parentImg").attr("src", this.dataDir + "/../" + dicedParent + "_sm.png");
+            $("#toggleParentImg").click(function() {
+                if (!$(this).data("hidden") || $(this).data("hidden") == false) {
+                    $("#toggleParentImgIcon").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
+                    $("#toggleParentImgText").text("Show");
+                    $("#parentImg").removeClass("w-50").addClass("h-70px");
+                    $(this).data("hidden", true);
+                } else {
+                    $("#toggleParentImgIcon").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
+                    $("#toggleParentImgText").text("Hide");
+                    $("#parentImg").removeClass("h-70px").addClass("w-50");
+                    $(this).data("hidden", false);
+                }
+            });
         }
     }
 
@@ -134,7 +160,8 @@ App.prototype.initAltSsn = function() {
     this.addClusterSize();
     this.setClusterImage(function() {});
     var altDiv = $("#altSsn");
-    this.addAltSsns(altDiv);
+    //this.addAltSsns(altDiv);
+    altDiv.show();
     $("#submitAnnoLink").attr("href", $("#submitAnnoLink").attr("href") + "?id=" + this.network.Id);
         $("#dataAvailable").show();
 }
@@ -378,6 +405,60 @@ App.prototype.initChildren = function() {
 
     $("#subgroupTable").show();
 }
+App.prototype.addDicedNav = function(isParent = false) {
+    var that = this;
+
+    if (!isParent) {
+        var nav = this.network.getDicedNav(isParent);
+        var idParts = this.network.Id.split("-");
+        var parentIdParts = idParts.slice(0, idParts.length-1);
+        var prevId = nav.siblings.prev ? parentIdParts.join("-") + "-" + nav.siblings.prev : "";
+        var nextId = nav.siblings.next ? parentIdParts.join("-") + "-" + nav.siblings.next : "";
+        
+        var prevBtn = $('<button id="prev-sibling-btn" class="btn btn-primary btn-sm">Previous Cluster</button>');
+        if (prevId) {
+            prevBtn.click(function() {
+                goToUrlFn(prevId, that.version, that.alignmentScore);
+            });
+        } else {
+            prevBtn.addClass("disabled");
+        }
+    
+        var nextBtn = $('<button id="next-sibling-btn" class="btn btn-primary btn-sm">Next Cluster</button>');
+        if (nextId) {
+            nextBtn.click(function() {
+                goToUrlFn(nextId, that.version, that.alignmentScore);
+            });
+        } else {
+            nextBtn.addClass("disabled");
+        }
+    
+        var idCb = $('<select id="sel-sibling-id" class="form-control w-25 mr-4"></select>');
+        var curId = idParts[idParts.length-1];
+        var ids = nav.siblings.ids;
+        var parentNum = idParts.slice(1, idParts.length-1).join("-");
+        for (var i = 0; i < ids.length; i++) {
+            var isSel = ids[i] == curId ? "selected" : "";
+            idCb.append($('<option value="cluster-' + parentNum + '-' + ids[i] + '" ' + isSel + '>Cluster ' + parentNum + '-' + ids[i] + '</option>'));
+        }
+        idCb.change(function() {
+            goToUrlFn(this.value, that.version, that.alignmentScore);
+        });
+        
+        $("#dicedNav").append(prevBtn).append(idCb).append(nextBtn);
+    }
+
+    var nav = this.network.getDicedNav(isParent);
+    var ascoreCb = $('<select id="sel-parent-ascores" class="form-control w-25"></select>');
+    for (var i = 0; i < nav.ascores.length; i++) {
+        var isSel = nav.ascores[i] == this.alignmentScore ? "selected" : "";
+        ascoreCb.append($('<option value="' + nav.ascores[i] + '" ' + isSel + '>AS ' + nav.ascores[i] + '</option>'));
+    }
+    ascoreCb.change(function() {
+        goToUrlFn(that.network.Id, that.version, this.value);
+    });
+    $("#dicedNav").append('<span class="mr-1">Alignment Score:</span>').append(ascoreCb);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -394,7 +475,7 @@ App.prototype.setPageHeaders = function () {
     }
 }
 App.prototype.addClusterSize = function () {
-    var size = this.network.getSizes();
+    var size = this.network.getCurrentSizes();
     if (size === false)
         return;
     $("#clusterSize").append('UniProt: <b>' + commify(size.uniprot) + '</b>, UniRef90: <b>' + commify(size.uniref90) + '</b>, UniRef50: <b>' + commify(size.uniref50) + '</b>');
@@ -632,7 +713,8 @@ App.prototype.addBreadcrumb = function() {
                 item = '<li class="breadcrumb-item active" aria-current="page">' + this.network.getName() + '</li>';
             } else {
                 var parentId = parts.slice(0, i + 1).join("-");
-                item = '<li class="breadcrumb-item"><a href="?id=' + parentId + '&v=' + this.version + '">';
+                var ascore = (i == parts.length - 1 && this.alignmentScore) ? "&as=" + this.alignmentScore : "";
+                item = '<li class="breadcrumb-item"><a href="?id=' + parentId + '&v=' + this.version + ascore + '">';
                 var parentNet = this.network.getNetworkMapName(parentId);
                 if (typeof parentNet !== "undefined")
                     item += parentNet;
@@ -822,7 +904,7 @@ App.prototype.addAltSsns = function (div) {
             body.append(row);
         }
     });
-    div.append(table).show();
+    div.append(table);
 }
 
 
