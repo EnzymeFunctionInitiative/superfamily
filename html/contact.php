@@ -1,23 +1,12 @@
-﻿<?php require_once 'includes/header.inc.php'; 
+﻿<?php
 
-$twig_contact_variables = array();
+require_once(__DIR__ . "/includes/main.inc.php");
 
-$twig_contact_loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
-$twig_contact = new \Twig\Environment($twig_contact_loader);
+$twig_variables = array();
+$loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
+$twig = new \Twig\Environment($loader);
 
-$contact_html = "";
-if (file_exists(settings::get_twig_dir() . "/custom/contact.html.twig")) {
-        $contact_html = $twig_contact->render("custom/contact.html.twig",$twig_contact_variables);
-}
-else {
-        $contact_html = $twig_contact->render("default/contact.html.twig",$twig_contact_variables);
-}
+$html = $twig->render("contact.html.twig", $twig_variables);
 
-echo $contact_html;
-
-
-
-require_once 'includes/footer.inc.php';
-
-?>
+echo $html;
 

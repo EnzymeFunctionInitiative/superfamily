@@ -90,27 +90,100 @@
                 <h3 class="explore-heading">Additional Alignment Score Segregations</h3>
                 <div id="altSsnPrimary" style="display: none">
                     <p>
-                    This page displays the SSN of <span class="alt-cluster-id">Megacluster</span>
-                    generated with an alignment score of <span class="alt-cluster-default-as">N</span>
-                    that collects all of the sequences into a single cluster.
-                    Links are provided to Color SSNs generated with increasing alignments scores
-                    (<span class="alt-cluster-ascores"></span>).
-                    As the alignment score increases, <span class="alt-cluster-id">Megacluster</span>
-                    segregates into an 
-                    increasing number of smaller clusters.   In some of these clusters, "fine structure" is 
-                    revealed that shows the emergence of subclusters.  The connected subclusters may have 
-                    similar functions.  As the alignment score is increased, the subclusters emerge as distinct 
-                    clusters that may be isofunctional.  
+                    This page displays the UniRef50 ID SSN of
+                    <span class="alt-cluster-id">Megacluster</span>,
+                    <span class="alt-cluster-sfld">SFLD</span> 
+                    generated with an alignment score of
+                    <span class="alt-cluster-default-as">N</span>
+                    that collects all of the sequences into a single cluster.  
                     </p>
-    
+                    
                     <p>
-                    On the Search page, the "Find by UniProt ID" and "Find by Sequence" functions can be used to 
-                    identify the clusters in the Color SSNs containing an ID/sequence of interest.  Analyses of 
-                    these clusters may allow the identification of isofunctional clusters (large alignment 
-                    score) and their relationships to other isofunctional clusters (connected subclusters at 
-                    smaller alignment scores).  The UniRef50 ID/FASTA files for the clusters can be used with 
-                    EFI-GNT to view the genome neighborhood diagrams (GNDs) of clusters, providing information 
-                    about functional heterogeneity.
+                    Sequence-function space in <span class="alt-cluster-id">Megacluster</span> is
+                    very large and diverse, so a "top-down" analysis is not practical (segregation
+                    of the SSN into isofunctional clusters by a step-wise increase in alignment
+                    score).  To enable "genomic enzymology"-based discovery of new functions, we
+                    precomputed Color SSNs using UniRef90 IDs at a series of alignment scores (from
+                    25 to 125, in increments of 5) and provide access to each of the clusters in
+                    each of the SSNs (&ge;3 nodes).  For each cluster, we provide the SSN (xgmml
+                    file), WebLogo, MSA, HMM, UniRef90/UniProt ID Length Histograms, and
+                    UniProt/UniRef90 sequences (IDs and FASTA files).  The Color SSNs and their
+                    WebLogos, MSA, HMMs, and Length Histograms were generated with the EFI-EST
+                    Cluster Analysis utility.   
+                    </p>
+                    
+                    <p>
+                    We also provide genome neighborhood diagrams (GNDs) for the UniRef90 node IDs
+                    in each cluster.  The GNDs provide information about both functional
+                    heterogeneity (one or several genome neighborhoods; one or more functions) and
+                    possible metabolic pathways (Pfam/InterPro families of proximal genes).  Note
+                    that the GNDs for the UniProt IDs in each UniRef90 node are available by
+                    clicking the "+" link adjacent to each UniRef90 GND.
+                    </p>
+                    
+                    <p>
+                    In contrast to the UniRef50 IDs used to generate the SSN shown above and
+                    segregate the superfamily into subgroups (see Subgroups), UniRef90 IDs are used
+                    so that isofunctional clusters can be obtained by increasing the alignment
+                    score (to achieve the same genome context).  The sequences in UniRef50 ID
+                    clusters often are functionally heterogeneous, so isofunctional clusters (same
+                    genome context) often cannot be obtained.
+                    </p>
+                    
+                    <p>
+                    On the Search page, the "Find by UniProt ID" and "Find by Sequence" functions
+                    can be used to identify the cluster in each Color SSN containing an ID/sequence
+                    of interest.  
+                    </p>
+                    
+                    <p>
+                    When using the "Find by UniProt ID" function, if the UniProt ID is in the
+                    dataset used to calculate the SSNs, the cluster containing the UniProt ID will
+                    be identified in each cluster if the cluster contains  &ge;3 nodes.  If the ID
+                    is located in a cluster with 2 nodes or a singleton, the ID will not be found
+                    as indicated by "ID not found".   The cluster name is a link to the page for
+                    that cluster.  Find by UniProt ID provides quick access to the clusters in the
+                    Color SSNs containing the ID; however, Find by Sequence likely is more useful
+                    (next paragraphs).
+                    </p>
+                    
+                    <p>
+                    When using the "Find by Sequence" function, the sequence is searched against
+                    the HMMs calculated for all of the clusters with &ge;3 nodes in all of the
+                    Color SSNs (be patient!).  The "best" seven cluster hits (smallest e-values)
+                    will be reported for each Color SSN.   When perusing these results, the
+                    e-values for the Color SSNs generated with small alignment scores will be
+                    "large" because these clusters likely are functionally diverse.  However, as
+                    the alignment score increases, the e-value associated with the "best" hit will
+                    decrease substantially when the cluster is isofunctional.  The cluster name is
+                    a link to the page for that cluster.  Examination of the GNDs for the UniRef90
+                    node IDs in the cluster will provide additional information about
+                    functionality.
+                    </p>
+                    
+                    <p>
+                    Each cluster page provides a link to the cluster in the SSN generated with the
+                    previous alignment score ("progenitor").   The page also contains the link(s)
+                    to the cluster(s) in the SSN generated with the next alignment score that
+                    contains the sequences in the cluster ("progeny").  These links may leverage
+                    identification of clusters with related functions (assuming the progeny share
+                    mechanistic attributes with the progenitor).  In favorable cases, it may be
+                    possible to "walk" from one function to another, with the function of the
+                    progenitor providing clues about the function of the progeny.
+                    </p>
+                    
+                    <p>
+                    <a href="" id="alt-cluster-next-as-link">Click here</a>
+                    to proceed to the page for
+                    <span class="alt-cluster-id">Megacluster</span>-1
+                    in the Color SSN generated with an alignment score of
+                    <span class="alt-cluster-next-as">N</span>.
+                    On that (and any) cluster page, you can explore the clusters at the displayed 
+                    alignment score and, also, choose any other alignment score.  
+                    </p>
+                    
+                    <p>
+                    Or proceed to the <a href="search.html">Search page</a> to explore sequence relationships.
                     </p>
                 </div>
                 <div id="altSsnSecondary" style="display: none">

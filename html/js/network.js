@@ -24,7 +24,6 @@ function Network(networkId, networkData) {
         this.data.public = {};
     if (typeof this.data.families === "undefined")
         this.data.families = {};
-    console.log(networkData.timing);
 }
 Network.prototype.getAlignmentScore = function() {
     //DEBUG:
@@ -68,6 +67,7 @@ Network.prototype.getDicedNav = function(isParent = false) {
     if (isParent) {
         nav.ascores = this.data.alt_ssn;
         nav.siblings = {};
+        nav.children = this.data.dicing.children;
     } else {
         if (typeof this.data.dicing.parent_ascores === "undefined" || typeof this.data.dicing.siblings === "undefined")
             return {};
@@ -78,6 +78,13 @@ Network.prototype.getDicedNav = function(isParent = false) {
 }
 Network.prototype.getAltSsns = function() {
     return (typeof this.data.alt_ssn !== "undefined" && Array.isArray(this.data.alt_ssn)) ? this.data.alt_ssn : [];
+}
+Network.prototype.getNextAscore = function() {
+    var ascores = this.getAltSsns();
+    if (ascores.length)
+        return ascores[0];
+    else
+        return "";
 }
 Network.prototype.getConsensusResidues = function() {
     return (typeof this.data.cons_res !== "undefined" && Array.isArray(this.data.cons_res)) ? this.data.cons_res : [];
@@ -154,8 +161,14 @@ Network.prototype.getNetworkSfldTitle = function (networkId) {
     else
         return "";
 }
+Network.prototype.getSfldDesc = function () {
+    return this.data.sfld_desc;
+}
+Network.prototype.getSfldId = function () {
+    return this.data.sfld_id;
+}
 // Needed for display of clusters that have children
-Network.prototype.getSfldDesc = function (id) {
+Network.prototype.getSfldDescForClusterId = function (id) {
     return typeof this.sfld_desc[id] !== "undefined" ? this.sfld_desc[id].desc : "";
 }
 // Needed for display of clusters that have children

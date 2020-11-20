@@ -1,0 +1,123 @@
+{% extends "base.html.twig" %}
+{% set page_title = 'Search' %}
+{% set page_active = 'search' %}
+{% set extra_css = ['css/typeahead.css?v=3'] %}
+{% set extra_js = ['js/typeahead.bundle.js', 'js/network.js', 'js/search.js?v=10', 'js/progress.js?v=1'] %}
+
+{% block content %}
+
+        <div class="container" id="searchUi">
+            <input type="hidden" name="version" id="version" value="2.2">
+
+            <div>
+                <h3>Find by UniProt ID</h3>
+                <p>
+                Input a UniProt ID to identify its cluster.
+                </p>
+                <p>
+                For all but megacluster-1-1 (subgroup-17, SPASM/Twitch domain) and megacluster-2-1 (subgroup 5, 
+                B12-binding domain), the search identifies the cluster that contains the user-specified UniProt 
+                ID.  The cluster is a link to the <a href="explore.html">Explore</a> page that provides information for the cluster, 
+                including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences. 
+                </p>
+                <p>
+                For megacluster-1-1 and megacluster-2-1, the search identifies the cluster (if &ge;3 
+                nodes/UniRef50 IDs) in each Color SSN that contains the ID.
+                <!--If the sequence does not match a 
+                cluster HMMs, the ID is identified as a member of Megacluster-1-1 or Megacluster-2-1.-->
+                </p>
+                <p>
+                In the generation of the megaclusters and clusters, some UniProt IDs for a singleton may be 
+                deleted.  The Search will report:  "ID not found".
+                </p>
+
+                <div id="searchIdErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
+                <div class="form-group">
+                    <input class="form-control w-25" type="text" name="searchId" id="searchId" />
+                </div>
+                <div class="form-group mb-5 mt-1"><button class="btn btn-primary btn-sm" id="searchIdBtn">Find Cluster</button></div>
+            </div>
+
+            <div>
+                <h3>Find by Sequence</h3>
+                <p>
+                Input a sequence to find clusters that contain homologues. The sequence is used to query the 
+                HMMs for the clusters (using hmmscan) and provides a list of matching clusters. 
+                </p>
+                <p>
+                The first section reports matches for (mega)clusters except megacluster-1-1 and megacluster-2-1 
+                if the e-value is &le;1e-10.   The next section reports matches  for clusters in the Color SSNs 
+                for megacluster-1-1 and megacluster-2-1 that contain ≥3 UniRef50 IDs/nodes; for each Color SSN; 
+                the clusters with the seven smallest e-values are listed.   The user should identify the 
+                cluster with smallest e-value.  The user should be critical/careful in concluding a cluster is 
+                matched if the e-value is "large"; matches within isofunctional clusters likely will have an 
+                e-value &le;1e-100. 
+                </p>
+                <p>
+                For megacluster-1-1 (subgroup-17, SPASM/Twitch domain) and megacluster-2-1 (subgroup 5, 
+                B12-binding domain), as the alignment score used to generate the Color SSNs increases, the 
+                e-value for the most significant match may decrease significantly as sequence heterogeneity in 
+                the cluster is decreased. The cluster with the largest alignment score and smallest e-value may 
+                be isofunctional; as the alignment score decreases, the cluster containing homologues with 
+                similar functions may be identified. The WebLogos (and MSAs) provide additional information 
+                about sequence heterogeneity. 
+                </p>
+                <p>
+                Each cluster is a link to an <a href="explore.html">Explore</a> page that provide the information for the cluster, 
+                including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences. 
+                </p>
+                <div id="searchSeqErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
+                <div class="form-group">
+                    <textarea class="form-control w-75" id="searchSeq" cols="70" rows="10"></textarea>
+                </div>
+                <div class="mt-1"><button class="btn btn-primary btn-sm" id="searchSeqBtn">Find Clusters</button></div>
+            </div>
+
+            <div>
+                <h3>Find by Taxonomy</h3>
+                <p>
+                Input the genus/species/strain for an organism. 
+                </p>
+                <p>
+                If only the genus is entered, a pop-up list of matching genus-species-strains is provided for 
+                selection of the desired genus/species/strain. If the genus and species are entered, a pop-up 
+                list of matching genus-species-strains is provided for selection of the desired 
+                genus/species/strain. The search provides a list of clusters containing proteins from the 
+                organism.  Each cluster is a link to the <a href="explore.html">Explore</a> page that provides information for the 
+                cluster, including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences.
+                </p>
+                <div id="searchTaxTermErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
+                <div class="form-group" style="display: none">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="searchTaxType" id="searchTaxTypeSpecies" value="1" checked>
+                        <label class="form-check-label" for="searchTaxTypeSpecies">Species</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="searchTaxType" id="searchTaxTypeGenus" value="1">
+                        <label class="form-check-label" for="searchTaxTypeGenus">Genus</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="searchTaxType" id="searchTaxTypeFamily" value="1">
+                        <label class="form-check-label" for="searchTaxTypeFamily">Family</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input class="form-control w-50" type="text" name="searchTaxTerm" id="searchTaxTerm" placeholder="Species" />
+                </div>
+                <div class="mt-1"><button class="btn btn-primary btn-sm" id="searchTaxTermBtn">Find Clusters</button></div>
+            </div>
+        </div>
+
+        <div class="container" id="searchResults" style="display: none">
+        </div>
+{% endblock %}
+
+{% block tail_content %}
+    <div id="progressLoader" class="progress-loader" style="display: none">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+{% endblock %}
+
+{% block body_javascript %}
+{% endblock %}
+

@@ -6,7 +6,7 @@ const STATE_TAX = 4;
 
 
 $(document).ready(function() {
-    var searchApp = "dosearch.php";
+    var searchApp = "search_do.php";
 
     var getVersion = function() {
         var v = $("#version").val();
@@ -17,7 +17,6 @@ $(document).ready(function() {
     var historyFn = function(type, id) { history.pushState({state: type}, null, "#"+type+id); };
     $(window).on("popstate", function (e) {
         var state = e.originalEvent.state;
-        console.log(state);
         if (state.state == STATE_HOME) {
             $("#searchResults").hide();
             $("#searchUi").show();

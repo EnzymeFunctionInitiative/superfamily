@@ -9,6 +9,9 @@
 		"twig/twig": "^3.0",
 		"pear/mail_mime": "1.10.1",
 		"pear/mail": "1.4.1"
+    },
+    "config": {
+        "vendor-dir": "html/vendor"
     }
 }
 

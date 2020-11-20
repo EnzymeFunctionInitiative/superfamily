@@ -1,0 +1,38 @@
+
+{% set nav_items = [
+    {'id': 'explore', 'name': 'Explore'},
+    {'id': 'search', 'name': 'Search'},
+    {'id': 'submit', 'name': 'Submit'},
+    {'id': 'about', 'name': 'About'},
+    {'id': 'contact', 'name': 'Contact'}
+] %}
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="mx-auto order-0">
+            <a class="navbar-brand mx-auto" href="index.php">{% if nav_page_title is defined %} {{ nav_page_title }} {% else %} RadicalSAM.org {% endif %}</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavItems" aria-controls="navbarNavItems" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <div class="navbar-collapse collapse w-100 order-3" id="navbarNavItems">
+            <ul class="navbar-nav ml-auto">
+                {% for item in nav_items %}
+                    {% set active_class = '' %}
+                    {% if (item.id == page_active) %}
+                        {% set active_class = 'active' %}
+                    {% endif %}
+                <li class="nav-item"><a class="nav-link {{ active_class }}" href="{{ item.id }}.php">{{ item.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+
+<!--
+                <li class="nav-item"><a class="nav-link" href="explore.php">Explore</a></li>
+                <li class="nav-item"><a class="nav-link" href="search.php">Search</a></li>
+                <li class="nav-item"><a class="nav-link" href="submit.php">Submit</a></li>
+                <li class="nav-item"><a class="nav-link active" href="about.php">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+-->
+

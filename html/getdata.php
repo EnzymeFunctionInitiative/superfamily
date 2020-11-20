@@ -18,6 +18,7 @@ const USE_UNIPROT_ID_JOIN = true;
 
 //$version = filter_input(INPUT_GET, "v", FILTER_SANITIZE_NUMBER_INT);
 $version = functions::validate_version();
+$qversion = (isset($_GET["qv"]) && is_numeric($_GET["qv"])) ? $_GET["qv"] : 0;
 
 $db = functions::get_database($version);
 
@@ -38,7 +39,7 @@ if (!validate_action($action) || ($cluster_id && !functions::validate_cluster_id
 $data = array("valid" => true, "message" => "");
 
 if ($action == "kegg") {
-    $kegg = get_kegg($db, $cluster_id, $ascore);
+    $kegg = get_kegg($db, $cluster_id, $ascore, $qversion);
     if ($kegg === false) {
         $data["valid"] = false;
         $data["message"] = "KEGG error.";
@@ -48,7 +49,7 @@ if ($action == "kegg") {
 } else if ($action == "cluster") {
     $timings = array();
     $all_start = microtime(true);
-    $cluster = get_cluster($db, $cluster_id, $ascore, $version, $timings);
+    $cluster = get_cluster($db, $cluster_id, $ascore, $version, $qversion, $timings);
     if ($cluster === false) {
         $data["valid"] = false;
         $data["message"] = "Cluster error.";
@@ -73,7 +74,7 @@ if ($action == "kegg") {
     $timings["total"] = $total_time;
     $data["timing"] = $timings;
 } else if ($action == "tax") {
-    $tax = get_tax_data($db, $cluster_id, $ascore);
+    $tax = get_tax_data($db, $cluster_id, $ascore, $qversion);
     if ($tax  === false) {
         $data["valid"] = false;
         $data["message"] = "Retrieval error.";
@@ -93,7 +94,7 @@ echo json_encode($data);
 
 
 
-function get_cluster($db, $cluster_id, $ascore, $version, &$timings) {
+function get_cluster($db, $cluster_id, $ascore, $version, $qversion, &$timings) {
     $data = array(
         "size" => array(
             "uniprot" => 0,
@@ -135,7 +136,9 @@ function get_cluster($db, $cluster_id, $ascore, $version, &$timings) {
     $data["dicing"]["parent"] = $parent_cluster_id;
     $timings["get_dicing_parent"] = microtime(true) - $start;//TIMING
     $start = microtime(true);//TIMING
-    $data["dicing"]["children"] = get_dicing_children($db, $cluster_id, $ascore);
+    $data["dicing"]["children"] = array();
+    if ($ascore)
+        $data["dicing"]["children"] = get_dicing_children($db, $cluster_id, $ascore);
     $timings["get_dicing_children"] = microtime(true) - $start;//TIMING
     $start = microtime(true);//TIMING
     if ($parent_cluster_id || count($data["dicing"]["children"])) {
@@ -166,18 +169,20 @@ $timings["get_network_info"] = microtime(true) - $start;
     $data["name"] = $info["name"];
     $data["title"] = $info["title"];
     $data["desc"] = $info["desc"];
+    $data["sfld_id"] = $info["sfld_id"];
+    $data["sfld_desc"] = $info["sfld_desc"];
     $data["image"] = $cluster_id;
 $start = microtime(true);
-    $data["public"]["has_kegg"] = get_kegg($db, $cluster_id, $ascore, true);
+    $data["public"]["has_kegg"] = get_kegg($db, $cluster_id, $ascore, true, $qversion);
 $timings["get_kegg"] = microtime(true) - $start;
 $start = microtime(true);
     $data["size"] = get_sizes($db, $cluster_id, $ascore, $is_child);
 $timings["get_sizes"] = microtime(true) - $start;
 $start = microtime(true);
-    //$data["public"]["swissprot"] = get_swissprot($db, $cluster_id, $ascore);
+    $data["public"]["swissprot"] = get_swissprot($db, $cluster_id, $ascore, $qversion);
 $timings["get_swissprot"] = microtime(true) - $start;
 $start = microtime(true);
-    //$data["public"]["pdb"] = get_pdb($db, $cluster_id, $ascore);
+    $data["public"]["pdb"] = get_pdb($db, $cluster_id, $ascore, $qversion);
 $timings["get_pdb"] = microtime(true) - $start;
 $start = microtime(true);
     $data["families"]["tigr"] = get_tigr($db, $cluster_id);
@@ -270,9 +275,9 @@ function get_network_info($db, $cluster_id, $is_child, $parent_cluster_id) {
     if ($row) {
         $child_cluster_id = $is_child ? $cluster_id : "";
         $title = get_network_info_title($row, false, $child_cluster_id);
-        return array("cluster_id" => $row["cluster_id"], "name" => $row["name"], "title" => $title, "desc" => $row["desc"]);
+        return array("cluster_id" => $row["cluster_id"], "name" => $row["name"], "title" => $title, "desc" => $row["desc"], "sfld_id" => $row["sfld_id"], "sfld_desc" => $row["sfld_desc"]);
     } else {
-        return array("cluster_id" => $cluster_id, "name" => "", "title" => "", "desc" => "");
+        return array("cluster_id" => $cluster_id, "name" => "", "title" => "", "desc" => "", "sfld_id" => "", "sfld_desc" => "");
     }
 }
 function get_all_network_names($db) {
@@ -409,8 +414,8 @@ function get_generic_fetch($db, $cluster_id, $sql, $handle_row_fn, $check_only =
     //return $check_only ? 0 : $data;
 }
 
-function get_generic_join_sql($table, $parm, $extra_where = "", $ascore = "", $check_only = false, $extra_join = "") {
-    if (USE_UNIPROT_ID_JOIN) {
+function get_generic_join_sql_shared($use_uniprot_id_join, $qversion, $table, $parm, $extra_where = "", $ascore = "", $check_only = false, $extra_join = "") {
+    if (!$qversion || $use_uniprot_id_join) {
         $join_table = $ascore ? DICED_ID_MAPPING : "id_mapping";
         $sql = "SELECT $parm FROM $table INNER JOIN $join_table ON $table.uniprot_id = $join_table.uniprot_id $extra_join WHERE $join_table.cluster_id = :id";
         if ($ascore)
@@ -421,34 +426,30 @@ function get_generic_join_sql($table, $parm, $extra_where = "", $ascore = "", $c
             $sql .= " LIMIT 1";
         return $sql;
     } else {
+        if ($qversion && $ascore)
+            $extra_where .= " AND ascore = '$ascore'";
         return functions::get_generic_sql($table, $parm, $extra_where, $check_only);
     }
-
-    //$check_parm = $check_only ? "COUNT(*) AS $parm" : "$parm";
-    //$sql = "SELECT $check_parm FROM $table LEFT JOIN id_mapping ON $table.uniprot_id = id_mapping.uniprot_id WHERE id_mapping.cluster_id = :id";
-    
-    //return functions::get_generic_sql($table, $parm, $extra_where, $check_only);
-    //if ($check_only)
-    //    $sql = "SELECT COUNT(*) AS $parm FROM $table WHERE cluster_id = :id $extra_where";
-    //else
-    //    $sql = "SELECT $parm FROM $table WHERE cluster_id = :id $extra_where";
-    //return $sql;
+}
+function get_generic_join_sql($qversion, $table, $parm, $extra_where = "", $ascore = "", $check_only = false, $extra_join = "") {
+    $use_id_join = $qversion ? false : USE_UNIPROT_ID_JOIN;
+    return get_generic_join_sql_shared($use_id_join, $qversion, $table, $parm, $extra_where, $ascore, $check_only, $extra_join);
 }
 
-function get_kegg($db, $cluster_id, $ascore = "", $check_only = false) {
-    $sql = get_generic_join_sql("kegg", "kegg", "", $ascore, $check_only);
+function get_kegg($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
+    $sql = get_generic_join_sql($qversion, "kegg", "kegg", "", $ascore, $check_only);
     $row_fn = function($row) { return $row["kegg"]; };
     return get_generic_fetch($db, $cluster_id, $sql, $row_fn, $check_only);
 }
 
-function get_swissprot($db, $cluster_id, $ascore = "", $check_only = false) {
-    $sql = get_generic_join_sql("swissprot", "function, GROUP_CONCAT(swissprot.uniprot_id) AS ids", "GROUP BY function ORDER BY function", $ascore, $check_only);
+function get_swissprot($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
+    $sql = get_generic_join_sql($qversion, "swissprot", "function, GROUP_CONCAT(swissprot.uniprot_id) AS ids", "GROUP BY function ORDER BY function", $ascore, $check_only);
     $row_fn = function($row) { return ($row["function"] && $row["ids"]) ? array($row["function"], $row["ids"]) : false; };
     return get_generic_fetch($db, $cluster_id, $sql, $row_fn);
 }
 
-function get_pdb($db, $cluster_id, $ascore = "", $check_only = false) {
-    $sql = get_generic_join_sql("pdb", "pdb, pdb.uniprot_id", "", $ascore, $check_only);
+function get_pdb($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
+    $sql = get_generic_join_sql($qversion, "pdb", "pdb, pdb.uniprot_id", "", $ascore, $check_only);
     $row_fn = function($row) { return array($row["pdb"], $row["uniprot_id"]); };
     return get_generic_fetch($db, $cluster_id, $sql, $row_fn);
 }
@@ -630,10 +631,11 @@ function get_sizes($db, $id, $ascore = "", $is_child = false) {
      */
 }
 
-function get_tax_data($db, $cluster_id, $ascore) {
+function get_tax_data($db, $cluster_id, $ascore, $qversion) {
     $uniref_join = "LEFT JOIN uniref_map ON taxonomy.uniprot_id = uniref_map.uniprot_id";
     $uniref_parm = ", uniref_map.uniref50_id, uniref_map.uniref90_id";
-    $sql = get_generic_join_sql("taxonomy", "taxonomy.* $uniref_parm", "", $ascore, false, $uniref_join);
+    $sql = get_generic_join_sql($qversion, "taxonomy", "taxonomy.* $uniref_parm", "", $ascore, false, $uniref_join);
+    return $sql;
     //$sql = get_generic_join_sql("taxonomy", "*", "", $ascore);
     $sth = $db->prepare($sql);
     if (!$sth)

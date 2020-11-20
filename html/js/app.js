@@ -110,6 +110,10 @@ App.prototype.init = function(network) {
             $(".alt-cluster-ascores").text(this.network.getAltSsns().join(", "));
             $(".alt-cluster-id").text(this.network.getName());
             $(".alt-cluster-default-as").text(network.getDefaultAlignmentScore());
+            $(".alt-cluster-sfld").text(network.getSfldDesc() + " (SFLD subgroup " + network.getSfldId() + ")");
+            var nextAs = network.getNextAscore();
+            $("#alt-cluster-next-as-link").attr("href", getUrlFn(this.network.Id + "-1", this.version, nextAs));
+            $(".alt-cluster-next-as").text(nextAs);
         //}
         this.addDownloadFeatures(dlDivId, hideTabStuff);
         this.addDicedNav(true); // true = this is a parent diced cluster
@@ -844,8 +848,8 @@ App.prototype.addSubgroupTable = function (div) {
                     var sfldIdStr = sfldId ? " [" + sfldId + "]" : "";
                     if (sfldDesc.length)
                         sfldDesc += '; ';
-                    sfldDesc += sfldDisplayFn(sfldId, that.network.getSfldDesc(sfldId));
-                    //sfldDesc += sfldDisplayFn(sfldId, that.network.getSfldDesc(sfldId) + sfldIdStr);
+                    sfldDesc += sfldDisplayFn(sfldId, that.network.getSfldDescForClusterId(sfldId));
+                    //sfldDesc += sfldDisplayFn(sfldId, that.network.getSfldDescForClusterId(sfldId) + sfldIdStr);
                 }
             } else {
                 var sfldIdStr = sfldIds.join("; ");

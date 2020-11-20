@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>{% if page_title is defined %} {{ page_title }} | {% endif %} RadicalSAM.org</title>
+
+	<link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+    <link href="css/custom.css?v=3" rel="stylesheet">
+    <link href="css/font/css/all.css" rel="stylesheet" />
+{% if extra_css is defined %}
+{% for item in extra_css %}
+    <link href="{{ item }}" rel="stylesheet" />
+{% endfor %}
+{% endif %}
+
+</head>
+<body>
+    {% include('navbar.html.twig') %}
+
+	<div class="container">
+        <h1 class="text-center">{{ page_title }}</h1>
+	</div>
+
+    {% block content %}
+    {% endblock %}
+
+    {% block tail_content %}
+    {% endblock %}
+
+    <footer class="container">
+        <hr class="w-25" />
+        <div class="text-center">
+            radicalSAM.org <span class="pl-4"></span> Gerlt, Mitchell, Firouzbakht, and Oberg, 2020 <span class="pl-4"></span> <a href="https://efi.igb.illinois.edu">EFI</a> at <a href="https://igb.illinois.edu">Institute for Genomic Biology, University of Illinois</a>
+        </div>
+    </footer>
+	
+    <script src="vendor/components/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="js/popper.min.js"></script>
+	<script src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
+    {% if extra_js is defined %}
+    {% for item in extra_js %}
+    <script src="{{ item }}" type="text/javascript"></script>
+    {% endfor %}
+    {% endif %}
+
+    {% block body_javascript %}
+    {% endblock %}
+</body>
+

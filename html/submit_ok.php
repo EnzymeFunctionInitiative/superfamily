@@ -1,14 +1,12 @@
-﻿<?php require_once 'includes/header.inc.php'; ?>
+﻿<?php
 
-    <main role="main">
-        <div class="container">
-            <h1 class="text-center" id="submitPageTitle">Community Annotation Submission - Thank You</h1>
-        </div>
+require_once(__DIR__ . "/includes/main.inc.php");
 
-        <div class="container" id="submitOk" style="margin-bottom: 500px">
-            Thank you for your submission.  We will review it and respond shortly.
-        </div>
-    </main>
+$twig_variables = array();
+$loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
+$twig = new \Twig\Environment($loader);
 
-<?php require_once 'includes/footer.inc.php'; ?>
+$html = $twig->render("submit_ok.html.twig", $twig_variables);
+
+echo $html;
 
