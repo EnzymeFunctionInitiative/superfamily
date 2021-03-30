@@ -1,2 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	Q58624	Putative glycyl-radical enzyme activating enzyme MJ1227 

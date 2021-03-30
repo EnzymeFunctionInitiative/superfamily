@@ -3,7 +3,7 @@
 require(__DIR__ . "/../libs/settings.class.inc.php");
 require(__DIR__ . "/../libs/functions.class.inc.php");
 
-const MAX_RESULTS = 3;
+const MAX_RESULTS = 11;
 
 // Design output structure to handle errors, etc
 
@@ -51,35 +51,14 @@ if ($type == "seq") {
         //$matches = array();
     
         $diced_db = settings::get_hmmdb_path($version, "diced");
-        $diced = false;
         $dmatches = array();
-        if (count($diced_db) > 0) {
-            // Check first dicing of each cluster
-            $first = true;
-            foreach ($diced_db as $parent_cluster => $dicings) {
-                foreach ($dicings as $info) {
-                    $ascore = $info[0];
-                    $hmm = $info[1];
-                    $diced_matches = hmmscan($out_dir, $hmm, $seq_file);
-                    // Skip to next cluster group, no need to cycle through all of the dicings since if it's not in one dicing it's not going to be in the others
-                    if (count($diced_matches) == 0)
-                        break;
-                    // If both have matches, we compare evalues to find out which is a better match.
-                    // Lower is better.
-                    //if ($first && count($matches) > 0 && $diced_matches[0][1] <= $matches[0][1]) {
-                    //} else if ( || $has_match) {
-                        if ($first) {
-                            //$matches = array();
-                            $first = false;
-                            $diced = true;
-                            $has_match = true;
-                        }
-                        $dmatches[$parent_cluster][$ascore] = $diced_matches;
-                    //}
-                }
-                // If one of the clusters matched, don't bother checking the others
-                if ($diced)
-                    break;
+        // Check if matches are the parent diced cluster.  If so, then we search the diced clusters.
+        if (count($matches) > 0) {
+            $dicings = get_parent($diced_db, $matches[0][0]);
+            if ($dicings !== false) {
+                $dm = search_diced($out_dir, $dicings);
+                if ($dm !== false)
+                    $dmatches = $dm;
             }
         }
     
@@ -307,5 +286,46 @@ function hmmscan($out_dir, $hmmdb, $seq_file) {
 }
 
 
+function get_parent($diced_db, $first_match) {
+    $diced_parent = "";
+    $dicing = false;
+    foreach ($diced_db as $parent_cluster => $dicings_iter) {
+        //$cluster = $matches[0][0];
+        //print "$cluster $parent_cluster\n";
+        if ($first_match == $parent_cluster) {
+            $dicing_parent = $parent_cluster;
+            $dicings = $dicings_iter;
+            break;
+        }
+    }
+
+    return $dicing;
+}
+
+
+function search_diced($out_dir, $dicings) {
+//        $diced_parent = get_parents($diced_db, $matches);
+//        if ($diced_parent)
+//            $dmatches = search_diced($diced_db, $diced_parent);
+//    
+//        if (count($diced_db) > 0) {
+//            $diced = false;
+//            // Check first dicing of each cluster
+//            $first = true;
+//            foreach ($diced_db as $parent_cluster => $dicings) {
+    $dmatches = false;
+    foreach ($dicings as $info) {
+        $ascore = $info[0];
+        $hmm = $info[1];
+        $diced_matches = hmmscan($out_dir, $hmm, $seq_file);
+        // Skip to next cluster group, no need to cycle through all of the dicings since if it's not in one dicing it's not going to be in the others
+        if (count($diced_matches) == 0)
+            break;
+        if ($first)
+            $first = false;
+        $dmatches[$parent_cluster][$ascore] = $diced_matches;
+    }
+    return $dmatches;
+}
 
 

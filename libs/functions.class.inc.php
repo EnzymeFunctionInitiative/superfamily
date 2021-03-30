@@ -41,7 +41,7 @@ class functions {
     public static function filter_version($version = "") {
         if (!$version)
             $version = $_GET["v"];
-        if ($version === "1.0" || $version === "2.0" || $version === "2.1" || $version === "2.2")
+        if ($version === "1.0" || $version === "2.0" || $version === "2.1" || $version === "2.2" || $version === "3.0")
             return $version;
         return "";
     }

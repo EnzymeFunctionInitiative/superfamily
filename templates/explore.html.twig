@@ -2,7 +2,7 @@
 {% set page_title = 'Explore' %}
 {% set page_active = 'explore' %}
 {% set extra_js = [
-                    'js/progress.js?v=1', 'js/app.js?v=34', 'js/network.js?v=10',
+                    'js/progress.js?v=1', 'js/app.js?v=37', 'js/network.js?v=11',
                     'js/sunburst/sunburst-chart.min.js', 'js/sunburst/circlepack-chart.min.js', 'js/sunburst/sunburst_helpers.js',
                     'js/imageMapResizer.min.js', 'js/jquery.maphilight.min.js', 'js/jquery.lazy.min.js'
                   ] %}
@@ -47,6 +47,10 @@
                         <div style="clear:both"></div>
                         <div id="clusterSizeContainer" style="display: none">
                             <div id="clusterSize" class="cluster-size">Number of IDs: </div>
+                            <div id="convRatioContainer" class="cluster-size" style="display: none">
+                                Convergence Ratio: <b><span id="convRatio" style="margin-right: 40px"></span></b>
+                                SSN Convergence Ratio: <b><span id="ssnConvRatio"></span></b>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -474,7 +478,7 @@
             var progress = new Progress($("#progressLoader"));
             progress.start();
 
-            initApp("2.2");
+            initApp("2.2", "{{gnd_key}}");
             $('.lazy').Lazy();
     
             $('[data-toggle="tooltip"]').tooltip();

@@ -1,3 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	Q58251	[Methyl-coenzyme M reductase subunit alpha]-arginine C-methyltransferase 
-1	Q8THG6	[Methyl-coenzyme M reductase subunit alpha]-arginine C-methyltransferase 

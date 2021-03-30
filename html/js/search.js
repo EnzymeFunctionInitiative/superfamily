@@ -65,7 +65,7 @@ $(document).ready(function() {
             		table.append(body);
                     for (var i = 0; i < matches.length; i++) {
                         var netName = typeof network !== 'undefined' ? network.getNetworkMapName(matches[i][0]) : matches[i][0];
-                        body.append('<tr><td><a href="explore.html?v=' + version + '&id=' + matches[i][0] + ascoreUrl + '">' + netName + '</a></td><td>' + matches[i][1] + '</td></tr>');
+                        body.append('<tr><td><a href="explore.php?v=' + version + '&id=' + matches[i][0] + ascoreUrl + '">' + netName + '</a></td><td>' + matches[i][1] + '</td></tr>');
                     }
                     if (parentCluster && ascore) {
                         var div = $("<div><h3>" + parentCluster + " AS " + ascore + "</h3></div>");
@@ -131,7 +131,7 @@ $(document).ready(function() {
                             var ascore = ascores[i];
                             var clusterId = data.cluster_id[ascore];
                             var netName = typeof network !== 'undefined' ? network.getNetworkMapName(clusterId) : clusterId;
-                            body.append('<tr><td><a href="explore.html?v=' + version + '&id=' + clusterId + "&as=" + ascore + '">' + netName + '</a></td><td>' + ascore + '</td></tr>');
+                            body.append('<tr><td><a href="explore.php?v=' + version + '&id=' + clusterId + "&as=" + ascore + '">' + netName + '</a></td><td>' + ascore + '</td></tr>');
                         }
                         $("#searchResults").empty().append(table).show();
                         $("#searchUi").hide();
@@ -140,7 +140,7 @@ $(document).ready(function() {
                     };
                     getNetInfo(version, addClusterTableFn);
                 } else {
-                    window.location.href = "explore.html?v=" + version + "&id=" + data.cluster_id;
+                    window.location.href = "explore.php?v=" + version + "&id=" + data.cluster_id;
                 }
             }
         });
@@ -179,7 +179,7 @@ $(document).ready(function() {
                         var ascoreParm = isDiced ? "&as=" + matches[i][1] : "";
                         if (netName) {
                             var tr = $('<tr>');
-                            tr.append($('<td><a href="explore.html?v=' + version + '&id=' + matches[i][0] + ascoreParm + '">' + netName + '</a></td>'));
+                            tr.append($('<td><a href="explore.php?v=' + version + '&id=' + matches[i][0] + ascoreParm + '">' + netName + '</a></td>'));
                             if (isDiced)
                                 tr.append($('<td>' + matches[i][1] + '</td>'));
                             tr.append($('<td>' + matches[i][isDiced ? 2 : 1] + '</td>'));

@@ -1,10 +1,11 @@
 
 {% set nav_items = [
-    {'id': 'explore', 'name': 'Explore'},
-    {'id': 'search', 'name': 'Search'},
-    {'id': 'submit', 'name': 'Submit'},
-    {'id': 'about', 'name': 'About'},
-    {'id': 'contact', 'name': 'Contact'}
+    {'id': 'explore', 'page': 'explore.php', 'name': 'Explore'},
+    {'id': 'explore3', 'page': 'explore.php?v=3.0', 'name': 'Explore V3'},
+    {'id': 'search', 'page': 'search.php', 'name': 'Search'},
+    {'id': 'submit', 'page': 'submit.php', 'name': 'Submit'},
+    {'id': 'about', 'page': 'about.php', 'name': 'About'},
+    {'id': 'contact', 'page': 'contact.php', 'name': 'Contact'}
 ] %}
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -22,7 +23,7 @@
                     {% if (item.id == page_active) %}
                         {% set active_class = 'active' %}
                     {% endif %}
-                <li class="nav-item"><a class="nav-link {{ active_class }}" href="{{ item.id }}.php">{{ item.name }}</a></li>
+                <li class="nav-item"><a class="nav-link {{ active_class }}" href="{{ item.page }}">{{ item.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>

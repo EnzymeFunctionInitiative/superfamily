@@ -1,3 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	P37956	Spore photoproduct lyase
-1	Q97L63	Spore photoproduct lyase

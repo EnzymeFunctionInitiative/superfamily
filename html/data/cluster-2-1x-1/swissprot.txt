@@ -1,9 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	C0JRZ9	Tryptophan 2-C-methyltransferase 
-1	P42349	Uncharacterized methyltransferase sll1242
-1	Q55373	Anaerobic magnesium-protoporphyrin IX monomethyl ester cyclase 
-1	Q56184	2-hydroxyethylphosphonate methyltransferase 
-1	Q58882	Uncharacterized methyltransferase MJ1487
-1	Q7X2C7	Anaerobic magnesium-protoporphyrin IX monomethyl ester cyclase 
-1	Q8KCU0	Bacteriochlorophyllide d C-12(1)-methyltransferase 
-1	Q8TWU9	Uncharacterized protein MK0932

@@ -31,7 +31,7 @@ $cluster_id = filter_input(INPUT_GET, "cid", FILTER_SANITIZE_STRING);
 $ascore = filter_input(INPUT_GET, "as", FILTER_SANITIZE_NUMBER_INT);
 
 if (!validate_action($action) || ($cluster_id && !functions::validate_cluster_id($db, $cluster_id))) {
-    echo json_encode(array("valid" => false, "message" => "Invalid request."));
+    echo json_encode(array("valid" => false, "message" => "Invalid request #0 $cluster_id."));
     exit(0);
 }
 
@@ -56,7 +56,7 @@ if ($action == "kegg") {
     } else {
         $data["cluster"] = $cluster;
         $start = microtime(true);
-        if (count($cluster["regions"]) || count($cluster["subgroups"]) || count($cluster["dicing"]["children"])) {
+        if (count($cluster["regions"]) || count($cluster["subgroups"]) || count($cluster["children"]) || count($cluster["dicing"]["children"])) {
             $data["network_map"] = get_all_network_names($db);
             $data["sfld_map"] = get_sfld_map($db);
             $data["sfld_desc"] = get_sfld_desc($db);
@@ -68,6 +68,9 @@ if ($action == "kegg") {
             $data["enzymecodes"] = array();
         }
         $dur = microtime(true) - $start;
+
+        $data["gnd_key"] = get_gnd_key($version);
+
         $timings["netname"] = $dur;
     }
     $total_time = microtime(true) - $all_start;
@@ -171,13 +174,21 @@ $timings["get_network_info"] = microtime(true) - $start;
     $data["desc"] = $info["desc"];
     $data["sfld_id"] = $info["sfld_id"];
     $data["sfld_desc"] = $info["sfld_desc"];
-    $data["image"] = $cluster_id;
+
+    $full_dir = functions::get_data_dir_path($cluster_id, $version, $ascore);
+    if (file_exists("$full_dir/${cluster_id}_merge_lg.png"))
+        $data["image"] = $cluster_id . "_merge";
+    else
+        $data["image"] = $cluster_id;
 $start = microtime(true);
     $data["public"]["has_kegg"] = get_kegg($db, $cluster_id, $ascore, true, $qversion);
 $timings["get_kegg"] = microtime(true) - $start;
 $start = microtime(true);
     $data["size"] = get_sizes($db, $cluster_id, $ascore, $is_child);
 $timings["get_sizes"] = microtime(true) - $start;
+$start = microtime(true);
+    $data["conv_ratio"] = get_conv_ratio($db, $cluster_id, $ascore, $is_child);
+$timings["get_conv_ratio"] = microtime(true) - $start;
 $start = microtime(true);
     $data["public"]["swissprot"] = get_swissprot($db, $cluster_id, $ascore, $qversion);
 $timings["get_swissprot"] = microtime(true) - $start;
@@ -197,6 +208,9 @@ $start = microtime(true);
     $data["regions"] = get_regions($db, $cluster_id);
 $timings["get_regions"] = microtime(true) - $start;
 $start = microtime(true);
+    $data["children"] = get_children($db, $cluster_id);
+$timings["get_children"] = microtime(true) - $start;
+$start = microtime(true);
     $data["alt_ssn"] = get_alt_ssns($db, $cluster_id);
 $timings["get_alt_ssns"] = microtime(true) - $start;
 $start = microtime(true);
@@ -209,7 +223,7 @@ $timings["get_consensus_residues"] = microtime(true) - $start;
     $data["default_alignment_score"] = get_default_alignment_score($db, $cluster_id);
 //    $data["dir"] = settings::get_data_dir($version) . "/$cluster_id";
 //    if ($ascore) {
-//        $full_dir = functions::get_data_dir_path($cluster_id, $version, $ascore);
+        $full_dir = functions::get_data_dir_path($cluster_id, $version, $ascore);
 //        $data["alignment_score"] = $ascore;
 //        $ascore_dir = $data["dir"] . "/dicing-$ascore";
 //        $full_dir = dirname(__FILE__) . "/$ascore_dir"; 
@@ -342,19 +356,20 @@ function get_display($db, $cluster_id, $version = "", $ascore = "", $child_id = 
     $feat = array();
     if (file_exists("$cpath/weblogo.png"))
         array_push($feat, "weblogo");
-    if (file_exists("$cpath/length_histogram_lg.png"))
+    if (file_exists("$cpath/length_histogram_lg.png") || file_exists("$cpath/length_histogram_filtered_lg.png"))
         array_push($feat, "length_histogram");
     if (file_exists("$cpath/gnd.sqlite"))
+        die("HI");
         array_push($feat, "gnd");
     return $feat;
 }
 
 function get_consensus_residues($db, $cluster_id, $version = "", $ascore = "", $child_id = "") {
-    $is_diced_parent = $ascore && !$child_id;
-    if (!$is_diced_parent)
-        return array();
+    //$is_diced_parent = $ascore && !$child_id;
+    //if (!$is_diced_parent)
+    //    return array();
     $cpath = functions::get_data_dir_path($cluster_id, $version, $ascore, $child_id);
-    $files = glob("$cpath/consensus_residue_*_all.zip");
+    $files = glob("$cpath/consensus_residue_*_position.txt");
     $res = array();
     foreach ($files as $file) {
         preg_match("/^.*consensus_residue_([A-Z])_.*$/", $file, $matches);
@@ -393,6 +408,9 @@ function get_download($db, $cluster_id, $version = "", $ascore = "", $child_id =
         array_push($feat, "id_fasta");
     if (file_exists("$cpath/swissprot.txt") || $show_child_feat)
         array_push($feat, "misc");
+    $cons_res_files = glob("$cpath/consensus_residue_*_position.txt");
+    if (count($cons_res_files) > 0 || $show_child_feat)
+        array_push($feat, "cons_res");
 
     return $feat;
     //return array("ssn", "weblogo", "msa", "hmm", "id_fasta", "misc");
@@ -443,13 +461,13 @@ function get_kegg($db, $cluster_id, $ascore = "", $check_only = false, $qversion
 }
 
 function get_swissprot($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
-    $sql = get_generic_join_sql($qversion, "swissprot", "function, GROUP_CONCAT(swissprot.uniprot_id) AS ids", "GROUP BY function ORDER BY function", $ascore, $check_only);
+    $sql = get_generic_join_sql($qversion, "swissprot", "function, GROUP_CONCAT(swissprot.uniprot_id) AS ids", "AND function IS NOT NULL AND function != \"\" GROUP BY function ORDER BY function", $ascore, $check_only);
     $row_fn = function($row) { return ($row["function"] && $row["ids"]) ? array($row["function"], $row["ids"]) : false; };
     return get_generic_fetch($db, $cluster_id, $sql, $row_fn);
 }
 
 function get_pdb($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
-    $sql = get_generic_join_sql($qversion, "pdb", "pdb, pdb.uniprot_id", "", $ascore, $check_only);
+    $sql = get_generic_join_sql($qversion, "pdb", "pdb, pdb.uniprot_id", "AND pdb IS NOT NULL AND pdb != \"\"", $ascore, $check_only);
     $row_fn = function($row) { return array($row["pdb"], $row["uniprot_id"]); };
     return get_generic_fetch($db, $cluster_id, $sql, $row_fn);
 }
@@ -469,6 +487,34 @@ function get_enzyme_codes($db) {
         $data[$row["code_id"]] = $row["desc"];
     }
     return $data;
+}
+
+function get_children($db, $cluster_id) {
+    //$sql = functions::get_generic_sql("network", "*", "ORDER BY cluster_id");
+    $sql = "SELECT cluster_id, name FROM network WHERE parent_id = :id ORDER BY cluster_id";
+    //cluster_id TEXT, region_id TEXT, region_index INT, name TEXT, number TEXT, coords TEXT
+    $row_fn = function($row) {
+        $data = array();
+        $data["id"] = $row["cluster_id"];
+        $data["name"] = $row["name"];
+        return $data;
+    };
+    $rows = get_generic_fetch($db, $cluster_id, $sql, $row_fn);
+    $sortFn = function($a, $b) {
+        $aa = explode("-", $a["id"]);
+        $bb = explode("-", $b["id"]);
+        for ($i = 0; $i < count($aa); $i++) {
+            if (is_numeric($aa[$i])) {
+                if ($aa[$i] < $bb[$i])
+                    return -1;
+                else if ($aa[$i] > $bb[$i])
+                    return 1;
+            }
+        }
+        return 0;
+    };
+    usort($rows, $sortFn);
+    return $rows;
 }
 
 function get_regions($db, $cluster_id) {
@@ -631,11 +677,22 @@ function get_sizes($db, $id, $ascore = "", $is_child = false) {
      */
 }
 
+function get_conv_ratio($db, $id, $ascore = "", $is_child = false) {
+    $table = $is_child ? "diced_conv_ratio" : "conv_ratio";
+    $sql = "SELECT * FROM $table WHERE cluster_id = :id";
+    if ($ascore && $is_child)
+        $sql .= " AND ascore = '$ascore'";
+    $row_fn = function($row) {
+        return array("conv_ratio" => $row["conv_ratio"], "ssn_conv_ratio" => $row["node_conv_ratio"]);
+    };
+    $result = get_generic_fetch($db, $id, $sql, $row_fn);
+    return (count($result) > 0 ? $result[0] : 0);
+}
+
 function get_tax_data($db, $cluster_id, $ascore, $qversion) {
     $uniref_join = "LEFT JOIN uniref_map ON taxonomy.uniprot_id = uniref_map.uniprot_id";
     $uniref_parm = ", uniref_map.uniref50_id, uniref_map.uniref90_id";
     $sql = get_generic_join_sql($qversion, "taxonomy", "taxonomy.* $uniref_parm", "", $ascore, false, $uniref_join);
-    return $sql;
     //$sql = get_generic_join_sql("taxonomy", "*", "", $ascore);
     $sth = $db->prepare($sql);
     if (!$sth)
@@ -720,4 +777,14 @@ function traverse_tree($tree, $parent_name, $species_map) {
 function validate_action($action) {
     return ($action == "cluster" || $action == "kegg" || $action == "netinfo" || $action == "tax");
 }
+
+function get_gnd_key($version) {
+    $dir = settings::get_base_dir_path($version);
+    $key_path = "$dir/gnds/gnd.key";
+    if (!file_exists($key_path))
+        return "";
+    $key = file_get_contents($key_path);
+    return $key;
+}
+
 

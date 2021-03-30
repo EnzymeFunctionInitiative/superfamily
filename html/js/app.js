@@ -16,7 +16,7 @@ $(document).ready(function () {
     });
 });
 
-function initApp(version) {
+function initApp(version, gndKey) {
     var requestData = getPageClusterId();
     var requestId = "", alignmentScore = "";
     if (!requestData.network_id)
@@ -38,7 +38,7 @@ function initApp(version) {
                     goToUrlFn(data.cluster.REDIRECT.cluster_id, version, data.cluster.REDIRECT.as);
                 } else {
                     var network = new Network(requestId, data);
-                    app.init(network);
+                    app.init(network, gndKey);
                 }
             } else {
                 app.responseError(data.message);
@@ -79,12 +79,14 @@ App.prototype.getDownloadSize = function (fileType) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // INITIALIZE/STARTUP
 //
-App.prototype.init = function(network) {
+App.prototype.init = function(network, gndKey) {
     this.network = network;
+    this.gndKey = gndKey;
     var hasSubgroups = network.getSubgroups().length > 0;
     var hasRegions = network.getRegions().length > 0;
+    var hasChildren = network.getChildren().length > 0;
     var hasDicedChildren = network.getDicedChildren().length > 0;
-    var isLeaf = !hasSubgroups && !hasRegions && !hasDicedChildren;
+    var isLeaf = !hasSubgroups && !hasRegions && !hasChildren && !hasDicedChildren;
 
     this.dataDir = network.getDataDir();
     this.alignmentScore = network.getAlignmentScore();
@@ -162,6 +164,7 @@ App.prototype.init = function(network) {
 }
 App.prototype.initAltSsn = function() {
     this.addClusterSize();
+    this.addConvRatio();
     this.setClusterImage(function() {});
     var altDiv = $("#altSsn");
     //this.addAltSsns(altDiv);
@@ -184,6 +187,7 @@ App.prototype.initStandard = function(isLeaf) {
 App.prototype.initLeafData = function() {
     var hasData = this.addDisplayFeatures();
     this.addClusterSize();
+    this.addConvRatio();
     if (hasData) {
         this.addSwissProtFunctions();
         this.addPdb();
@@ -217,7 +221,7 @@ App.prototype.initTabPages = function() {
         if (that.version)
             clusterParms += '&v=' + that.version;
         var div = $('<div class="float-right"></div>');
-        var link = $('<a class="link-dl" href="explore.html?' + clusterParms + '"></a>');
+        var link = $('<a class="link-dl" href="explore.php?' + clusterParms + '"></a>');
         link.append('<span class="download-btn mr-4" data-toggle="tooltip" title="View Cluster Page">Cluster <img src="img/cytossn.png"></span>');
         div.append(link);
         return div;
@@ -295,17 +299,12 @@ App.prototype.initTabPages = function() {
         var table = $('<table class="table table-sm text-center w-auto"></table>');
         for (var ri = 0; ri < consResTypes.length; ri++) {
             var consRes = consResTypes[ri];
-            //var bodyRes = $('<tbody></tbody>');
-            //bodyRes.append('<tr><td colspan="3" class="file-header-row">' + consRes + '</td></tr>');
-            //table.append(bodyRes);
             var body = $('<tbody></tbody>');
             var res = consRes.toLowerCase();
-            //body.append('<tr><td>' + this.getDownloadButton("crpo"+res) + '</td><td>Consensus residue position summary table</td><td>&lt;1 MB</td></tr>');
             body.append('<tr><td>' + this.getDownloadButton("crpe"+res) + '</td><td>Consensus residue percentage summary table</td><td>&lt;1 MB</td></tr>');
-            //body.append('<tr><td>' + this.getDownloadButton("crid"+res) + '</td><td>ID lists grouped by consensus residue percentage and number of residues in cluster</td><td>&lt;1 MB</td></tr>');
             table.append(body);
         }
-        $("#childConsRes").append(table);
+        //$("#childConsRes").append(table);
     }
 
     var histDiv = $("<div><h3>Length Histograms</h3></div>");
@@ -482,7 +481,18 @@ App.prototype.addClusterSize = function () {
     var size = this.network.getCurrentSizes();
     if (size === false)
         return;
-    $("#clusterSize").append('UniProt: <b>' + commify(size.uniprot) + '</b>, UniRef90: <b>' + commify(size.uniref90) + '</b>, UniRef50: <b>' + commify(size.uniref50) + '</b>');
+    $("#clusterSize").append('UniProt: <b>' + commify(size.uniprot) + '</b>, UniRef90: <b>' + commify(size.uniref90) + '</b>');
+    if (size.uniref50 > 0)
+        $("#clusterSize").append(', UniRef50: <b>' + commify(size.uniref50) + '</b>');
+    $("#clusterSizeContainer").show();
+}
+App.prototype.addConvRatio = function () {
+    var cr = this.network.getConvRatio();
+    if (typeof cr.conv_ratio === "undefined" || cr === false || cr.conv_ratio == 0)
+        return;
+    $("#convRatio").text(cr.conv_ratio);
+    $("#ssnConvRatio").text(cr.ssn_conv_ratio);
+    $("#convRatioContainer").show();
     $("#clusterSizeContainer").show();
 }
 
@@ -509,13 +519,13 @@ App.prototype.addDisplayFeatures = function () {
             var dlDiv = $('<div class="float-right download-btn" data-toggle="tooltip" title="Download high-resolution">PNG </div>').append(dlBtn);
             dlDiv.click(function (e) { e.preventDefault(); window.location.href = that.getDownloadUrl("hist"); });
             
-            mainDiv.append('<h5>Length Histogram for All Sequences (UniProt IDs)</h5>');
-            // First download
-            mainDiv.append(dlDiv);
-            mainDiv.append('<div style="clear: both"></div>');
-            // Then image
-            mainDiv.append('<div></div>')
-                .append('<img src="' + this.dataDir + '/length_histogram_sm.png" alt="Length histogram for ' + this.network.Id + '" class="display-img-width">');
+            //mainDiv.append('<h5>Length Histogram for All Sequences (UniProt IDs)</h5>');
+            //// First download
+            //mainDiv.append(dlDiv);
+            //mainDiv.append('<div style="clear: both"></div>');
+            //// Then image
+            //mainDiv.append('<div></div>')
+            //    .append('<img src="' + this.dataDir + '/length_histogram_sm.png" alt="Length histogram for ' + this.network.Id + '" class="display-img-width">');
 
             var fileName = "filtered";
             var dlType = "hist_filt";
@@ -579,16 +589,17 @@ App.prototype.addDownloadFeatures = function (containerId, hideTabStuff = false)
                 var logoBtn = '<button class="btn btn-primary btn-sm hmm-logo" data-logo="' + logoParms + '">View HMM</button>';
                 body.append('<tr><td>' + logoBtn + '</td><td>View HMM in SkyLign</td><td></td></tr>');
             }
-//        } else if (feat[i] == "gnd" && !hideTabStuff) {
-//            var gndParms = 'rs-id=' + this.network.Id;
-//            if (this.alignmentScore)
-//                gndParms += ":" + this.alignmentScore;
-//            if (false) // check if this is a parent and provide the child ID here
-//                gndParms += ":" + this.network.Id;
-//            if (this.version)
-//                gndParms += '&rs-ver=' + this.version;
-//            var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
-//            body.append('<tr><td>' + viewBtn + '</td><td>View Genome Neighborhood Diagrams</td><td></td></tr>');
+        } else if (feat[i] == "gnd" && !hideTabStuff) {
+            var gndParms = 'rs-id=' + this.network.Id;
+            if (this.alignmentScore)
+                gndParms += ":" + this.alignmentScore;
+            if (false) // check if this is a parent and provide the child ID here
+                gndParms += ":" + this.network.Id;
+            if (this.version)
+                gndParms += '&rs-ver=' + this.version;
+            gndParms += "&key=" + this.gndKey;
+            var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
+            body.append('<tr><td>' + viewBtn + '</td><td>View Genome Neighborhood Diagrams</td><td></td></tr>');
         } else if (feat[i] == "id_fasta") {
             var t = [
                 { "key": "uniprot_id", "desc": "UniProt ID list" },
@@ -619,6 +630,16 @@ App.prototype.addDownloadFeatures = function (containerId, hideTabStuff = false)
 
             for (var k = 0; k < t.length; k++) {
                 body.append('<tr><td>' + this.getDownloadButton(t[k].key) + '</td><td>' + t[k].desc + '</td></tr>');//<td>' + this.getDownloadSize(t[k].key) + '</td></tr>');
+            }
+        } else if (feat[i] == "cons_res") {
+            table.append('<tbody><tr><td colspan="3"><b>Consensus Residues</b></td></tr></tbody>');
+            body = $('<tbody>');
+            var consResTypes = this.network.getConsensusResidues();
+            for (var ri = 0; ri < consResTypes.length; ri++) {
+                var consRes = consResTypes[ri];
+                var res = consRes.toLowerCase();
+                body.append('<tr><td>' + this.getDownloadButton("crpo"+res) + '</td><td>Consensus residue percentage summary table (' + consRes + ')</td></tr>');
+                table.append(body);
             }
         }
     }
@@ -710,7 +731,7 @@ App.prototype.addBreadcrumb = function() {
     var nav = $("#exploreBreadcrumb");
     var parts = this.network.Id.split("-");
     if (parts.length > 1) {
-        var ol = $('<ol class="breadcrumb"><li class="breadcrumb-item" aria-current="page"><a href="?">Explore</a></li>');
+        var ol = $('<ol class="breadcrumb"><li class="breadcrumb-item" aria-current="page"><a href="?v=' + this.version + '">Explore</a></li>');
         for (var i = 1; i < parts.length; i++) {
             var item = "";
             if (i == parts.length - 1) {
@@ -827,14 +848,25 @@ App.prototype.addSubgroupTable = function (div) {
     var that = this;
 
     // If there are cleanly-defined sub-clusters, then the 'regions' property will be present.
-    if (this.network.getRegions().length > 0) {
+    if (this.network.getRegions().length > 0 || this.network.getChildren().length > 0) {
+        var kids = this.network.getRegions();
+        if (kids.length == 0)
+            kids = this.network.getChildren();
+
+        var hasUniRef50 = false;
+        if (kids.length > 0) {
+            var size = that.network.getSizes(kids[kids.length-1].id);
+            hasUniRef50 = size.uniref50 > 0;
+        }
+
         var headHtml = '<thead><tr class="text-center"><th>Cluster</th>';
         if (this.network.Id != "fullnetwork") //TODO: HACK
             headHtml += '<th>SFLD Subgroup</th>';
-        headHtml += '<th>UniProt</th><th>UniRef90</th><th>UniRef50</th></tr></thead>';
+        headHtml += '<th>UniProt</th><th>UniRef90</th>' + (hasUniRef50 ? '<th>UniRef50</th>' : '') + '</tr></thead>';
         var head = table.append(headHtml);
         var body = table.append('<tbody class="row-clickable text-center"></tbody>');
-        $.each(this.network.getRegions(), function (i, data) {
+
+        $.each(kids, function (i, data) {
             var row = $('<tr data-node-id="' + data.id + '"></tr>');
             var size = that.network.getSizes(data.id);
             var sfldIds = that.network.getSfldIds(data.id);
@@ -861,7 +893,13 @@ App.prototype.addSubgroupTable = function (div) {
             var rowHtml = "<td>" + data.name + "</td>";
             if (that.network.Id != "fullnetwork") //TODO: HACK
                 rowHtml += "<td>" + sfldDesc + "</td>";
-            rowHtml += "<td>" + commify(size.uniprot) + "</td><td>" + commify(size.uniref90) + "</td><td>" + commify(size.uniref50) + "</td>";
+            rowHtml += "<td>" + commify(size.uniprot) + "</td><td>" + commify(size.uniref90) + "</td>";
+            if (hasUniRef50) {
+                rowHtml += "<td>";
+                if (size.uniref50 > 0)
+                    rowHtml += commify(size.uniref50);
+                rowHtml += "</td>";
+            }
             row.append(rowHtml);
             body.append(row);
         });
@@ -938,7 +976,7 @@ function triggerDownload (imgURI) {
 App.prototype.addGndFeature = function() {
     var feat = this.network.getDisplayFeatures();
     var hasData = feat.length > 0;
-    if (!hasData || !feat.includes("gnd"))
+    if (!hasData || !feat.includes("gnd") || this.network.getChildren().length > 0)
         return;
 
     var that = this;
@@ -948,6 +986,8 @@ App.prototype.addGndFeature = function() {
             gndParms += ":" + that.alignmentScore;
         if (that.version)
             gndParms += '&rs-ver=' + that.version;
+        if (that.gndKey)
+            gndParms += '&key=' + that.gndKey;
         window.open('https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms);
     }).enableDataAvailableButton();
 }

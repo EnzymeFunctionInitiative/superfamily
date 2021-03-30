@@ -14,10 +14,10 @@ class settings {
             return SF_HMMDB_V1;
         } else if ($version == "2.0" && defined("SF_HMMDB_V2")) {
             return SF_HMMDB_V2;
-        } else if (($version == "2.1" && defined("SF_HMMDB_V2_1")) || ($version == "2.2" && defined("SF_HMMDB_V2_2"))) {
+        } else if (($version == "2.1" && defined("SF_HMMDB_V2_1")) || ($version == "2.2" && defined("SF_HMMDB_V2_2")) || ($version == "3.0" && defined("SF_HMMDB_V3_0"))) {
             //TODO: handle dicing in subsequent versions
             //HACK: make this flexible
-            $dir = ($version == "2.1" ? SF_HMMDB_V2_1 : SF_HMMDB_V2_2) . "/hmm";
+            $dir = ($version == "2.1" ? SF_HMMDB_V2_1 : ($version == "3.0" ? SF_HMMDB_V3_0 : SF_HMMDB_V2_2)) . "/hmm";
             if (!$type || $type == "all" || !preg_match("/^[a-z]+$/", $type) || !file_exists("$dir/$type.txt"))
                 return array("$dir/all.hmm");
             $lines = file("$dir/$type.txt");
@@ -39,6 +39,12 @@ class settings {
     public static function get_tmpdir_path() {
         return defined("SF_TMPDIR") ? SF_TMPDIR : "";
     }
+    public static function get_base_dir_path($version = "") {
+        if ($version == "3.0" && defined("SF_BASE_DIR_V3_0"))
+            return SF_BASE_DIR_V3_0;
+        else
+            return "";
+    }
     public static function get_cluster_db_path($version = "") {
         if ($version == "1.0" && defined("SF_CLUSTERDB_V1"))
             return SF_CLUSTERDB_V1;
@@ -48,6 +54,8 @@ class settings {
             return SF_CLUSTERDB_V2_1;
         else if ($version == "2.2" && defined("SF_CLUSTERDB_V2_2"))
             return SF_CLUSTERDB_V2_2;
+        else if ($version == "3.0" && defined("SF_CLUSTERDB_V3_0"))
+            return SF_CLUSTERDB_V3_0;
         return defined("SF_CLUSTERDB") ? SF_CLUSTERDB : "";
     }
     public static function get_data_dir($version = "") {
@@ -59,6 +67,8 @@ class settings {
             return SF_DATA_DIR_V2_1;
         else if ($version == "2.2" && defined("SF_DATA_DIR_V2_2"))
             return SF_DATA_DIR_V2_2;
+        else if ($version == "3.0" && defined("SF_DATA_DIR_V3_0"))
+            return SF_DATA_DIR_V3_0;
         return defined("SF_DATA_DIR") ? SF_DATA_DIR : "data";
     }
     public static function get_submit_email() {
@@ -70,6 +80,12 @@ class settings {
     public static function get_twig_dir() {
         $twig_dir = __DIR__ . "/../" . TWIG_DIR;
         return realpath($twig_dir);
+    }
+
+    public static function get_gnd_key() {
+        $key_path = SF_GND_KEY_PATH;
+        $key = file_get_contents($key_path);
+        return $key;
     }
 }
 

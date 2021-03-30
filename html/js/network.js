@@ -53,6 +53,9 @@ Network.prototype.getSubgroups = function() {
 Network.prototype.getRegions = function() {
     return Array.isArray(this.data.regions) ? this.data.regions : [];
 }
+Network.prototype.getChildren = function() {
+    return Array.isArray(this.data.children) ? this.data.children : [];
+}
 Network.prototype.getTigr = function() {
     return Array.isArray(this.data.families.tigr) ? this.data.families.tigr : [];
 }
@@ -123,7 +126,7 @@ Network.prototype.getKeggIds = function(version, addKeggIdFn, finishFn) {
     });
 }
 Network.prototype.getSizes = function(netId) {
-    if (netId) {
+    if (netId && typeof this.network_map[netId] !== "undefined") {
         return this.network_map[netId].size;
     } else {
         return 0;
@@ -132,6 +135,13 @@ Network.prototype.getSizes = function(netId) {
 Network.prototype.getCurrentSizes = function() {
     if (typeof this.data.size !== "undefined" && this.data.size.uniprot > 0) {
         return this.data.size;
+    } else {
+        return false;
+    }
+}
+Network.prototype.getConvRatio = function() {
+    if (typeof this.data.conv_ratio !== "undefined") {
+        return this.data.conv_ratio;
     } else {
         return false;
     }
@@ -179,5 +189,7 @@ Network.prototype.getSfldColor = function (id) {
 Network.prototype.getSfldIds = function (cid) {
     return typeof this.sfld_map[cid] !== "undefined" ? this.sfld_map[cid] : [];
 }
-
+Network.prototype.getGndKey = function () {
+    return typeof this.data.gnd_key !== "undefined" ? this.data.gnd_key : "";
+}
 

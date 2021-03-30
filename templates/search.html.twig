@@ -2,12 +2,12 @@
 {% set page_title = 'Search' %}
 {% set page_active = 'search' %}
 {% set extra_css = ['css/typeahead.css?v=3'] %}
-{% set extra_js = ['js/typeahead.bundle.js', 'js/network.js', 'js/search.js?v=10', 'js/progress.js?v=1'] %}
+{% set extra_js = ['js/typeahead.bundle.js', 'js/network.js', 'js/search.js?v=11', 'js/progress.js?v=1'] %}
 
 {% block content %}
 
         <div class="container" id="searchUi">
-            <input type="hidden" name="version" id="version" value="2.2">
+            <input type="hidden" name="version" id="version" value="3.0">
 
             <div>
                 <h3>Find by UniProt ID</h3>
@@ -17,7 +17,7 @@
                 <p>
                 For all but megacluster-1-1 (subgroup-17, SPASM/Twitch domain) and megacluster-2-1 (subgroup 5, 
                 B12-binding domain), the search identifies the cluster that contains the user-specified UniProt 
-                ID.  The cluster is a link to the <a href="explore.html">Explore</a> page that provides information for the cluster, 
+                ID.  The cluster is a link to the <a href="explore.php">Explore</a> page that provides information for the cluster, 
                 including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences. 
                 </p>
                 <p>
@@ -63,7 +63,7 @@
                 about sequence heterogeneity. 
                 </p>
                 <p>
-                Each cluster is a link to an <a href="explore.html">Explore</a> page that provide the information for the cluster, 
+                Each cluster is a link to an <a href="explore.php">Explore</a> page that provide the information for the cluster, 
                 including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences. 
                 </p>
                 <div id="searchSeqErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
@@ -83,7 +83,7 @@
                 selection of the desired genus/species/strain. If the genus and species are entered, a pop-up 
                 list of matching genus-species-strains is provided for selection of the desired 
                 genus/species/strain. The search provides a list of clusters containing proteins from the 
-                organism.  Each cluster is a link to the <a href="explore.html">Explore</a> page that provides information for the 
+                organism.  Each cluster is a link to the <a href="explore.php">Explore</a> page that provides information for the 
                 cluster, including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences.
                 </p>
                 <div id="searchTaxTermErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
