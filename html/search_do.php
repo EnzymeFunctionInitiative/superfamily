@@ -3,7 +3,7 @@
 require(__DIR__ . "/../libs/settings.class.inc.php");
 require(__DIR__ . "/../libs/functions.class.inc.php");
 
-const MAX_RESULTS = 11;
+const MAX_RESULTS = 3;
 
 // Design output structure to handle errors, etc
 
@@ -26,7 +26,6 @@ if (!$query && !$id && $type != "tax-prefetch") {
 }
 $version = functions::validate_version(isset($_POST["v"]) ? $_POST["v"] : "");
 
-
 if ($type == "seq") {
     $seq = preg_replace("/>.*?[\r\n]+/", "", $query);
 
@@ -45,18 +44,17 @@ if ($type == "seq") {
         $seq = ">SEQUENCE\n$seq";
         $seq_file = "$out_dir/sequence.txt";
         file_put_contents($seq_file, $seq);
-    
-        $hmmdb = settings::get_hmmdb_path($version, "all");
+
+        $hmmdb = functions::get_hmmdb_path($version, "all");
         $matches = hmmscan($out_dir, $hmmdb[0], $seq_file);
-        //$matches = array();
     
-        $diced_db = settings::get_hmmdb_path($version, "diced");
+        $diced_db = functions::get_hmmdb_path($version, "diced");
         $dmatches = array();
         // Check if matches are the parent diced cluster.  If so, then we search the diced clusters.
         if (count($matches) > 0) {
             $dicings = get_parent($diced_db, $matches[0][0]);
             if ($dicings !== false) {
-                $dm = search_diced($out_dir, $dicings);
+                $dm = search_diced($out_dir, $dicings, $seq_file);
                 if ($dm !== false)
                     $dmatches = $dm;
             }
@@ -76,6 +74,7 @@ if ($type == "seq") {
     } else {
         $file = settings::get_cluster_db_path($version);
         $db = new SQLite3($file);
+        $query = preg_replace("/[^A-Z0-9]/i", "", $query);
         $id = $db->escapeString($query);
     
         // First check if this is in the diced clusters.
@@ -163,7 +162,6 @@ if ($type == "seq") {
 
         $sql = "SELECT cluster_id, ascore, species FROM taxonomy INNER JOIN diced_id_mapping ON taxonomy.uniprot_id = diced_id_mapping.uniprot_id WHERE $field LIKE '%$query%' ORDER BY cluster_id, ascore";
         $results = $db->query($sql);
-
         list($diced_count, $diced_clusters, $diced_parents) = $search_fn($results, true);
 
         $query = $db->escapeString($query);
@@ -286,15 +284,66 @@ function hmmscan($out_dir, $hmmdb, $seq_file) {
 }
 
 
+function hmmscan2($out_dir, $hmmdb, $seq_file, $out_file_name = "summary.txt") {
+    $hmmscan = settings::get_hmmscan2_path();
+
+    $temp_dir = "$out_dir/temp";
+    mkdir($temp_dir);
+
+    $out_file = "$out_dir/$out_file_name";
+
+    $cmd = "source /etc/profile\n";
+    $cmd .= "$hmmscan --seq-file $seq_file --db-list-file $hmmdb --temp-dir $temp_dir --output-file $out_file --num-tasks 10";
+    $cmd_output = "";
+    $cmd_results = 0;
+    file_put_contents("$temp_dir/test.txt", "Hi");
+    exec($cmd, $cmd_output, $cmd_result);
+
+    if ($cmd_result !== 0) {
+        print json_encode(array("status" => false, "message" => "An error in dicing occurred"));
+        exit(0);
+    }
+
+    $lines = file($out_file);
+    $matches = array();
+    $cluster_counts = array();
+
+    for ($i = 0; $i < count($lines); $i++) {
+        $parts = preg_split("/\s+/", $lines[$i]);
+        $parent_cluster = $parts[0];
+        $sub_cluster = $parts[2];
+        $evalue = floatval($parts[3]);
+        if ($parts[1]) {
+            $ascore = $parts[1];
+            if (!isset($matches[$parent_cluster][$ascore])) {
+                $matches[$parent_cluster][$ascore] = array();
+                $cluster_counts[$parent_cluster][$ascore] = 0;
+            }
+            $cluster_counts[$parent_cluster][$ascore]++;
+            if ($cluster_counts[$parent_cluster][$ascore] <= MAX_RESULTS)
+                array_push($matches[$parent_cluster][$ascore], array($sub_cluster, $evalue));
+        } else {
+            if (!isset($matches[$parent_cluster])) {
+                $matches[$parent_cluster] = array();
+                $cluster_counts[$parent_cluster] = 0;
+            }
+            $cluster_counts[$parent_cluster]++;
+            if ($cluster_counts[$parent_cluster] <= MAX_RESULTS)
+                array_push($matches[$parent_cluster], array($sub_cluster, $evalue));
+        }
+    }
+    return $matches;
+}
+
+
 function get_parent($diced_db, $first_match) {
     $diced_parent = "";
     $dicing = false;
     foreach ($diced_db as $parent_cluster => $dicings_iter) {
-        //$cluster = $matches[0][0];
-        //print "$cluster $parent_cluster\n";
+        $cluster = $matches[0][0];
         if ($first_match == $parent_cluster) {
             $dicing_parent = $parent_cluster;
-            $dicings = $dicings_iter;
+            $dicing = $dicings_iter;
             break;
         }
     }
@@ -303,7 +352,7 @@ function get_parent($diced_db, $first_match) {
 }
 
 
-function search_diced($out_dir, $dicings) {
+function search_diced($out_dir, $dicing_db, $seq_file) {
 //        $diced_parent = get_parents($diced_db, $matches);
 //        if ($diced_parent)
 //            $dmatches = search_diced($diced_db, $diced_parent);
@@ -314,18 +363,18 @@ function search_diced($out_dir, $dicings) {
 //            $first = true;
 //            foreach ($diced_db as $parent_cluster => $dicings) {
     $dmatches = false;
-    foreach ($dicings as $info) {
-        $ascore = $info[0];
-        $hmm = $info[1];
-        $diced_matches = hmmscan($out_dir, $hmm, $seq_file);
+//    foreach ($dicings as $info) {
+//        $ascore = $info[0];
+//        $hmm = $info[1];
+        $diced_matches = hmmscan2($out_dir, $dicing_db, $seq_file);
         // Skip to next cluster group, no need to cycle through all of the dicings since if it's not in one dicing it's not going to be in the others
-        if (count($diced_matches) == 0)
-            break;
-        if ($first)
-            $first = false;
-        $dmatches[$parent_cluster][$ascore] = $diced_matches;
-    }
-    return $dmatches;
+//        if (count($diced_matches) == 0)
+//            break;
+//        if ($first)
+//            $first = false;
+//        $dmatches[$parent_cluster][$ascore] = $diced_matches;
+//    }
+    return $diced_matches;
 }
 
 

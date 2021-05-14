@@ -13,6 +13,15 @@ $(document).ready(function() {
         return v;
     };
 
+    var getResultsUrl = function(id, ascore = "") {
+        var v = getVersion();
+        var parms = ["id="+id, "v="+v];
+        if (ascore)
+            parms.push("as="+ascore);
+        var url = "explore.php?" + parms.join("&");
+        return url;
+    };
+
     history.replaceState({state: STATE_HOME}, null, "");
     var historyFn = function(type, id) { history.pushState({state: type}, null, "#"+type+id); };
     $(window).on("popstate", function (e) {
@@ -58,14 +67,15 @@ $(document).ready(function() {
                 $("#searchSeqErrorMsg").text(data.message).show();
             } else {
                 var processFn = function(network, matches, parentCluster = "", ascore = "") {
-                    var ascoreUrl = (parentCluster && ascore) ? "&as=" + ascore : "";
+                    ascore = (parentCluster && ascore) ? ascore : "";
                     var table = $('<table class="table table-sm"></table>');
     		        table.append('<thead><tr><th>Cluster</th><th>E-Value</th></thead>');
     		        var body = $('<tbody>');
             		table.append(body);
                     for (var i = 0; i < matches.length; i++) {
-                        var netName = typeof network !== 'undefined' ? network.getNetworkMapName(matches[i][0]) : matches[i][0];
-                        body.append('<tr><td><a href="explore.php?v=' + version + '&id=' + matches[i][0] + ascoreUrl + '">' + netName + '</a></td><td>' + matches[i][1] + '</td></tr>');
+                        var clusterId = matches[i][0];
+                        var netName = typeof network !== 'undefined' ? network.getNetworkMapName(clusterId) : clusterId;
+                        body.append('<tr><td><a href="' + getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td><td>' + matches[i][1] + '</td></tr>');
                     }
                     if (parentCluster && ascore) {
                         var div = $("<div><h3>" + parentCluster + " AS " + ascore + "</h3></div>");
@@ -131,7 +141,7 @@ $(document).ready(function() {
                             var ascore = ascores[i];
                             var clusterId = data.cluster_id[ascore];
                             var netName = typeof network !== 'undefined' ? network.getNetworkMapName(clusterId) : clusterId;
-                            body.append('<tr><td><a href="explore.php?v=' + version + '&id=' + clusterId + "&as=" + ascore + '">' + netName + '</a></td><td>' + ascore + '</td></tr>');
+                            body.append('<tr><td><a href="' + getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td><td>' + ascore + '</td></tr>');
                         }
                         $("#searchResults").empty().append(table).show();
                         $("#searchUi").hide();
@@ -140,7 +150,7 @@ $(document).ready(function() {
                     };
                     getNetInfo(version, addClusterTableFn);
                 } else {
-                    window.location.href = "explore.php?v=" + version + "&id=" + data.cluster_id;
+                    window.location.href = getResultsUrl(data.cluster_id);
                 }
             }
         });
@@ -175,11 +185,12 @@ $(document).ready(function() {
     		        var body = $('<tbody>');
             		table.append(body);
                     for (var i = 0; i < matches.length; i++) {
-                        var netName = typeof network !== 'undefined' ? network.getNetworkMapName(matches[i][0]) : matches[i][0];
-                        var ascoreParm = isDiced ? "&as=" + matches[i][1] : "";
+                        var clusterId = matches[i][0];
+                        var netName = typeof network !== 'undefined' ? network.getNetworkMapName(clusterId) : clusterId;
+                        var ascore = isDiced ? matches[i][1] : "";
                         if (netName) {
                             var tr = $('<tr>');
-                            tr.append($('<td><a href="explore.php?v=' + version + '&id=' + matches[i][0] + ascoreParm + '">' + netName + '</a></td>'));
+                            tr.append($('<td><a href="' + getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td>'));
                             if (isDiced)
                                 tr.append($('<td>' + matches[i][1] + '</td>'));
                             tr.append($('<td>' + matches[i][isDiced ? 2 : 1] + '</td>'));

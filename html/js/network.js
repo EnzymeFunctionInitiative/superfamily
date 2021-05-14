@@ -90,7 +90,18 @@ Network.prototype.getNextAscore = function() {
         return "";
 }
 Network.prototype.getConsensusResidues = function() {
-    return (typeof this.data.cons_res !== "undefined" && Array.isArray(this.data.cons_res)) ? this.data.cons_res : [];
+    if (typeof this.data.cons_res !== "undefined") {
+        return this.data.cons_res;
+    } else {
+        return false;
+    }
+}
+Network.prototype.getConsensusResiduesFiles = function() {
+    if (typeof this.data.cons_res_files !== "undefined" && Array.isArray(this.data.cons_res_files)) {
+        return this.data.cons_res_files;
+    } else {
+        return [];
+    }
 }
 Network.prototype.getDataDir = function() {
     return typeof this.dataDir !== "undefined" ? this.dataDir : "data";
@@ -146,6 +157,13 @@ Network.prototype.getConvRatio = function() {
         return false;
     }
 }
+Network.prototype.getDicedWalkthrough= function() {
+    if (typeof this.data.dicing.dnav !== "undefined") {
+        return this.data.dicing.dnav;
+    } else {
+        return false;
+    }
+}
 Network.prototype.getSwissProtFunctions = function () {
     return Array.isArray(this.data.public.swissprot) ? this.data.public.swissprot : [];
 }
@@ -156,10 +174,11 @@ Network.prototype.getEnzymeCodes = function () {
     return typeof this.enzymecodes !== "undefined" ? this.enzymecodes : {};
 }
 Network.prototype.getDisplayFeatures = function () {
-    return Array.isArray(this.data.display) ? this.data.display : [];
+    return typeof this.data.display !== "undefined" ? this.data.display : {};
 }
 Network.prototype.getDownloadFeatures = function () {
-    return Array.isArray(this.data.download) ? this.data.download : [];
+    return typeof this.data.download !== "undefined" ? this.data.download : {};
+    //return Array.isArray(this.data.download) ? this.data.download : [];
 }
 // Needed for breadcrumb and other things
 Network.prototype.getNetworkMapName = function (networkId) {

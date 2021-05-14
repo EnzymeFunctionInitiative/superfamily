@@ -2,9 +2,11 @@
 
 require_once(__DIR__ . "/includes/main.inc.php");
 
-$v3 = (isset($_GET["v"]) && $_GET["v"] == "3.0") ? "3" : "";
+$version = functions::validate_version();
+$v3 = $version === "3.0" ? "3" : "";
 
-$gnd_key = settings::get_gnd_key();
+if ($version)
+    $gnd_key = functions::get_gnd_key($version);
 
 $twig_variables = array();
 $loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());

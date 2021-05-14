@@ -11,19 +11,18 @@ $ascore = filter_input(INPUT_GET, "as", FILTER_SANITIZE_NUMBER_INT);
 
 $type = filter_type($type);
 if (!is_array($type)) {
-    //TODO: error
-    die();
+    die("Not array $type|");
 }
 if (!preg_match("/^[cluster0-9\-]+$/", $cluster_id)) {
     //TODO: error
-    die();
+    die("not match $cluster_id");
 }
 $db = functions::get_database($version);
 if (!functions::validate_cluster_id($db, $cluster_id)) {
     //TODO: error
-    die();
+    die("not validate $version");
 }
-$version = functions::filter_version($version);
+$version = functions::validate_version($version);
 
 $basepath = functions::get_data_dir_path2($db, $version, $ascore, $cluster_id);
 $fpath = "";
@@ -94,7 +93,7 @@ function filter_type($type) {
         "net" => array("lg.png"),
         "hmm" => array("hmm.hmm", "hmm.zip"),
         "hmmpng" => array("hmm.png", "hmm.zip"),
-        "hist" => array("length_histogram_lg.png", "length_histogram_uniprot.zip"),
+        "hist" => array("length_histogram_lg.png", "length_histogram_uniprot.zip", "length_histogram_uniprot_lg.png"),
         "hist_filt" => array("length_histogram_filtered_lg.png"),
         "hist_up" => array("length_histogram_uniprot.zip"),
         "hist_ur50" => array("length_histogram_uniref50_lg.png", "length_histogram_uniref50.zip"),
@@ -110,7 +109,7 @@ function filter_type($type) {
         "crpe" => array("consensus_residue_${RES}percentage.txt"),
         "crid" => array("consensus_residue_${RES}all.zip"),
         "swissprot" => array("swissprot.txt"),
-        "ssn" => array("ssn.zip"));
+        "ssn" => array("ssn.zip", "ssn.xgmml"));
     if (isset($types[$type]))
         return $types[$type];
     else

@@ -1,5 +1,5 @@
 
-const DEFAULT_VERSION = "2.2";
+const DEFAULT_VERSION = "3.0";
 
 // Extend the jQuery API for data available buttons
 $(document).ready(function () {
@@ -96,27 +96,24 @@ App.prototype.init = function(network, gndKey) {
 
     this.setPageHeaders();
     this.addBreadcrumb();
+
+    // This shows the main diced image and page.
     if (this.network.getAltSsns().length > 0) {
         this.initAltSsn();
         var dlDivId = "downloads";
         var hideTabStuff = false;
         if (this.alignmentScore) {
-            //this.initTabPages();
-            //dlDivId = "childDownload";
-            //hideTabStuff = true;
             $("#altSsnSecondary").show();
         }
-        //} else {
-            $("#downloadContainer").show();
-            $("#altSsnPrimary").show();
-            $(".alt-cluster-ascores").text(this.network.getAltSsns().join(", "));
-            $(".alt-cluster-id").text(this.network.getName());
-            $(".alt-cluster-default-as").text(network.getDefaultAlignmentScore());
-            $(".alt-cluster-sfld").text(network.getSfldDesc() + " (SFLD subgroup " + network.getSfldId() + ")");
-            var nextAs = network.getNextAscore();
-            $("#alt-cluster-next-as-link").attr("href", getUrlFn(this.network.Id + "-1", this.version, nextAs));
-            $(".alt-cluster-next-as").text(nextAs);
-        //}
+        $("#downloadContainer").show();
+        $("#altSsnPrimary").show();
+        $(".alt-cluster-ascores").text(this.network.getAltSsns().join(", "));
+        $(".alt-cluster-id").text(this.network.getName());
+        $(".alt-cluster-default-as").text(network.getDefaultAlignmentScore());
+        $(".alt-cluster-sfld").text(network.getSfldDesc() + " (SFLD subgroup " + network.getSfldId() + ")");
+        var nextAs = network.getNextAscore();
+        $("#alt-cluster-next-as-link").attr("href", getUrlFn(this.network.Id + "-1", this.version, nextAs));
+        $(".alt-cluster-next-as").text(nextAs);
         this.addDownloadFeatures(dlDivId, hideTabStuff);
         this.addDicedNav(true); // true = this is a parent diced cluster
     } else {
@@ -134,21 +131,7 @@ App.prototype.init = function(network, gndKey) {
         var dicedParent = this.network.getDicedParent();
         if (dicedParent) {
             this.addDicedNav();
-            $("#dicedParentImg").show();
-            $("#parentImg").attr("src", this.dataDir + "/../" + dicedParent + "_sm.png");
-            $("#toggleParentImg").click(function() {
-                if (!$(this).data("hidden") || $(this).data("hidden") == false) {
-                    $("#toggleParentImgIcon").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
-                    $("#toggleParentImgText").text("Show");
-                    $("#parentImg").removeClass("w-50").addClass("h-70px");
-                    $(this).data("hidden", true);
-                } else {
-                    $("#toggleParentImgIcon").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
-                    $("#toggleParentImgText").text("Hide");
-                    $("#parentImg").removeClass("h-70px").addClass("w-50");
-                    $(this).data("hidden", false);
-                }
-            });
+            this.setDicedClusterImage(dicedParent, function() {});
         }
     }
 
@@ -165,6 +148,7 @@ App.prototype.init = function(network, gndKey) {
 App.prototype.initAltSsn = function() {
     this.addClusterSize();
     this.addConvRatio();
+    this.addConsRes();
     this.setClusterImage(function() {});
     var altDiv = $("#altSsn");
     //this.addAltSsns(altDiv);
@@ -188,6 +172,7 @@ App.prototype.initLeafData = function() {
     var hasData = this.addDisplayFeatures();
     this.addClusterSize();
     this.addConvRatio();
+    this.addConsRes();
     if (hasData) {
         this.addSwissProtFunctions();
         this.addPdb();
@@ -291,7 +276,7 @@ App.prototype.initTabPages = function() {
         return table;
     };
 
-    var consResTypes = this.network.getConsensusResidues();
+    var consResTypes = this.network.getConsensusResiduesFiles();
     if (consResTypes.length == 0) {
         $("#childConsResListItem").hide();
         $("#childConsRes").hide();
@@ -418,7 +403,7 @@ App.prototype.addDicedNav = function(isParent = false) {
         var prevId = nav.siblings.prev ? parentIdParts.join("-") + "-" + nav.siblings.prev : "";
         var nextId = nav.siblings.next ? parentIdParts.join("-") + "-" + nav.siblings.next : "";
         
-        var prevBtn = $('<button id="prev-sibling-btn" class="btn btn-primary btn-sm">Previous Cluster</button>');
+        var prevBtn = $('<button id="prev-sibling-btn" class="btn btn-primary btn-sm mr-0">Previous</button>');
         if (prevId) {
             prevBtn.click(function() {
                 goToUrlFn(prevId, that.version, that.alignmentScore);
@@ -427,7 +412,7 @@ App.prototype.addDicedNav = function(isParent = false) {
             prevBtn.addClass("disabled");
         }
     
-        var nextBtn = $('<button id="next-sibling-btn" class="btn btn-primary btn-sm">Next Cluster</button>');
+        var nextBtn = $('<button id="next-sibling-btn" class="btn btn-primary btn-sm">Next</button>');
         if (nextId) {
             nextBtn.click(function() {
                 goToUrlFn(nextId, that.version, that.alignmentScore);
@@ -436,7 +421,7 @@ App.prototype.addDicedNav = function(isParent = false) {
             nextBtn.addClass("disabled");
         }
     
-        var idCb = $('<select id="sel-sibling-id" class="form-control w-25 mr-4"></select>');
+        var idCb = $('<select id="sel-sibling-id" class="form-control w-auth mx-2"></select>');
         var curId = idParts[idParts.length-1];
         var ids = nav.siblings.ids;
         var parentNum = idParts.slice(1, idParts.length-1).join("-");
@@ -452,7 +437,7 @@ App.prototype.addDicedNav = function(isParent = false) {
     }
 
     var nav = this.network.getDicedNav(isParent);
-    var ascoreCb = $('<select id="sel-parent-ascores" class="form-control w-25"></select>');
+    var ascoreCb = $('<select id="sel-parent-ascores" class="form-control w-auto"></select>');
     for (var i = 0; i < nav.ascores.length; i++) {
         var isSel = nav.ascores[i] == this.alignmentScore ? "selected" : "";
         ascoreCb.append($('<option value="' + nav.ascores[i] + '" ' + isSel + '>AS ' + nav.ascores[i] + '</option>'));
@@ -460,7 +445,83 @@ App.prototype.addDicedNav = function(isParent = false) {
     ascoreCb.change(function() {
         goToUrlFn(that.network.Id, that.version, this.value);
     });
-    $("#dicedNav").append('<span class="mr-1">Alignment Score:</span>').append(ascoreCb);
+    $("#dicedNav").append('<span class="mr-1 ml-4">Alignment Score:</span>').append(ascoreCb);
+
+
+    if (!isParent) {
+        var asNavBtn = $('<button id="cluster-as-nav-btn" class="btn btn-primary btn-sm pull-right" style="margin-left: 90px"><i class="fas fa-code-branch"></i> AS Walk-Through</button>');
+        asNavBtn.click(function() {
+            $("#clusterAsNavList").empty();
+            var dnav = that.network.getDicedWalkthrough();
+            var makeWalkthroughDnav = function(navList, headingText) {
+                var nextAscore = "";
+                var table = $('<table class="table"></table>');
+                var th = $('<thead><td>Cluster ID</td><td>Num Nodes</td><td>Conv. Ratio</td><td>SwissProt</td></thead>');
+                var tbody = $('<tbody></tbody>');
+                table.append(th).append(tbody);
+    
+                for (var i = 0; i < navList.length; i++) {
+                    var navItem = navList[i];
+                    var navItemName = ucFirst(navItem.cluster_id);
+                    nextAscore = navItem.ascore;
+                    if (typeof navItem.num_nodes !== "undefined") {
+                        var spDiv = getPopoverSwissProt(navItem.sp);
+                        var listItem = $('<tr></tr>');
+                        listItem.append('<td><a href="' + getUrlFn(navItem.cluster_id, that.version, navItem.ascore) + '">' + navItemName + '</a></td>');
+                        listItem.append('<td>' + navItem.num_nodes + '</td>');
+                        var cr = typeof navItem.cr !== "undefined" ? navItem.cr : "";
+                        listItem.append('<td>' + cr + '</td>');
+                        var cell = $('<td></td>');
+                        cell.append(spDiv);
+                        listItem.append(cell);
+                        tbody.append(listItem);
+                    }
+                }
+                if (nextAscore)
+                    $("#clusterAsNavList").append('<div></div>').append('<h5>' + headingText + ' (AS' + nextAscore + ')</h5>').append(table);
+            };
+            if (dnav.backward !== false)
+                makeWalkthroughDnav(dnav.backward, "Previous Cluster");
+            if (dnav.forward !== false)
+                makeWalkthroughDnav(dnav.forward, "Next Clusters");
+            $("#clusterAsNavModal").modal();
+        });
+        $("#dicedNav").append(asNavBtn);
+    }
+}
+
+function getPopoverSwissProt(sp) {
+    if (sp.length == 0)
+        return "";
+
+    var ul = addSwissProtList(sp, function(){}, function(){});
+    ul.hide();
+    var btn = $('<button class="btn btn-primary btn-sm">SwissProts</button>');
+    btn.click(function() {
+        ul.show();
+    });
+    var div = $("<div></div>");
+    div.append(btn);
+    div.append(ul);
+    return div;
+}
+function ucFirst(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function addSwissProtList(list, enzymeCodeFn, clipFn) {
+    var ul = $('<ul class="expandable"></ul>');
+    for (var i = 0; i < list.length; i++) {
+        var parts = list[i][0].split("||");
+        var desc = parts[0];
+        if (parts.length > 0 && typeof parts[1] !== "undefined") 
+            desc += enzymeCodeFn(parts[1]);
+        var spItemIds = list[i][1].split(",").map(x => '<a href="https://www.uniprot.org/uniprot/'+x+'">'+x+'</a>').join("<br>\n");
+        ul.append('<li data-toggle="collapse" data-target="#spListItem' + i + '">' + desc + '<div class="collapse sp-list-item" id="spListItem' + i + '">' + spItemIds + '</div>' + '</li>');
+        spItemIds = "\t" + list[i][1].split(",").join("\n\t") + "\n";
+        clipFn(desc, spItemIds);
+    }
+    return ul;
 }
 
 
@@ -495,6 +556,25 @@ App.prototype.addConvRatio = function () {
     $("#convRatioContainer").show();
     $("#clusterSizeContainer").show();
 }
+App.prototype.addConsRes = function () {
+    var cs = this.network.getConsensusResidues();
+    if (typeof cs === "undefined" || cs === false)
+        return;
+    var consResContents = "";
+    if (Array.isArray(cs)) {
+        var consResContents = $('<div class="float-left"></div>');
+        for (var i = 0; i < cs.length; i++) {
+            //if (str)
+            //    str += ", ";
+            //str += '<b>' + cs[i].num_res + "</b><br><sup>" + cs[i].percent + "%</sup>";
+            var div = '<div class="float-left ml-3 text-center"><b>' + cs[i].num_res + '</b><br><sup>' + cs[i].percent + '%</sup></div>';
+            consResContents.append(div);
+        }
+    } else {
+        consResContents = '<b>' + cs.num_res + '</b>' + ' (70%)';
+    }
+    $("#consensusResidue").append(consResContents);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -503,39 +583,20 @@ App.prototype.addConvRatio = function () {
 App.prototype.addDisplayFeatures = function () {
     var feat = this.network.getDisplayFeatures();
     var that = this;
-    var hasData = feat.length > 0;
-    for (var i = 0; i < feat.length; i++) {
-        if (feat[i] == "weblogo") {
-            //TESTING/DEBUGGING:
-            //var img = $('<img src="data/weblogo.png" alt="WebLogo for ' + this.network.Id + '" class="display-img-width">');
-            var img = $('<img src="' + this.dataDir + '/weblogo.png" alt="WebLogo for ' + this.network.Id + '" class="display-img-width">');
-            $("#weblogo").append(img);
-            $("#downloadWeblogoImage").click(function (e) { e.preventDefault(); window.location.href = that.getDownloadUrl("weblogo"); });
-            $("#weblogoContainer").show();
-        } else if (feat[i] == "length_histogram") {
+    var hasData = Object.keys(feat).length > 0;
+
+    if (feat.hasOwnProperty("weblogo")) {
+        var img = $('<img src="' + this.dataDir + '/weblogo.png" alt="WebLogo for ' + this.network.Id + '" class="display-img-width">');
+        $("#weblogo").append(img);
+        $("#downloadWeblogoImage").click(function (e) { e.preventDefault(); window.location.href = that.getDownloadUrl("weblogo"); });
+        $("#weblogoContainer").show();
+    }
+    if (feat.hasOwnProperty("length_histogram")) {
+        //TODO: uniref50/90
+        var addHistFn = function(fileName, dlType, seqText) {
             var mainDiv = $("<div></div>");
 
-            var dlBtn = $('<i class="fas fa-download"></i>');
-            var dlDiv = $('<div class="float-right download-btn" data-toggle="tooltip" title="Download high-resolution">PNG </div>').append(dlBtn);
-            dlDiv.click(function (e) { e.preventDefault(); window.location.href = that.getDownloadUrl("hist"); });
-            
-            //mainDiv.append('<h5>Length Histogram for All Sequences (UniProt IDs)</h5>');
-            //// First download
-            //mainDiv.append(dlDiv);
-            //mainDiv.append('<div style="clear: both"></div>');
-            //// Then image
-            //mainDiv.append('<div></div>')
-            //    .append('<img src="' + this.dataDir + '/length_histogram_sm.png" alt="Length histogram for ' + this.network.Id + '" class="display-img-width">');
-
-            var fileName = "filtered";
-            var dlType = "hist_filt";
-            if (this.alignmentScore) {
-                mainDiv.append('<h5>Length Histogram for Node Sequences (UniRef50 IDs)</h5>');
-                fileName = "uniref50";
-                dlType = "hist_ur50";
-            } else {
-                mainDiv.append('<h5>Length-Filtered Histogram for Node Sequences (UniRef50 IDs) &mdash; Used for MSA, WebLogo, and HMM</h5>');
-            }
+            mainDiv.append('<h5>Length Histogram for ' + seqText + '</h5>');
             // First download
             dlBtn = $('<i class="fas fa-download"></i>');
             dlDiv = $('<div class="float-right download-btn" data-toggle="tooltip" title="Download high-resolution">PNG </div>').append(dlBtn);
@@ -545,11 +606,28 @@ App.prototype.addDisplayFeatures = function () {
 
             // Then image
             mainDiv.append('<div></div>')
-                .append('<img src="' + this.dataDir + '/length_histogram_' + fileName + '_sm.png" alt="Length histogram for ' + this.network.Id + '" class="display-img-width">');
-            
-            $("#lengthHistogramContainer").append(mainDiv).show();
+                .append('<img src="' + that.dataDir + '/length_histogram' + fileName + '_sm.png" alt="Length histogram for ' + that.network.Id + '" class="display-img-width">');
+
+            return mainDiv;
         }
+
+        console.log(feat.length_histogram);
+        for (var i = 0; i < feat.length_histogram.length; i++) {
+            var theDiv;
+            if (feat.length_histogram[i] == "uniprot")
+                theDiv = addHistFn("_uniprot", "hist", "All Sequences");
+            else if (feat.length_histogram[i] == "uniprot_leg")
+                theDiv = addHistFn("", "hist", "All Sequences");
+            else if (feat.length_histogram[i] == "uniref50")
+                theDiv = addHistFn("_uniref50", "hist", "Node Sequences (UniRef50) &mdash; Used for MSA, WebLogo, and HMM");
+            else if (feat.length_histogram[i] == "uniref90")
+                theDiv = addHistFn("_uniref90", "hist", "Node Sequences (UniRef90) &mdash; Used for MSA, WebLogo, and HMM");
+            $("#lengthHistogramContainer").append(theDiv);
+        }
+    
+        $("#lengthHistogramContainer").show();
     }
+
     return hasData;
 }
 App.prototype.addDownloadFeatures = function (containerId, hideTabStuff = false) {
@@ -564,83 +642,88 @@ App.prototype.addDownloadFeatures = function (containerId, hideTabStuff = false)
     var body = $('<tbody>');
     table.append(body);
 
-    for (var i = 0; i < feat.length; i++) {
-        //"downloads": ["weblogo", "msa", "hmm", "id_fasta", "misc"]
-        if (feat[i] == "gnn") {
-        } else if (feat[i] == "ssn") {
-            //var parentSsnText = isDiced ? " (for parent cluster)" : "";
-            var parentSsnText = "";
-            body.append('<tr><td>' + this.getDownloadButton(feat[i] + ".zip") + '</td><td>Sequence Similarity Network' + parentSsnText + '</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
-        //} else if (feat[i] == "cons") { // consensus residue
-        //    body.append('<tr><td>' + this.getDownloadButton(feat[i] + ".txt") + '</td><td>Consensus Residues</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
-        } else if (feat[i] == "weblogo" && !hideTabStuff) {
-            body.append('<tr><td>' + this.getDownloadButton(feat[i] + ".png") + '</td><td>WebLogo for Length-Filtered Node Sequences</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
-        } else if (feat[i] == "msa" && !hideTabStuff) {
-            body.append('<tr><td>' + this.getDownloadButton(feat[i] + ".afa") + '</td><td>MSA for Length-Filtered Node Sequences</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
-        } else if (feat[i] == "hmm" && !hideTabStuff) {
-            body.append('<tr><td>' + this.getDownloadButton(feat[i] + ".hmm") + '</td><td>HMM for Length-Filtered Node Sequences</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
-            if (!hideTabStuff) {
-                var logoParms = "";
-                var logoParms = 'cid=' + this.network.Id;
-                if (this.alignmentScore)
-                    logoParms += '&as=' + this.alignmentScore;
-                if (this.version)
-                    logoParms += '&v=' + this.version;
-                var logoBtn = '<button class="btn btn-primary btn-sm hmm-logo" data-logo="' + logoParms + '">View HMM</button>';
-                body.append('<tr><td>' + logoBtn + '</td><td>View HMM in SkyLign</td><td></td></tr>');
-            }
-        } else if (feat[i] == "gnd" && !hideTabStuff) {
-            var gndParms = 'rs-id=' + this.network.Id;
+    if (feat.hasOwnProperty("ssn")) {
+        body.append('<tr><td>' + this.getDownloadButton("ssn") + '</td><td>Sequence Similarity Network' + "" + '</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
+    }
+    if (feat.hasOwnProperty("weblogo") && !hideTabStuff) {
+        body.append('<tr><td>' + this.getDownloadButton("weblogo") + '</td><td>WebLogo for Node Sequences</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
+    }
+    if (feat.hasOwnProperty("msa") && !hideTabStuff) {
+        body.append('<tr><td>' + this.getDownloadButton("msa") + '</td><td>MSA for Node Sequences</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
+    }
+    if (feat.hasOwnProperty("hmm") && !hideTabStuff) {
+        body.append('<tr><td>' + this.getDownloadButton("hmm") + '</td><td>HMM for Node Sequences</td></tr>');//<td>' + this.getDownloadSize(feat[i]) + '</td></tr>');
+        if (!hideTabStuff) {
+            var logoParms = "";
+            var logoParms = 'cid=' + this.network.Id;
             if (this.alignmentScore)
-                gndParms += ":" + this.alignmentScore;
-            if (false) // check if this is a parent and provide the child ID here
-                gndParms += ":" + this.network.Id;
+                logoParms += '&as=' + this.alignmentScore;
             if (this.version)
-                gndParms += '&rs-ver=' + this.version;
-            gndParms += "&key=" + this.gndKey;
-            var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
-            body.append('<tr><td>' + viewBtn + '</td><td>View Genome Neighborhood Diagrams</td><td></td></tr>');
-        } else if (feat[i] == "id_fasta") {
-            var t = [
-                { "key": "uniprot_id", "desc": "UniProt ID list" },
-                { "key": "uniref90_id", "desc": "UniRef90 ID list" },
-                { "key": "uniref50_id", "desc": "UniRef50 ID list" },
-                { "key": "uniprot_fasta", "desc": "UniProt FASTA file" },
-                { "key": "uniref90_fasta", "desc": "UniRef90 FASTA file" },
-                { "key": "uniref50_fasta", "desc": "UniRef50 FASTA file" }
-            ];
+                logoParms += '&v=' + this.version;
+            var logoBtn = '<button class="btn btn-primary btn-sm hmm-logo" data-logo="' + logoParms + '">View HMM</button>';
+            body.append('<tr><td>' + logoBtn + '</td><td>View HMM in SkyLign</td><td></td></tr>');
+        }
+    }
+    if (feat.hasOwnProperty("gnd") && !hideTabStuff) {
+        var gndParms = 'rs-id=' + this.network.Id;
+        if (this.alignmentScore)
+            gndParms += ":" + this.alignmentScore;
+        if (false) // check if this is a parent and provide the child ID here
+            gndParms += ":" + this.network.Id;
+        if (this.version)
+            gndParms += '&rs-ver=' + this.version;
+        gndParms += "&key=" + this.gndKey;
+        var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
+        body.append('<tr><td>' + viewBtn + '</td><td>View Genome Neighborhood Diagrams</td><td></td></tr>');
+    }
+    if (feat.hasOwnProperty("id_fasta")) {
+        table.append('<tbody><tr><td colspan="3"><b>ID Lists and FASTA Files</b></td></tr></tbody>');
+        body = $('<tbody>');
+        table.append(body);
 
-            table.append('<tbody><tr><td colspan="3"><b>ID Lists and FASTA Files</b></td></tr></tbody>');
-            body = $('<tbody>');
+        var that = this;
+        var addRowFn = function(key, desc) {
+            body.append('<tr><td>' + that.getDownloadButton(key) + '</td><td>' + desc + '</td></tr>');
+        };
+
+        var types = feat.id_fasta;
+        if (types.hasOwnProperty("uniprot"))
+            addRowFn("uniprot_id", "UniProt ID List");
+        if (types.hasOwnProperty("uniref90"))
+            addRowFn("uniref90_id", "UniRef90 ID list");
+        if (types.hasOwnProperty("uniref50"))
+            addRowFn("uniref50_id", "UniRef50 ID list");
+        if (types.hasOwnProperty("uniprot"))
+            addRowFn("uniprot_fasta", "UniProt FASTA file");
+        if (types.hasOwnProperty("uniref90"))
+            addRowFn("uniref90_fasta", "UniRef90 FASTA file");
+        if (types.hasOwnProperty("uniref50"))
+            addRowFn("uniref50_fasta", "UniRef50 FASTA file");
+    }
+    if (feat.hasOwnProperty("misc")) {
+        var t = [
+            //{ "key": "cluster_size", "desc": "Cluster sizes" },
+            { "key": "swissprot.txt", "desc": "SwissProt annotations within cluster" },
+            //{ "key": "sp_singletons", "desc": "SwissProt annotations by singletons" }
+        ];
+
+        table.append('<tbody><tr><td colspan="3"><b>Miscellaneous Files</b></td></tr></tbody>');
+        body = $('<tbody>');
+        table.append(body);
+
+        for (var k = 0; k < t.length; k++) {
+            body.append('<tr><td>' + this.getDownloadButton(t[k].key) + '</td><td>' + t[k].desc + '</td></tr>');//<td>' + this.getDownloadSize(t[k].key) + '</td></tr>');
+        }
+    }
+    if (feat.hasOwnProperty("cons_res")) {
+        table.append('<tbody><tr><td colspan="3"><b>Consensus Residues</b></td></tr></tbody>');
+        body = $('<tbody>');
+        var consResTypes = this.network.getConsensusResiduesFiles();
+        for (var ri = 0; ri < consResTypes.length; ri++) {
+            var consRes = consResTypes[ri];
+            var res = consRes.toLowerCase();
+            body.append('<tr><td>' + this.getDownloadButton("crpo"+res) + '</td><td>Consensus residue percentage summary table (' + consRes + ')</td></tr>');
             table.append(body);
-
-            for (var k = 0; k < t.length; k++) {
-                body.append('<tr><td>' + this.getDownloadButton(t[k].key) + '</td><td>' + t[k].desc + '</td></tr>');//<td>' + this.getDownloadSize(t[k].key) + '</td></tr>');
-            }
-        } else if (feat[i] == "misc") {
-            var t = [
-                //{ "key": "cluster_size", "desc": "Cluster sizes" },
-                { "key": "swissprot.txt", "desc": "SwissProt annotations within cluster" },
-                //{ "key": "sp_singletons", "desc": "SwissProt annotations by singletons" }
-            ];
-
-            table.append('<tbody><tr><td colspan="3"><b>Miscellaneous Files</b></td></tr></tbody>');
-            body = $('<tbody>');
-            table.append(body);
-
-            for (var k = 0; k < t.length; k++) {
-                body.append('<tr><td>' + this.getDownloadButton(t[k].key) + '</td><td>' + t[k].desc + '</td></tr>');//<td>' + this.getDownloadSize(t[k].key) + '</td></tr>');
-            }
-        } else if (feat[i] == "cons_res") {
-            table.append('<tbody><tr><td colspan="3"><b>Consensus Residues</b></td></tr></tbody>');
-            body = $('<tbody>');
-            var consResTypes = this.network.getConsensusResidues();
-            for (var ri = 0; ri < consResTypes.length; ri++) {
-                var consRes = consResTypes[ri];
-                var res = consRes.toLowerCase();
-                body.append('<tr><td>' + this.getDownloadButton("crpo"+res) + '</td><td>Consensus residue percentage summary table (' + consRes + ')</td></tr>');
-                table.append(body);
-            }
         }
     }
 
@@ -675,6 +758,29 @@ App.prototype.setClusterImage = function (onFinishFn) {
             window.location.href = that.getDownloadUrl("net");
         });
     }
+}
+App.prototype.setDicedClusterImage = function (dicedParent, onFinishFn) {
+    var that = this;
+    var imgPath = this.dataDir + "/../" + dicedParent;
+    $("#parentImg").attr("src", imgPath + "_sm.png");
+    $("#dicedParentImg").show();
+    $("#toggleParentImg").click(function() {
+        if (!$(this).data("hidden") || $(this).data("hidden") == false) {
+            $("#toggleParentImgIcon").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
+            $("#toggleParentImgText").text("Show");
+            $("#parentImg").removeClass("w-50").addClass("h-70px");
+            $(this).data("hidden", true);
+        } else {
+            $("#toggleParentImgIcon").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
+            $("#toggleParentImgText").text("Hide");
+            $("#parentImg").removeClass("h-70px").addClass("w-50");
+            $(this).data("hidden", false);
+        }
+    });
+    $("#downloadDicedParentImage").click(function (e) {
+        e.preventDefault();
+        window.location.href = that.getDownloadUrl("net", dicedParent);
+    });
 }
 // This should be called on the image
 App.prototype.addClusterHotspots = function (img) {
@@ -799,28 +905,46 @@ App.prototype.addSwissProtFunctions = function () {
     var list = this.network.getSwissProtFunctions();
     if (list === false || list.length == 0)
         return;
+
     var ecodes = this.network.getEnzymeCodes();
-    var ul = $('<ul class="expandable"></ul>');
-    for (var i = 0; i < list.length; i++) {
-        var parts = list[i][0].split("||");
-        var desc = parts[0];
-        if (parts.length > 0 && typeof parts[1] !== "undefined") {
-            var code = parts[1];
-            if (code) {
-                var codeDesc = ecodes[code];
-                var linkCode = '<a href="https://enzyme.expasy.org/EC/' + code + '">' + code + '</a>';
-                if (typeof codeDesc !== "undefined")
-                    codeDesc = '<span data-toggle="tooltip" title="' + codeDesc + '">' + linkCode + '</span>';
-                else
-                    codeDesc = linkCode;
-                desc += " (" + codeDesc + ")";
-            }
+    var ecFn = function(code) {
+        if (code) {
+            var codeDesc = ecodes[code];
+            var linkCode = '<a href="https://enzyme.expasy.org/EC/' + code + '">' + code + '</a>';
+            if (typeof codeDesc !== "undefined")
+                codeDesc = '<span data-toggle="tooltip" title="' + codeDesc + '">' + linkCode + '</span>';
+            else
+                codeDesc = linkCode;
+            desc += " (" + codeDesc + ")";
         }
-        var spItemIds = list[i][1].split(",").map(x => '<a href="https://www.uniprot.org/uniprot/'+x+'">'+x+'</a>').join("<br>\n");
-        ul.append('<li data-toggle="collapse" data-target="#spListItem' + i + '">' + desc + '<div class="collapse sp-list-item" id="spListItem' + i + '">' + spItemIds + '</div>' + '</li>');
-        spItemIds = "\t" + list[i][1].split(",").join("\n\t") + "\n";
-        $("#spModalIdListClip").append(desc + "\n" + spItemIds);
-    }
+    };
+    var clipFn = function (desc, spItemIds) {
+        $('#spModalIdListClip').append(desc + "\n" + spItemIds);
+    };
+    
+//    var ul = $('<ul class="expandable"></ul>');
+    var ul = addSwissProtList(list, ecFn, clipFn);
+
+//    for (var i = 0; i < list.length; i++) {
+//        var parts = list[i][0].split("||");
+//        var desc = parts[0];
+//        if (parts.length > 0 && typeof parts[1] !== "undefined") {
+//            var code = parts[1];
+//            if (code) {
+//                var codeDesc = ecodes[code];
+//                var linkCode = '<a href="https://enzyme.expasy.org/EC/' + code + '">' + code + '</a>';
+//                if (typeof codeDesc !== "undefined")
+//                    codeDesc = '<span data-toggle="tooltip" title="' + codeDesc + '">' + linkCode + '</span>';
+//                else
+//                    codeDesc = linkCode;
+//                desc += " (" + codeDesc + ")";
+//            }
+//        }
+//        var spItemIds = list[i][1].split(",").map(x => '<a href="https://www.uniprot.org/uniprot/'+x+'">'+x+'</a>').join("<br>\n");
+//        ul.append('<li data-toggle="collapse" data-target="#spListItem' + i + '">' + desc + '<div class="collapse sp-list-item" id="spListItem' + i + '">' + spItemIds + '</div>' + '</li>');
+//        spItemIds = "\t" + list[i][1].split(",").join("\n\t") + "\n";
+//        $("#spModalIdListClip").append(desc + "\n" + spItemIds);
+//    }
     $("#spFunctions").append(ul);
     $("#spFunctions ul li span").css({ "font-style": "italic" });
     $("#dataAvailableSp").click(function() { $("#spModal").modal(); }).enableDataAvailableButton();
@@ -842,6 +966,25 @@ App.prototype.addPdb = function () {
 }
 
 
+App.prototype.getUniRefVersion = function(useCurrent = true) {
+    if (useCurrent) {
+        var size = this.network.getCurrentSizes(this.network.Id);
+        var hasUniRef50 = size.uniref50 > 0;
+        return hasUniRef50 ? 50 : 90;
+    }
+    var kids = this.network.getRegions();
+    if (kids.length == 0) {
+        kids = this.network.getChildren();
+    }
+    var hasUniRef50 = false;
+    if (kids.length > 0) {
+        var size = this.network.getSizes(kids[kids.length-1].id);
+        hasUniRef50 = size.uniref50 > 0;
+    }
+    return hasUniRef50 ? 50 : 90;
+}
+
+
 App.prototype.addSubgroupTable = function (div) {
     var table = $('<table class="table table-hover w-auto"></table>');
 
@@ -853,11 +996,7 @@ App.prototype.addSubgroupTable = function (div) {
         if (kids.length == 0)
             kids = this.network.getChildren();
 
-        var hasUniRef50 = false;
-        if (kids.length > 0) {
-            var size = that.network.getSizes(kids[kids.length-1].id);
-            hasUniRef50 = size.uniref50 > 0;
-        }
+        var hasUniRef50 = this.getUniRefVersion(false) == 50 ? true : false;
 
         var headHtml = '<thead><tr class="text-center"><th>Cluster</th>';
         if (this.network.Id != "fullnetwork") //TODO: HACK
@@ -975,8 +1114,7 @@ function triggerDownload (imgURI) {
 
 App.prototype.addGndFeature = function() {
     var feat = this.network.getDisplayFeatures();
-    var hasData = feat.length > 0;
-    if (!hasData || !feat.includes("gnd") || this.network.getChildren().length > 0)
+    if (!feat.hasOwnProperty("gnd") || this.network.getChildren().length > 0)
         return;
 
     var that = this;
@@ -993,8 +1131,8 @@ App.prototype.addGndFeature = function() {
 }
 
 App.prototype.addSunburstFeature = function() {
-    var hasData = this.network.getDisplayFeatures().length > 0;
-    if (!hasData)
+    var feat = this.network.getDisplayFeatures();
+    if (!feat.hasOwnProperty("tax"))
         return;
 
     var that = this;
@@ -1116,6 +1254,11 @@ App.prototype.addSunburstFeature = function() {
         return $("input[name='sunburstIdType']:checked").val();
     };
 
+
+    if (this.getUniRefVersion() != 50) {
+        $("#sunburstIdTypeUniRef50Container").hide();
+    }
+
     $("#sunburstDlIds").click(function() {
         var idType = getIdType();
         var ids = getIdsFromTree(that.sbCurrentData, idType);
@@ -1126,12 +1269,18 @@ App.prototype.addSunburstFeature = function() {
             fname += idType + "_";
         fname += fixNodeName(that.sbCurrentData.node) + ".txt";
         var text = ids.join("\r\n");
+        //$("#sbDownloadBtn").show();
+        //$("#sunburstDownloadModal").show();
         $("#sbDownloadLink").attr("download", fname);
         $("#sbDownloadLink").attr("href", makeTextFile(text));
-        $("#sbDownloadLink").click(function() {
-            $("#sunburstDownloadModal").modal();
-        });
-        $("#sunburstDownloadModal").modal();
+        $("#sbDownloadLink")[0].click();
+        //$("#sbDownloadBtn").find("a").trigger("click"); //#sbDownloadLink
+        //$("#sbDownloadBtn").trigger("click"); //#sbDownloadLink
+        //$("#sbDownloadLink").click(function() {
+        //    //$("#sunburstDownloadModal").modal();
+        //    $("#sunburstDownloadModal").hide();
+        //});
+        //$("#sunburstDownloadModal").modal();
     });
     $("#sunburstDlFasta").click(function() {
         var idType = getIdType();
@@ -1155,6 +1304,7 @@ App.prototype.addSunburstFeature = function() {
         form.append(fidtype);
         $("body").append(form);
         $("#sbDownloadBtn").hide();
+        $("#sunburstDownloadModal").show();
         $("#sunburstDownloadModal h5").show();
         $("#sunburstDownloadModal").modal();
         form.submit();
