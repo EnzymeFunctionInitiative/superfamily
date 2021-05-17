@@ -1,78 +1,48 @@
 <?php
 
-require(__DIR__ . "/../conf/settings.inc.php");
+require_once(__DIR__ . "/../conf/settings.inc.php");
 
 class settings {
     public static function get_title() {
-        return defined("SF_TITLE") ? SF_TITLE : "Superfamily";
+        return defined("__TITLE__") ? __TITLE__ : "Superfamily";
     }
     public static function get_hmmscan_path() {
-        return defined("SF_HMMSCAN") ? SF_HMMSCAN : "";
+        return defined("__HMMSCAN_LEGACY__") ? __HMMSCAN_LEGACY__ : "";
     }
-    public static function get_hmmdb_path($version = "", $type = "") {
-        if ($version == "1.0" && defined("SF_HMMDB_V1")) {
-            return SF_HMMDB_V1;
-        } else if ($version == "2.0" && defined("SF_HMMDB_V2")) {
-            return SF_HMMDB_V2;
-        } else if (($version == "2.1" && defined("SF_HMMDB_V2_1")) || ($version == "2.2" && defined("SF_HMMDB_V2_2")) || ($version == "3.0" && defined("SF_HMMDB_V3_0"))) {
-            //TODO: handle dicing in subsequent versions
-            //HACK: make this flexible
-            $dir = ($version == "2.1" ? SF_HMMDB_V2_1 : ($version == "3.0" ? SF_HMMDB_V3_0 : SF_HMMDB_V2_2)) . "/hmm";
-            if (!$type || $type == "all" || !preg_match("/^[a-z]+$/", $type) || !file_exists("$dir/$type.txt"))
-                return array("$dir/all.hmm");
-            $lines = file("$dir/$type.txt");
-            $db_list = array();
-            for ($i = 0; $i < count($lines); $i++) {
-                $line = trim($lines[$i]);
-                $parts = explode("\t", $line);
-                if (count($parts) >= 3) {
-                    $file = "$dir/" . $parts[2]; // added in a later step . ".hmm";
-                    if (!isset($db_list[$parts[0]]))
-                        $db_list[$parts[0]] = array();
-                    array_push($db_list[$parts[0]], array($parts[1], $file));
-                }
-            }
-            return $db_list;
-        }
-        return defined("SF_HMMDB") ? SF_HMMDB : "";
+    public static function get_hmmscan2_path() {
+        return defined("__HMMSCAN__") ? __HMMSCAN__ : "";
+    }
+    public static function get_hmm_db_dir($version) {
+        $dir = self::get_base_dir_path($version);
+        $dir = "$dir/".__HMM_DB_DIR_NAME__;
+        return $dir;
+    }
+    public static function get_default_hmm_db_name() {
+        return __DEFAULT_HMM_DB__;
     }
     public static function get_tmpdir_path() {
-        return defined("SF_TMPDIR") ? SF_TMPDIR : "";
+        return __TEMP_DIR__;
     }
+    # Version must be validated before calling!!!!
     public static function get_base_dir_path($version = "") {
-        if ($version == "3.0" && defined("SF_BASE_DIR_V3_0"))
-            return SF_BASE_DIR_V3_0;
-        else
-            return "";
+        $dir = __DATA_BASE_DIR__;
+        if ($version)
+            $dir = "$dir/" . self::get_data_dir_name($version);
+        return $dir;
+    }
+    public static function get_data_dir_name ($version) {
+        return self::get_version_prefix() . "-$version";
     }
     public static function get_cluster_db_path($version = "") {
-        if ($version == "1.0" && defined("SF_CLUSTERDB_V1"))
-            return SF_CLUSTERDB_V1;
-        else if ($version == "2.0" && defined("SF_CLUSTERDB_V2"))
-            return SF_CLUSTERDB_V2;
-        else if ($version == "2.1" && defined("SF_CLUSTERDB_V2_1"))
-            return SF_CLUSTERDB_V2_1;
-        else if ($version == "2.2" && defined("SF_CLUSTERDB_V2_2"))
-            return SF_CLUSTERDB_V2_2;
-        else if ($version == "3.0" && defined("SF_CLUSTERDB_V3_0"))
-            return SF_CLUSTERDB_V3_0;
-        return defined("SF_CLUSTERDB") ? SF_CLUSTERDB : "";
+        $dir = self::get_base_dir_path($version);
+        return "$dir/" . self::get_db_file_name();
     }
-    public static function get_data_dir($version = "") {
-        if ($version == "1.0" && defined("SF_DATA_DIR_V1"))
-            return SF_DATA_DIR_V1;
-        else if ($version == "2.0" && defined("SF_DATA_DIR_V2"))
-            return SF_DATA_DIR_V2;
-        else if ($version == "2.1" && defined("SF_DATA_DIR_V2_1"))
-            return SF_DATA_DIR_V2_1;
-        else if ($version == "2.2" && defined("SF_DATA_DIR_V2_2"))
-            return SF_DATA_DIR_V2_2;
-        else if ($version == "3.0" && defined("SF_DATA_DIR_V3_0"))
-            return SF_DATA_DIR_V3_0;
-        return defined("SF_DATA_DIR") ? SF_DATA_DIR : "data";
+    public static function get_db_file_name() {
+        return __DATA_DB_FILE_NAME__;
     }
+
     public static function get_submit_email() {
-        return defined("SF_SUBMIT_EMAIL") ? SF_SUBMIT_EMAIL : "";
+        return defined("__SUBMIT_EMAIL__") ? __SUBMIT_EMAIL__ : "";
     }
     public static function get_version() {
         return defined("VERSION") ? VERSION : "";
@@ -82,10 +52,19 @@ class settings {
         return realpath($twig_dir);
     }
 
-    public static function get_gnd_key() {
-        $key_path = SF_GND_KEY_PATH;
-        $key = file_get_contents($key_path);
-        return $key;
+    public static function get_gnd_key_path($version) {
+        $key_path = self::get_base_dir_path($version) . "/" . __GND_KEY_FILE_NAME__;
+        return $key_path;
+    }
+
+    public static function get_version_prefix() {
+        return __DATA_VERSION_PREFIX__;
+    }
+    public static function get_version_db_file() {
+        return self::get_base_dir_path() . "/" . __DATA_VERSION_FILE__;
+    }
+    public static function get_default_version() {
+        return __DEFAULT_VERSION__;
     }
 }
 

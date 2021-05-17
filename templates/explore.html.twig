@@ -2,7 +2,7 @@
 {% set page_title = 'Explore' %}
 {% set page_active = 'explore' %}
 {% set extra_js = [
-                    'js/progress.js?v=1', 'js/app.js?v=37', 'js/network.js?v=11',
+                    'js/progress.js?v=1', 'js/app.js?v=40', 'js/network.js?v=12',
                     'js/sunburst/sunburst-chart.min.js', 'js/sunburst/circlepack-chart.min.js', 'js/sunburst/sunburst_helpers.js',
                     'js/imageMapResizer.min.js', 'js/jquery.maphilight.min.js', 'js/jquery.lazy.min.js'
                   ] %}
@@ -478,10 +478,11 @@
             var progress = new Progress($("#progressLoader"));
             progress.start();
 
-            initApp("2.2", "{{gnd_key}}");
+            initApp("3.0", "{{gnd_key}}");
             $('.lazy').Lazy();
     
             $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover();
         });
     </script>
 {% endblock %}

@@ -24,7 +24,7 @@ class functions {
         return $path;
     }
     public static function get_rel_data_dir_path($cluster = "", $version = "", $ascore = "", $child_id = "") {
-        $dir = settings::get_data_dir($version);
+        $dir = settings::get_data_dir_name($version);
         if (preg_match("/^[a-z0-9\-]+$/", $cluster)) {
             $dir = "$dir/$cluster";
             if (is_numeric($ascore)) {
@@ -35,16 +35,38 @@ class functions {
         }
         return $dir;
     }
+
     public static function validate_version($version = "") {
-        return self::filter_version($version);
+        return self::filter_version2($version);
     }
     public static function filter_version($version = "") {
         if (!$version)
             $version = $_GET["v"];
-        if ($version === "1.0" || $version === "2.0" || $version === "2.1" || $version === "2.2" || $version === "3.0")
-            return $version;
-        return "";
+        if (!$version)
+            $version = settings::get_default_version();
+        return $version;
     }
+    public static function filter_version2($version = "") {
+        if (!$version)
+            $version = $_GET["v"];
+        if (!$version)
+            $version = settings::get_default_version();
+
+        if (!preg_match("/^[\d\.]+$/", $version))
+            return false;
+        
+        $fpath = settings::get_version_db_file();
+        $lines = file($fpath);
+        if ($lines === false)
+            return false;
+
+        for ($i = 0; $i < count($lines); $i++) {
+            if (trim($lines[$i]) == $version)
+                return $version;
+        }
+        return false;
+    }
+
     public static function validate_cluster_id($db, $id) {
         $check_fn = function($db, $id, $table_name, $col_name) {
             $sql = "SELECT $col_name FROM $table_name WHERE cluster_id = :id";
@@ -67,6 +89,7 @@ class functions {
         else
             return false;
     }
+
     public static function get_ssn_path($db, $cluster) {
         $sql = "SELECT ssn FROM ssn WHERE cluster_id = :id";
         $sth = $db->prepare($sql);
@@ -79,6 +102,7 @@ class functions {
         }
         return $data;
     }
+
     public static function get_generic_sql($table, $parm, $extra_where = "", $check_only = false) {
         if ($check_only)
             $sql = "SELECT COUNT(*) AS $parm FROM $table WHERE cluster_id = :id $extra_where";
@@ -132,6 +156,7 @@ class functions {
         $basepath = functions::get_data_dir_path($parent_cluster_id, $version, $ascore, $child_cluster_id);
         return $basepath;
     }
+
     public static function send_headers($filename, $filesize, $type = "application/octet-stream") {
         header('Pragma: public');
         header('Expires: 0');
@@ -155,6 +180,48 @@ class functions {
             ob_flush();
             flush();
         }
+    }
+
+    public static function get_gnd_key ($version) {
+        $key_path = settings::get_gnd_key_path($version);
+        if (!file_exists($key_path))
+            return "";
+        $key = file_get_contents($key_path);
+        return $key;
+    }
+    
+    public static function get_hmmdb_path($version, $group) {
+        $dir = settings::get_hmm_db_dir($version);
+        //if (!$group || $group == "all" || !preg_match("/^[a-z]+$/", $group) || !file_exists("$dir/$group.txt")) {
+        if (!$group || $group == "all" || !preg_match("/^[a-z]+$/", $group) || !preg_match("/^dic(ed|ing)/", $group)) {
+            $file = "$dir/" . settings::get_default_hmm_db_name();
+            if (file_exists($file))
+                return array($file);
+            else
+                return false;
+        }
+
+        $db_files = glob("$dir/$group-*");
+        $db_list = array();
+        foreach ($db_files as $filename) {
+            preg_match("/dic(ed|ing)-(cluster-[\-0-9]+)\.txt$/", $filename, $matches);
+            $cluster = $matches[2];
+            $db_list[$cluster] = $filename;
+        }
+        return $db_list;
+//        $lines = file("$dir/$group.txt");
+//        $db_list = array();
+//        for ($i = 0; $i < count($lines); $i++) {
+//            $line = trim($lines[$i]);
+//            $parts = explode("\t", $line);
+//            if (count($parts) >= 3) {
+//                $file = "$dir/" . $parts[2]; // added in a later step . ".hmm";
+//                if (!isset($db_list[$parts[0]]))
+//                    $db_list[$parts[0]] = array();
+//                array_push($db_list[$parts[0]], array($parts[1], $file));
+//            }
+//        }
+//        return $db_list;
     }
 }
 
