@@ -2,31 +2,49 @@
 {% set page_title = 'Explore' %}
 {% set page_active = 'explore' %}
 {% set extra_js = [
-                    'js/progress.js?v=1', 'js/app.js?v=40', 'js/network.js?v=12',
+                      'js/app/progress.js?v=1',
+                          'js/app/util.js?v=1',
+                     'js/app/swissprot.js?v=1',
+                        'js/app/uniref.js?v=1',
+                      'js/app/sunburst.js?v=1',
+                    'js/app/navigation.js?v=1',
+                 'js/app/data_features.js?v=1',
+                      'js/app/app_meta.js?v=1',
+                         'js/app/image.js?v=1',
+                           'js/app/url.js?v=1',
+                         'js/app/diced.js?v=1',
+                      'js/app/app_data.js?v=12',
+                           'js/app/app.js?v=40',
                     'js/sunburst/sunburst-chart.min.js', 'js/sunburst/circlepack-chart.min.js', 'js/sunburst/sunburst_helpers.js',
                     'js/imageMapResizer.min.js', 'js/jquery.maphilight.min.js', 'js/jquery.lazy.min.js'
                   ] %}
 
 
 {% block content %}
+
         <div class="container">
             <nav aria-label="breadcrumb" id="exploreBreadcrumb" style="display: none;">
             </nav>
             <div class="container">
                 <h1 class="text-center" id="familyTitle"></h1>
-                <div>
+            </div>
+            <div class="container">
+                <div id="dicedContainer" style="display: none">
                     <div id="dicedParentImg" style="display: none">
                         <div class="border border-dark rounded p-2 mb-2 text-center w-100">
                             <img src="img/blank.png" class="img-fluid w-50" id="parentImg" />
                         </div>
+                        <div class="float-right download-btn ml-5" data-toggle="tooltip" title="Download high-resolution" id="downloadDicedParentImage">PNG <i class="fas fa-download"></i></div>
                         <div class="float-right download-btn">
                             <button class="btn btn-outline-secondary btn-sm btn-tiny" id="toggleParentImg"><i class="fas fa-chevron-circle-up" style="cursor: pointer" id="toggleParentImgIcon"></i> <span id="toggleParentImgText">Hide</span> Primary Cluster Image</button>
                         </div>
                         <div style="clear:both"></div>
                     </div>
-                    <div id="clusterNums" class="w-100 container-cluster-num pl-2 pr-2"></div>
-                    <div id="dicedNav" class="diced-nav w-100 form-inline "></div>
-                    <div>
+                    <div id="dicedNav" class="diced-nav w-100 mt-3 form-inline "></div>
+                </div>
+                <div>
+                    <div id="clusterNums" class="w-100 container-cluster-num pl-2 pr-2" style="display: none"></div>
+                    <div id="clusterImgContainer">
                         <div class="border border-dark rounded p-2 mb-2 float-right w-100">
                             <img src="img/blank.png" class="img-fluid" id="clusterImg" />
                         </div>
@@ -51,6 +69,11 @@
                                 Convergence Ratio: <b><span id="convRatio" style="margin-right: 40px"></span></b>
                                 SSN Convergence Ratio: <b><span id="ssnConvRatio"></span></b>
                             </div>
+                            <div id="consensusResidueContainer" style="display: none">
+                                <div class="cluster-size float-left">Conserved Cys Residues: </div>
+                                <div id="consensusResidue" class="float-left ml-2"></div>
+                                <div style="clear: both"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -61,15 +84,101 @@
             <div class="alert alert-danger" role="alert" id="loadError" style="display: none"></div>
             <p class="text-center" id="clusterDesc">
             </p>
+        </div>
 
-            <div id="dicingInfo" style="display: none" class="dicing-info">
-                This cluster was diced.  TODO: put some description here??
+        <div class="container">
+            <div id="childTabs" style="display: none">
+                <ul class="nav nav-tabs nav-intro-tabs" id="childTabsHdr" role="tablist">
+                    <li class="nav-item"><a href="#childDownload"   id="tab-child-download" class="nav-link active" data-toggle="tab" role="tab" aria-controls="download"  aria-selected="false">Data File Download</a></li>
+                    <li class="nav-item"><a href="#childLogo"       id="tab-child-logo"     class="nav-link" data-toggle="tab" role="tab" aria-controls="logo"      aria-selected="false">WebLogos</a></li>
+                    <li class="nav-item" id="childConsResListItem"><a href="#childConsRes"    id="tab-child-cons-res" class="nav-link" data-toggle="tab" role="tab" aria-controls="cons-res"  aria-selected="false">Consensus Cys Residues</a></li>
+                    <li class="nav-item"><a href="#childHmm"        id="tab-child-hmm"      class="nav-link" data-toggle="tab" role="tab" aria-controls="hmm"       aria-selected="false">HMMs</a></li>
+                    <li class="nav-item"><a href="#childHisto"      id="tab-child-histo"    class="nav-link" data-toggle="tab" role="tab" aria-controls="histo"     aria-selected="false">Length Histograms</a></li>
+                </ul>
+                <div class="tab-content" id="childTabContent">
+                    <div class="tab-pane fade child-tab-pane show active"  id="childDownload"  role="tabpanel" aria-labelledby="tab-child-download">
+                    </div>
+                    <div class="tab-pane fade child-tab-pane show"         id="childLogo"      role="tabpanel" aria-labelledby="tab-child-logo">
+                    </div>
+                    <div class="tab-pane fade child-tab-pane show"         id="childConsRes"   role="tabpanel" aria-labelledby="tab-child-cons-res" style="min-height: 500px">
+                    </div>
+                    <div class="tab-pane fade child-tab-pane show"         id="childHmm"       role="tabpanel" aria-labelledby="tab-child-hmm">
+                    </div>
+                    <div class="tab-pane fade child-tab-pane show"         id="childHisto"     role="tabpanel" aria-labelledby="tab-child-histo">
+                    </div>
+                </div>
+            </div>
+            <div id="subgroupTable" style="display: none">
+                <h3 class="explore-heading">Sub-clusters (Segregated Into Higher Alignment Scores)</h3>
             </div>
 
-            <!--
-            <div id="contentTabsDiv">
--->
-            <div id="altSsn" style="display: none">
+            <!-- // HISTOGRAM, WEB LOGO, AND DOWNLOADS //////////////////////////////////////////// -->
+            <div id="displayFeatures" style="display: none">
+                <div class="row">
+                    <div id="weblogoContainer" class="col" style="display: none">
+                        <h5>WebLogo</h5>
+                        <div class="float-right download-btn" data-toggle="tooltip" title="Download high-resolution" id="downloadWeblogoImage">PNG <i class="fas fa-download"></i></div>
+                        <div id="weblogo"></div>
+                    </div>
+                    <div class="col">
+                        <div id="lengthHistogramContainer" style="display: none">
+                        </div>
+                        <div id="downloadContainer" style="display: none">
+                            <h3 class="explore-heading">Downloads</h3>
+                            <div id="downloads"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- // METADATA, SUCH AS ANNOTATIONS AND PUBLICATIONS //////////////////////////////// -->
+            <div id="metadataContainer" style="display: none">
+                <div id="otherAnnoContainer">
+                    <h3>Public Annotation Databases</h3>
+                </div>
+
+                <div id="commAnno">
+                    <h3>Community Annotations</h3>
+                    <div id="noCommAnno">
+                        <p>
+                        No community annotations are available for this cluster.  
+                        </p>
+                        <p>
+                        We are accepting <a href="submit.html" id="submitAnnoLink">submissions for community-driven annotations</a>.
+                        </p>
+                    </div>
+                    <div id="commAnnoTable"></div>
+                </div>
+
+                <div id="publicationsContainer">
+                    <h3>Publications</h3>
+                    <div id="publications">
+                        No publications are available for this cluster.  Please contact us to contribute a
+                        citation to this page.
+                    </div>
+                </div>
+
+                <div id="familyListContainer">
+                    <div id="tigrfamContainer">
+                        <h3>TIGR Families</h3>
+                        <div id="tigrFams"></div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /container -->
+
+        <!-- // DISPLAY THE VARIOUS DICINGS ///////////////////////////////////////////////////// -->
+        <div class="container" style="display: none">
+            <div class="container">
+                <div id="dicedIntroContainer" class="row border border-dark rounded p-2" style="display: none">
+                    <ul class="nav nav-pills mb-3 border-bottom border-medium" id="dicedAscoreTabList" role="tablist">
+                    </ul>
+                    <div class="tab-content ml-2" id="dicedAscoreTabs">
+                    </div>
+                </div>
+            </div>
+
+            <div id="altSsn">
                 <h3 class="explore-heading">Additional Alignment Score Segregations</h3>
                 <div id="altSsnPrimary" style="display: none">
                     <p>
@@ -176,138 +285,6 @@
                     UniProt IDs.  The Color SSNs generated with increasing alignment scores are colored 
                     independently, so clusters in different Color SSNs with the same color need not be related.
                     </p>
-
-                    <!--
-                    <p>
-                    The tabs provide several types of information generated with the "Cluster Analysis" utility:  
-                    </p>
-
-                    <p>
-                    The <span class="link-dl">DATA FILE DOWNLOAD</span> tab provides the Color SSN along with folders with lists of IDs and 
-                    FASTA sequences for all clusters in the SSN.   
-                    </p>
-
-                    <p>
-                    The <span class="link-dl">WEBLOGOS</span> tab provides the WebLogo and MSA for each cluster with &ge;3 nodes (UniRef50 IDs).  
-                    </p>
-
-                    <p>
-                    The <span class="link-dl">CONSENSUS CYS RESIDUES</span> tab provides the positions of conserved Cys residues for each 
-                    cluster with &ge;3 nodes (UniRef50 IDs).  
-                    </p>
-
-                    <p>
-                    The <span class="link-dl">HMMS</span> tab provides the HMM for each cluster with &ge;3 nodes (UniRef50 IDs).  
-                    </p>
-
-                    <p>
-                    The <span class="link-dl">LENGTH HISTOGRAMS</span> tab provides length histograms for the UniProt and UniRef50 IDs for 
-                    each cluster with &ge;3 nodes (UniRef50 IDs).  
-                    </p>
-
-                    <p>
-                    The <span class="link-dl">WEBLOGOS</span>, <span class="link-dl">HMMS</span>, and <span class="link-dl">LENGTH HISTOGRAMS</span> provide a link to the the Explore page
-                    for the cluster that provides information/downloads for the cluster.
-                    </p>
-                    -->
-                </div>
-            </div>
-            <div id="childTabs" style="display: none">
-                <ul class="nav nav-tabs nav-intro-tabs" id="childTabsHdr" role="tablist">
-                    <li class="nav-item"><a href="#childDownload"   id="tab-child-download" class="nav-link active" data-toggle="tab" role="tab" aria-controls="download"  aria-selected="false">Data File Download</a></li>
-                    <li class="nav-item"><a href="#childLogo"       id="tab-child-logo"     class="nav-link" data-toggle="tab" role="tab" aria-controls="logo"      aria-selected="false">WebLogos</a></li>
-                    <li class="nav-item" id="childConsResListItem"><a href="#childConsRes"    id="tab-child-cons-res" class="nav-link" data-toggle="tab" role="tab" aria-controls="cons-res"  aria-selected="false">Consensus Cys Residues</a></li>
-                    <li class="nav-item"><a href="#childHmm"        id="tab-child-hmm"      class="nav-link" data-toggle="tab" role="tab" aria-controls="hmm"       aria-selected="false">HMMs</a></li>
-                    <li class="nav-item"><a href="#childHisto"      id="tab-child-histo"    class="nav-link" data-toggle="tab" role="tab" aria-controls="histo"     aria-selected="false">Length Histograms</a></li>
-                </ul>
-                <div class="tab-content" id="childTabContent">
-                    <div class="tab-pane fade child-tab-pane show active"  id="childDownload"  role="tabpanel" aria-labelledby="tab-child-download">
-                    </div>
-                    <div class="tab-pane fade child-tab-pane show"         id="childLogo"      role="tabpanel" aria-labelledby="tab-child-logo">
-                    </div>
-                    <div class="tab-pane fade child-tab-pane show"         id="childConsRes"   role="tabpanel" aria-labelledby="tab-child-cons-res" style="min-height: 500px">
-                    </div>
-                    <div class="tab-pane fade child-tab-pane show"         id="childHmm"       role="tabpanel" aria-labelledby="tab-child-hmm">
-                    </div>
-                    <div class="tab-pane fade child-tab-pane show"         id="childHisto"     role="tabpanel" aria-labelledby="tab-child-histo">
-                    </div>
-                </div>
-            </div>
-            <div id="subgroupTable" style="display: none">
-                <h3 class="explore-heading">Sub-clusters (Segregated Into Higher Alignment Scores)</h3>
-            </div>
-            <div id="displayFeatures" style="display: none">
-                <div id="summaryInfoContainer">
-                    <!--<div id="derivationContainerBottom">
-                        <b>DERIVATION:</b> IPR007197+IPR006638 // AS##,
-                        edge-edited<span data-toggle="tooltip" title="Edge editing is done to ensure that clusters with very low connectivity to other parts of the network are isolated." style="font-size: 0.8em;"><sup><i class="fas fa-question-circle"></i></sup></span>
-                        and isolated // AS##,
-                        edge-edited<span data-toggle="tooltip" title="Edge editing is done to ensure that clusters with very low connectivity to other parts of the network are isolated." style="font-size: 0.8em;"><sup><i class="fas fa-question-circle"></i></sup></span>
-                        and isolated // HMM developed from isofunctional cluster
-                    </div>-->
-                    <!--
-                    <div id="spFunctionContainer" style="display: none">
-                        <h3>Swiss-Prot Functions</h3>
-                        <div id="spFunctions"></div>
-                    </div>
-                    -->
-                </div>
-                <!--<h3 class="explore-heading">Length Histograms and WebLogo</h3>-->
-                <div class="row">
-                    <div id="weblogoContainer" class="col" style="display: none">
-                        <h5>WebLogo</h5>
-                        <div class="float-right download-btn" data-toggle="tooltip" title="Download high-resolution" id="downloadWeblogoImage">PNG <i class="fas fa-download"></i></div>
-                        <div id="weblogo"></div>
-                    </div>
-                    <div class="col">
-                        <div id="lengthHistogramContainer" style="display: none">
-                        </div>
-                        <div id="downloadContainer" style="display: none">
-                            <h3 class="explore-heading">Downloads</h3>
-                            <div id="downloads"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!--
-            <div id="downloadContainer" style="display: none">
-                <h3 class="explore-heading">Downloads</h3>
-                <div id="downloads"></div>
-            </div>
-            -->
-
-            <div id="metadataContainer" style="display: none">
-                <div id="otherAnnoContainer">
-                    <h3>Public Annotation Databases</h3>
-                </div>
-
-                <div id="commAnno">
-                    <h3>Community Annotations</h3>
-                    <div id="noCommAnno">
-                        <p>
-                        No community annotations are available for this cluster.  
-                        </p>
-                        <p>
-                        We are accepting <a href="submit.html" id="submitAnnoLink">submissions for community-driven annotations</a>.
-                        </p>
-                    </div>
-                    <div id="commAnnoTable"></div>
-                </div>
-
-                <div id="publicationsContainer">
-                    <h3>Publications</h3>
-                    <div id="publications">
-                        No publications are available for this cluster.  Please contact us to contribute a
-                        citation to this page.
-                    </div>
-                </div>
-
-                <div id="familyListContainer">
-                    <div id="tigrfamContainer">
-                        <h3>TIGR Families</h3>
-                        <div id="tigrFams"></div>
-                    </div>
                 </div>
             </div>
         </div> <!-- /container -->
@@ -331,6 +308,23 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default mr-auto copy-btn" data-clipboard-target="keggIdListClip" data-id="keggIdListClip">Copy <i class="far fa-copy"></i></button>
+                    <button type="button" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="clusterAsNavModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alignment Score Walk-Through</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div id="clusterAsNavList" class="">
+                    </div>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -425,12 +419,12 @@
                                 <label class="form-check-label" for="sunburstIdTypeUniProt">UniProt</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniRef50" value="uniref50">
-                                <label class="form-check-label" for="sunburstIdTypeUniRef50">UniRef50</label>
-                            </div>
-                            <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniRef90" value="uniref90">
                                 <label class="form-check-label" for="sunburstIdTypeUniRef90">UniRef90</label>
+                            </div>
+                            <div class="form-check form-check-inline" id="sunburstIdTypeUniRef50Container">
+                                <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniRef50" value="uniref50">
+                                <label class="form-check-label" for="sunburstIdTypeUniRef50">UniRef50</label>
                             </div>
 <!--
                             <select class="form-control w-50" data-toggle="tooltip" title="By default the full set of UniProt IDs is downloaded. By selecting this option, only the UniRef50 IDs will be downloaded.">

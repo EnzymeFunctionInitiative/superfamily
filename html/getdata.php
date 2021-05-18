@@ -238,8 +238,10 @@ function get_cluster($db, $cluster_id, $ascore, $version, $qversion, &$timings) 
         } else {
             $ascores = get_alt_ssns($db, $cluster_id);
             //TODO: redirect to requested ascore
+            //$redir_ascore = $ascores[0][0];
+            $redir_ascore = $ascore;
             if (isset($ascores[0][0])) {
-                $data["REDIRECT"]["as"] = $ascores[0][0];
+                $data["REDIRECT"]["as"] = $redir_ascore;
                 $data["REDIRECT"]["cluster_id"] = $cluster_id . "-" . $data["dicing"]["children"][0];
             }
         }
