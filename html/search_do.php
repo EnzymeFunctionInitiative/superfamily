@@ -26,7 +26,10 @@ if (!$query && !$id && $type != "tax-prefetch") {
 }
 $version = functions::validate_version(isset($_POST["v"]) ? $_POST["v"] : "");
 
+
+
 if ($type == "seq") {
+    $oquery = $query;
     $seq = preg_replace("/>.*?[\r\n]+/", "", $query);
 
     $cache_file = "results.json";
@@ -36,6 +39,9 @@ if ($type == "seq") {
         $json = file_get_contents($cache_file);
     } else {
         $job_id = functions::get_id();
+        
+        $file = settings::get_cluster_db_path($version);
+        $db = new SQLite3($file);
     
         $out_dir = settings::get_tmpdir_path() . "/" . $job_id;
         $cache_file = "$out_dir/$cache_file";
@@ -46,21 +52,85 @@ if ($type == "seq") {
         file_put_contents($seq_file, $seq);
 
         $hmmdb = functions::get_hmmdb_path($version, "all");
-        $matches = hmmscan($out_dir, $hmmdb[0], $seq_file);
+        $matches_raw = hmmscan($out_dir, $hmmdb[0], $seq_file);
+
+        $make_sql = function($cluster, $use_diced = false) {
+            $table_prefix = "";
+            $name_col = "NET.name AS name";
+            $name_join = "";
+            if ($use_diced) {
+                $table_prefix = "diced_";
+                $name_join = "LEFT JOIN network ON network.cluster_id = NET.parent_id";
+                $name_col = "network.name AS name";
+            }
+
+            $sql = 
+                  " SELECT SZ.uniprot AS uniprot, SZ.uniref90 AS uniref90,"
+                  . " CR.conv_ratio AS conv_ratio,"
+                  . " $name_col"
+                  . " FROM ${table_prefix}size AS SZ"
+                  . " LEFT JOIN ${table_prefix}conv_ratio AS CR ON SZ.cluster_id = CR.cluster_id"
+                  . " LEFT JOIN ${table_prefix}network AS NET ON SZ.cluster_id = NET.cluster_id"
+                  . " $name_join"
+                  . " WHERE SZ.cluster_id = '$cluster'";
+            return $sql;
+        };
+
+        $process_cluster = function($matches_raw, $use_diced = false) use ($make_sql, $db) {
+            $data = array();
+            foreach ($matches_raw as $match) {
+                $sql = $make_sql($match[0], $use_diced);
+//                print "$sql\n\n\n";
+                $results = $db->query($sql);
+                $row = $results->fetchArray();
+                $the_name = $row["name"];
+                if ($use_diced) {
+                    $parts = explode("-", $match[0]);
+                    $the_name = $the_name . "-" . $parts[count($parts)-1];
+                }
+                $out_row = array("cluster" => $match[0], "evalue" => $match[1], "num_up" => $row["uniprot"], "num_ur" => $row["uniref90"], "cr" => $row["conv_ratio"], "name" => $the_name);
+                array_push($data, $out_row);
+            }
+            return $data;
+        };
+
+        $data = $process_cluster($matches_raw);
+        $matches = array(array("ascore" => "", "parent" => "", "clusters" => $data));
     
-        $diced_db = functions::get_hmmdb_path($version, "diced");
         $dmatches = array();
+        $diced_db = functions::get_hmmdb_path($version, "diced");
+//        $ascore_sql = "SELECT DID.cluster_id AS cluster_id, DID.ascore AS ascore,"
+//            . " DS.uniprot AS uniprot, DS.uniref90 AS uniref90,"
+//            . " CR.conv_ratio AS conv_ratio"
+//            . " FROM diced_id_mapping AS DID"
+//            . " LEFT JOIN diced_size AS DS ON (DID.cluster_id = DS.cluster_id AND DID.ascore = DS.ascore)"
+//            . " LEFT JOIN diced_conv_ratio AS CR ON (DID.cluster_id = CR.cluster_id AND DID.ascore = CR.ascore)"
+//            . " WHERE DID.uniprot_id = '$id'";
+//
         // Check if matches are the parent diced cluster.  If so, then we search the diced clusters.
-        if (count($matches) > 0) {
-            $dicings = get_parent($diced_db, $matches[0][0]);
+        if (count($matches_raw) > 0) {
+            $dicings = get_parent($diced_db, $matches_raw[0][0]);
             if ($dicings !== false) {
                 $dm = search_diced($out_dir, $dicings, $seq_file);
-                if ($dm !== false)
-                    $dmatches = $dm;
+                if ($dm !== false) {
+                    foreach ($dm as $cluster => $cluster_raw) {
+                        $cluster_data = array();
+                        $sql = "SELECT network.name FROM diced_network LEFT JOIN network ON diced_network.parent_id = network.cluster_id WHERE diced_network.parent_id = '$cluster'";
+                        $results = $db->query($sql);
+                        $row = $results->fetchArray();
+                        $parent = $row["name"];
+                        foreach ($cluster_raw as $ascore => $dmatches_raw) {
+                            $data = $process_cluster($dmatches_raw, true);
+                            array_push($dmatches, array("ascore" => $ascore, "parent" => $parent, "clusters" => $data));
+                            //array_push($cluster_data, array("ascore" => $ascore, "parent" => "TODO", "clusters" => $data));
+                        }
+                        //array_push($dmatches, $cluster_data);
+                    }
+                }
             }
         }
     
-        $json = json_encode(array("status" => true, "matches" => $matches, "diced_matches" => $dmatches, "id" => $job_id));
+        $json = json_encode(array("status" => true, "matches" => $matches, "diced_matches" => $dmatches, "id" => $job_id, "query" => str_replace("\n", "^", $query)));
         file_put_contents($cache_file, $json);
     }
     print $json;
@@ -78,10 +148,28 @@ if ($type == "seq") {
         $id = $db->escapeString($query);
     
         // First check if this is in the diced clusters.
-        $ascore_sql = "SELECT cluster_id, ascore FROM diced_id_mapping WHERE uniprot_id = '$id'";
+        //$ascore_sql = "SELECT DID.cluster_id AS cluster_id, DID.ascore AS ascore, DS.uniprot AS uniprot, DS.uniref90 AS uniref90 " .
+        //    "FROM diced_id_mapping AS DID LEFT JOIN diced_size AS DS ON (DID.cluster_id = DS.cluster_id AND DID.ascore = DS.ascore) " .
+        //    "WHERE DID.uniprot_id = '$id'";
+        $ascore_sql = "SELECT DID.cluster_id AS cluster_id, DID.ascore AS ascore,"
+            . " DS.uniprot AS uniprot, DS.uniref90 AS uniref90,"
+            . " CR.conv_ratio AS conv_ratio,"
+            . " NET.name AS name"
+            . " FROM diced_id_mapping AS DID"
+            . " LEFT JOIN diced_size AS DS ON (DID.cluster_id = DS.cluster_id AND DID.ascore = DS.ascore)"
+            . " LEFT JOIN diced_conv_ratio AS CR ON (DID.cluster_id = CR.cluster_id AND DID.ascore = CR.ascore)"
+            . " LEFT JOIN diced_network AS DN ON (DID.cluster_id = DN.cluster_id AND DID.ascore = DN.ascore)"
+            . " LEFT JOIN network AS NET ON (NET.cluster_id = DN.parent_id)"
+            . " WHERE DID.uniprot_id = '$id'";
         $results = $db->query($ascore_sql);
         $cluster_id = array();
+        $data = array();
         while ($row = $results->fetchArray()) {
+            $parts = explode("-", $row["cluster_id"]);
+            array_splice($parts, count($parts)-1);
+            $parent = implode("-", $parts);
+            $out_row = array("cluster" => $row["cluster_id"], "num_up" => $row["uniprot"], "num_ur" => $row["uniref90"], "cr" => $row["conv_ratio"]);
+            array_push($data, array("clusters" => array($out_row), "ascore" => $row["ascore"], "parent" => $row["name"]));
             $cluster_id[$row["ascore"]] = $row["cluster_id"];
         }
     
@@ -99,7 +187,7 @@ if ($type == "seq") {
         
         $job_id = functions::get_id();
         if ((is_array($cluster_id) && count($cluster_id) > 0) || (!is_array($cluster_id) && $cluster_id))
-            $json = json_encode(array("status" => true, "cluster_id" => $cluster_id, "id" => $job_id));
+            $json = json_encode(array("status" => true, "cluster_data" => $data, "id" => $job_id, "query" => $id));
         else
             $json = json_encode(array("status" => false, "message" => "ID not found"));
     
@@ -353,27 +441,7 @@ function get_parent($diced_db, $first_match) {
 
 
 function search_diced($out_dir, $dicing_db, $seq_file) {
-//        $diced_parent = get_parents($diced_db, $matches);
-//        if ($diced_parent)
-//            $dmatches = search_diced($diced_db, $diced_parent);
-//    
-//        if (count($diced_db) > 0) {
-//            $diced = false;
-//            // Check first dicing of each cluster
-//            $first = true;
-//            foreach ($diced_db as $parent_cluster => $dicings) {
-    $dmatches = false;
-//    foreach ($dicings as $info) {
-//        $ascore = $info[0];
-//        $hmm = $info[1];
-        $diced_matches = hmmscan2($out_dir, $dicing_db, $seq_file);
-        // Skip to next cluster group, no need to cycle through all of the dicings since if it's not in one dicing it's not going to be in the others
-//        if (count($diced_matches) == 0)
-//            break;
-//        if ($first)
-//            $first = false;
-//        $dmatches[$parent_cluster][$ascore] = $diced_matches;
-//    }
+    $diced_matches = hmmscan2($out_dir, $dicing_db, $seq_file);
     return $diced_matches;
 }
 

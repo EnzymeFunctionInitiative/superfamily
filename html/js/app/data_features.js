@@ -97,8 +97,8 @@ AppDataFeatures.prototype.addGndFeature = function() {
     var that = this.appMeta;
     $("#dataAvailableGnd").click(function() {
         var gndParms = 'rs-id=' + that.Id;
-        if (that.AlignmentScore)
-            gndParms += ":" + that.AlignmentScore;
+        if (that.Ascore)
+            gndParms += ":" + that.Ascore;
         if (that.Version)
             gndParms += '&rs-ver=' + that.Version;
         if (that.GndKey)
@@ -108,13 +108,13 @@ AppDataFeatures.prototype.addGndFeature = function() {
     }).enableDataAvailableButton();
 }
 
-AppDataFeatures.prototype.addClusterSize = function () {
+AppDataFeatures.prototype.addClusterSize = function (divId) {
     var size = this.appData.getCurrentSizes();
     if (size === false)
         return;
-    $("#clusterSize").append('UniProt: <b>' + commify(size.uniprot) + '</b>, UniRef90: <b>' + commify(size.uniref90) + '</b>');
+    $("#"+divId).append('UniProt: <b>' + commify(size.uniprot) + '</b>, UniRef90: <b>' + commify(size.uniref90) + '</b>');
     if (size.uniref50 > 0)
-        $("#clusterSize").append(', UniRef50: <b>' + commify(size.uniref50) + '</b>');
+        $("#"+divId).append(', UniRef50: <b>' + commify(size.uniref50) + '</b>');
     $("#clusterSizeContainer").show();
 }
 AppDataFeatures.prototype.addConvRatio = function () {
@@ -131,6 +131,7 @@ AppDataFeatures.prototype.addConsRes = function () {
     if (typeof cs === "undefined" || cs === false)
         return;
     var consResContents = "";
+    var showConsRes = false;
     if (Array.isArray(cs)) {
         var consResContents = $('<div class="float-left"></div>');
         for (var i = 0; i < cs.length; i++) {
@@ -140,10 +141,14 @@ AppDataFeatures.prototype.addConsRes = function () {
             var div = '<div class="float-left ml-3 text-center"><b>' + cs[i].num_res + '</b><br><sup>' + cs[i].percent + '%</sup></div>';
             consResContents.append(div);
         }
+        showConsRes = cs.length > 0;
     } else {
         consResContents = '<b>' + cs.num_res + '</b>' + ' (70%)';
+        showConsRes = true;
     }
     $("#consensusResidue").append(consResContents);
+    if (showConsRes)
+        $("#consensusResidueContainer").show();
 }
 
 

@@ -2,7 +2,12 @@
 {% set page_title = 'Search' %}
 {% set page_active = 'search' %}
 {% set extra_css = ['css/typeahead.css?v=3'] %}
-{% set extra_js = ['js/typeahead.bundle.js', 'js/network.js', 'js/search.js?v=13', 'js/progress.js?v=1'] %}
+{% set extra_js = [ 'js/typeahead.bundle.js',
+                    'js/app/app_data.js?v=12',
+                    'js/app/search.js?v=14',
+                    'js/app/progress.js?v=1',
+                    'js/app/color.js?v=1',
+                  ] %}
 
 {% block content %}
 
@@ -14,21 +19,28 @@
                 <p>
                 Input a UniProt ID to identify its cluster.
                 </p>
+
                 <p>
-                For all but megacluster-1-1 (subgroup-17, SPASM/Twitch domain) and megacluster-2-1 (subgroup 5, 
-                B12-binding domain), the search identifies the cluster that contains the user-specified UniProt 
-                ID.  The cluster is a link to the <a href="explore.php">Explore</a> page that provides information for the cluster, 
-                including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences. 
+                For all but Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain),
+                Megacluster-2-1 (SFLD Subgroup 5, B12-binding domain), Megacluster-2-2 (SFLD
+                Subgroup 2, anaerobic coproporphyrinogen-III oxidase-like), or Cluster-7 ((SFLD
+                Subgroup 16, PLP-dependent), the search opens the Explore page for the cluster
+                that contains the user-specified UniProt ID. 
                 </p>
+                
                 <p>
-                For megacluster-1-1 and megacluster-2-1, the search identifies the cluster (if &ge;3 
-                nodes/UniRef50 IDs) in each Color SSN that contains the ID.
-                <!--If the sequence does not match a 
-                cluster HMMs, the ID is identified as a member of Megacluster-1-1 or Megacluster-2-1.-->
+                For Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain), Megacluster-2-1
+                (SFLD Subgroup 5, B12-binding domain), Megacluster-2-2 (SFLD Subgroup 2,
+                anaerobic coproporphyrinogen-III oxidase-like), or Cluster-7 ((SFLD Subgroup
+                16, PLP-dependent), the search identifies the cluster (if ≥3 nodes/UniRef50
+                IDs) in each “diced” SSN that contains the ID.  The number of UniProt IDs,
+                number of cluster nodes, and UniProt ID convergence ratio (CR; described on the
+                Subgroups tab) are provided for each identified cluster.
                 </p>
+                
                 <p>
-                In the generation of the megaclusters and clusters, some UniProt IDs for a singleton may be 
-                deleted.  The Search will report:  "ID not found".
+                In the generation of the megaclusters and clusters, some UniProt IDs for a
+                singleton may be deleted. The Search will report: "ID not found". 
                 </p>
 
                 <div id="searchIdErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
@@ -40,32 +52,33 @@
 
             <div>
                 <h3>Find by Sequence</h3>
+
                 <p>
-                Input a sequence to find clusters that contain homologues. The sequence is used to query the 
-                HMMs for the clusters (using hmmscan) and provides a list of matching clusters. 
+                Input a sequence to find clusters that contain homologues. The sequence is used
+                to query the HMMs for the clusters (≥3 UniRef IDs/nodes).  
                 </p>
+                
                 <p>
-                The first section reports matches for (mega)clusters except megacluster-1-1 and megacluster-2-1 
-                if the e-value is &le;1e-10.   The next section reports matches  for clusters in the Color SSNs 
-                for megacluster-1-1 and megacluster-2-1 that contain ≥3 UniRef50 IDs/nodes; for each Color SSN; 
-                the clusters with the seven smallest e-values are listed.   The user should identify the 
-                cluster with smallest e-value.  The user should be critical/careful in concluding a cluster is 
-                matched if the e-value is "large"; matches within isofunctional clusters likely will have an 
-                e-value &le;1e-100. 
+                The results reports matches for the “top” three clusters if the e-value is
+                ≤1e-10. The cluster is a link to the Explore page for the cluster.
                 </p>
+                
                 <p>
-                For megacluster-1-1 (subgroup-17, SPASM/Twitch domain) and megacluster-2-1 (subgroup 5, 
-                B12-binding domain), as the alignment score used to generate the Color SSNs increases, the 
-                e-value for the most significant match may decrease significantly as sequence heterogeneity in 
-                the cluster is decreased. The cluster with the largest alignment score and smallest e-value may 
-                be isofunctional; as the alignment score decreases, the cluster containing homologues with 
-                similar functions may be identified. The WebLogos (and MSAs) provide additional information 
-                about sequence heterogeneity. 
+                For Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain), Megacluster-2-1
+                (SFLD Subgroup 5, B12-binding domain), Megacluster-2-2 (SFLD Subgroup 2,
+                anaerobic coproporphyrinogen-III oxidase-like), or Cluster-7 ((SFLD Subgroup
+                16, PLP-dependent), the second section reports matches for clusters in the
+                “diced” SSNs; the clusters with the three smallest e-values are listed. The
+                number of UniProt IDs, number of cluster nodes, and UniProt ID convergence
+                ratio (CR; described on the Subgroups tab) are provided for each identified
+                cluster.  
                 </p>
+                
                 <p>
-                Each cluster is a link to an <a href="explore.php">Explore</a> page that provide the information for the cluster, 
-                including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences. 
+                The “Exploring Subgroups” subtab under the “Functionally Diverse Subgroups” tab
+                provides advice about interpreting the search results for these subgroups.
                 </p>
+
                 <div id="searchSeqErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
                 <div class="form-group">
                     <textarea class="form-control w-75" id="searchSeq" cols="70" rows="10"></textarea>
@@ -75,17 +88,25 @@
 
             <div>
                 <h3>Find by Taxonomy</h3>
+
                 <p>
                 Input the genus/species/strain for an organism. 
                 </p>
+
                 <p>
-                If only the genus is entered, a pop-up list of matching genus-species-strains is provided for 
-                selection of the desired genus/species/strain. If the genus and species are entered, a pop-up 
-                list of matching genus-species-strains is provided for selection of the desired 
-                genus/species/strain. The search provides a list of clusters containing proteins from the 
-                organism.  Each cluster is a link to the <a href="explore.php">Explore</a> page that provides information for the 
-                cluster, including WebLogos, MSAs, HMMs, and files containing IDs and FASTA sequences.
+                If only the genus is entered, a pop-up list of matching genus-species-strains
+                is provided for selection of the desired genus/species/strain. If the genus and
+                species are entered, a pop-up list of matching genus-species-strains is
+                provided for selection of the desired genus/species/strain. 
                 </p>
+                
+                <p>
+                The search provides a list of sequences in the RSS.   The list provides the
+                UniProt ID (link to the UniProt page for sequence), UniProt description,
+                organism name, UniProt annotation status (SwissProt or TrEMBL), and link to its
+                Explore page.  
+                </p>
+
                 <div id="searchTaxTermErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
                 <div class="form-group" style="display: none">
                     <div class="form-check form-check-inline">

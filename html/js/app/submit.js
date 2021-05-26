@@ -32,7 +32,7 @@ $(document).ready(function () {
                 success: function (data) {
                     console.log(data);
                     if (data.valid) {
-                        window.location.href = "submit_ok.html";
+                        window.location.href = "submit_ok.php";
                     } else {
                         $("#errorMsg").empty().show();
                         for (var msg in data.message) {

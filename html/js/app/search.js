@@ -13,6 +13,12 @@ $(document).ready(function() {
         return v;
     };
 
+    var colors = generateColor("#ff0000", "#000000", 15)
+    var getColor = function(val) {
+        var idx = Math.floor(val * colors.length);
+        return colors[idx];
+    };
+
     var getResultsUrl = function(id, ascore = "") {
         var v = getVersion();
         var parms = ["id="+id, "v="+v];
@@ -42,7 +48,7 @@ $(document).ready(function() {
             var network;
             if (netData !== false) {
                 if (netData.valid) {
-                    network = new Network("", netData);
+                    network = new AppData("", netData);
                 }
             }
             if (network) {
@@ -50,6 +56,50 @@ $(document).ready(function() {
             }
         });
     }
+
+    var addClusterTableFn = function(data, multiBody = false, showClusterHeader = false) {
+        var hasEvalue = (data.length > 0 && typeof data[0].clusters[0].evalue !== "undefined");
+        var table = $('<table class="table table-sm"></table>');
+        table.append('<thead><tr><th>' + (showClusterHeader ? 'Cluster' : '') + '</th>' + (hasEvalue ? '<th>E-Value</th>' : '') + '<th>UniProt IDs</th><th>Nodes</th><th>UniProt ID CR</th></thead>');
+        console.log(data);
+        for (var i = 0; i < data.length; i++) {
+            var DD = data[i];
+            var cellStyle = i ? 'pt-5' : '';
+            var numCols = hasEvalue ? 5 : 4;
+            var parentNetName = DD.parent;
+            var ascore = DD.ascore;
+            var body = $('<tbody></tbody>');
+            if (multiBody)
+                body.append('<tr><td class="' + cellStyle + ' pb-0" colspan="' + numCols + '"><h5><b>' + parentNetName + ' AS ' + ascore + '</b></h5></td></tr>');
+
+            for (var ri = 0; ri < DD.clusters.length; ri++) {
+                var D = DD.clusters[ri];
+                var clusterId = D.cluster;
+                var numUniProt = D.num_up;
+                var numUniRef90 = D.num_ur;
+                var convRatio = D.cr;
+                var netName = typeof D.name !== "undefined" ? D.name : clusterId;
+                if (parentNetName.toLowerCase().startsWith("mega"))
+                    netName = "Mega" + netName;
+
+                var row = $('<tr></tr>');
+                row.append('<td><a href="' + getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td>');
+                if (hasEvalue)
+                    row.append('<td>' + D.evalue + '</td>');
+                row.append('<td>' + numUniProt + '</td>');
+                row.append('<td>' + numUniRef90 + '</td>');
+                var cell = $('<td style="color: #' + getColor(convRatio) + '"></td>');
+                cell.append(convRatio > 0.7 ? ('<b>' + convRatio + '</b>') : convRatio);
+                row.append(cell);
+    
+                body.append(row);
+            }
+    	    table.append(body);
+        }
+        $("#searchResults").append(table).show();
+        $("#searchUi").hide();
+    };
+
 
     var searchSeqFn = function(id = "") {
         var seq = $("#searchSeq").val();
@@ -66,57 +116,26 @@ $(document).ready(function() {
             if (data.status !== true) {
                 $("#searchSeqErrorMsg").text(data.message).show();
             } else {
-                var processFn = function(network, matches, parentCluster = "", ascore = "") {
-                    ascore = (parentCluster && ascore) ? ascore : "";
-                    var table = $('<table class="table table-sm"></table>');
-    		        table.append('<thead><tr><th>Cluster</th><th>E-Value</th></thead>');
-    		        var body = $('<tbody>');
-            		table.append(body);
-                    for (var i = 0; i < matches.length; i++) {
-                        var clusterId = matches[i][0];
-                        var netName = typeof network !== 'undefined' ? network.getNetworkMapName(clusterId) : clusterId;
-                        body.append('<tr><td><a href="' + getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td><td>' + matches[i][1] + '</td></tr>');
-                    }
-                    if (parentCluster && ascore) {
-                        var div = $("<div><h3>" + parentCluster + " AS " + ascore + "</h3></div>");
-                        $("#searchResults").append(div);
-                    }
-                    if (matches.length > 0) {
-                        $("#searchResults").append(table);
-                    }
-                    return matches.length;
-                };
-
-                var netInfoFn = function(network) {
-                    var numMatches = processFn(network, data.matches);
-                    var dicedClusters = Object.keys(data.diced_matches);
-                    if (dicedClusters.length > 0) {
-                        for (var i = 0; i < dicedClusters.length; i++) {
-                            var parentCluster = dicedClusters[i];
-                            var ascores = Object.keys(data.diced_matches[parentCluster]);
-                            for (var ai = 0; ai < ascores.length; ai++) {
-                                var ascore = ascores[ai];
-                                var matches = data.diced_matches[parentCluster][ascore];
-                                numMatches += processFn(network, matches, parentCluster, ascore);
-                            }
-                        }
-                    }
-                    if (numMatches > 0) {
-                        $("#searchUi").hide();
-                        $("#searchResults").show();
-                        if (typeof id === "function")
-                            id(data.id);
-                    } else {
-                        $("#searchSeqErrorMsg").text("No matching sequences or clusters found.").show();
-                    }
-                    progress.stop();
-                };
 
                 $("#searchResults").empty();
-                getNetInfo(version, netInfoFn);
+                $("#searchResults").append('<div class="my-5 bigger">Query Sequence:<br><code>' + data.query.replaceAll('^', "<br>") + '</code></div>');
+
+                if (data.matches.length > 0) {
+                    //$("#searchResults").append('<div class="mt-5"><h5>Non-diced Clusters</h5></div>');
+                    addClusterTableFn(data.matches, false, true);
+                }
+
+                $("#searchResults").append('<div class="my-5"></div>');
+
+                if (data.diced_matches.length > 0) {
+                    $("#searchResults").append('<div class="mt-5"><h4>Diced Clusters</h4></div>');
+                    addClusterTableFn(data.diced_matches, true);
+                }
             }
+            progress.stop();
         });
     };
+
     var searchIdFn = function(id = "") {
         var idVal = $("#searchId").val();
         var version = getVersion();
@@ -130,31 +149,17 @@ $(document).ready(function() {
             if (data.status !== true) {
                 $("#searchIdErrorMsg").text(data.message).show();
             } else {
-                if (typeof data.cluster_id === "object") {
-                    var addClusterTableFn = function(network) {
-                        var table = $('<table class="table table-sm"></table>');
-        		        table.append('<thead><tr><th>Cluster</th><th>Alignment Score</th></thead>');
-        		        var body = $('<tbody>');
-                		table.append(body);
-                        var ascores = Object.keys(data.cluster_id);
-                        for (var i = 0; i < ascores.length; i++) {
-                            var ascore = ascores[i];
-                            var clusterId = data.cluster_id[ascore];
-                            var netName = typeof network !== 'undefined' ? network.getNetworkMapName(clusterId) : clusterId;
-                            body.append('<tr><td><a href="' + getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td><td>' + ascore + '</td></tr>');
-                        }
-                        $("#searchResults").empty().append(table).show();
-                        $("#searchUi").hide();
-                        if (typeof id === "function")
-                            id(data.id);
-                    };
-                    getNetInfo(version, addClusterTableFn);
+                if (typeof data.cluster_data !== "undefined" && typeof data.cluster_data === "object") {
+                    $("#searchResults").empty();
+                    $("#searchResults").append('<div class="my-5 bigger">Query ID:<br><b>' + data.query + '</b></div>');
+                    addClusterTableFn(data.cluster_data, true);
                 } else {
                     window.location.href = getResultsUrl(data.cluster_id);
                 }
             }
         });
     };
+
     var getSearchTaxType = function() {
         return $("#searchTaxTypeGenus").prop("checked") ? "genus" : ($("#searchTaxTypeFamily").prop("checked") ? "family" : "species");
     };
@@ -210,7 +215,7 @@ $(document).ready(function() {
                     var network;
                     if (netData !== false) {
                         if (netData.valid) {
-                            network = new Network("", netData);
+                            network = new AppData("", netData);
                         }
                     }
                     processFn(network, data.matches);
@@ -269,13 +274,5 @@ $(document).ready(function() {
         limit: 100,
     });
 
-
-    //if (id) {//searchState.state != STATE_HOME) {
-    //    $("#searchResults").show();
-    //    $("#searchUi").hide();
-    //} else {
-    //    $("#searchResults").hide();
-    //    $("#searchUi").show();
-    //}
 });
 

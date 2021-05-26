@@ -1,5 +1,5 @@
 {% extends "base.html.twig" %}
-{% set page_title = 'Explore' %}
+{% set page_title = 'Exploring the Radical SAM Superfamily' %}
 {% set page_active = 'explore' %}
 {% set extra_js = [
                       'js/app/progress.js?v=1',
@@ -8,13 +8,13 @@
                         'js/app/uniref.js?v=1',
                       'js/app/sunburst.js?v=1',
                     'js/app/navigation.js?v=1',
-                 'js/app/data_features.js?v=1',
-                      'js/app/app_meta.js?v=1',
+                 'js/app/data_features.js?v=3',
+                      'js/app/app_meta.js?v=2',
                          'js/app/image.js?v=1',
                            'js/app/url.js?v=1',
-                         'js/app/diced.js?v=1',
-                      'js/app/app_data.js?v=12',
-                           'js/app/app.js?v=40',
+                         'js/app/diced.js?v=3',
+                      'js/app/app_data.js?v=13',
+                           'js/app/app.js?v=42',
                     'js/sunburst/sunburst-chart.min.js', 'js/sunburst/circlepack-chart.min.js', 'js/sunburst/sunburst_helpers.js',
                     'js/imageMapResizer.min.js', 'js/jquery.maphilight.min.js', 'js/jquery.lazy.min.js'
                   ] %}
@@ -23,20 +23,28 @@
 {% block content %}
 
         <div class="container">
-            <nav aria-label="breadcrumb" id="exploreBreadcrumb" style="display: none;">
+            <nav aria-label="breadcrumb" id="exploreBreadcrumb">
             </nav>
             <div class="container">
                 <h1 class="text-center" id="familyTitle"></h1>
+                <div class="fullnetwork-text" style="display: none">
+                    <p>
+                    The SSN for the RSS was generated and segregated into five megaclusters (containing &gt;1 SFLD subgroup) and five clusters (1 SFLD
+                    subgroup).  These are shown in the image.   The megaclusters then were separately segregated to obtain their component SFLD
+                    subgroups as well as uncharacterized subgroups.  The details for this segregation are provided in the Subgroups tab on the
+                    RadicalSAM.org home page.
+                    </p>
+                </div>
             </div>
-            <div class="container">
-                <div id="dicedContainer" style="display: none">
-                    <div id="dicedParentImg" style="display: none">
+            <div class="container" id="clusterDataOverviewContainer" style="display: none">
+                <div id="dicedImageContainer" style="display: none">
+                    <div id="diced_clusterParentImgContainer" style="display: none">
                         <div class="border border-dark rounded p-2 mb-2 text-center w-100">
-                            <img src="img/blank.png" class="img-fluid w-50" id="parentImg" />
+                            <img src="img/blank.png" class="img-fluid w-50" id="diced_parentImg" />
                         </div>
-                        <div class="float-right download-btn ml-5" data-toggle="tooltip" title="Download high-resolution" id="downloadDicedParentImage">PNG <i class="fas fa-download"></i></div>
+                        <div class="float-right download-btn ml-5" data-toggle="tooltip" title="Download high-resolution" id="diced_downloadParentImage">PNG <i class="fas fa-download"></i></div>
                         <div class="float-right download-btn">
-                            <button class="btn btn-outline-secondary btn-sm btn-tiny" id="toggleParentImg"><i class="fas fa-chevron-circle-up" style="cursor: pointer" id="toggleParentImgIcon"></i> <span id="toggleParentImgText">Hide</span> Primary Cluster Image</button>
+                            <button class="btn btn-outline-secondary btn-sm btn-tiny" id="diced_toggleParentImg"><i class="fas fa-chevron-circle-up" style="cursor: pointer" id="diced_toggleParentImgIcon"></i> <span id="diced_toggleParentImgText">Hide</span> Primary Cluster Image</button>
                         </div>
                         <div style="clear:both"></div>
                     </div>
@@ -84,30 +92,39 @@
             <div class="alert alert-danger" role="alert" id="loadError" style="display: none"></div>
             <p class="text-center" id="clusterDesc">
             </p>
+            <div id="dicedClusterDesc" style="display: none">
+                <p><span class="diced-desc-cluster-id">Cluster</span> is large and functionally diverse.
+                A single alignment score threshold cannot  be used to segregate
+                the SSN  into isofunctional clusters.  To solve this problem,
+                a series of <span id="dicedNumDicings">#</span> SSNs was generated with increasing alignment
+                scores (<span id="dicedDiceIncrements">increments</span>). As the alignment
+                score increases, the clusters decrease in complexity  and size
+                as they become  isofunctional.  We refer this process as
+                "dicing".
+                </p>
+                <p>The "AS Walk-Through" function is provided so that the
+                user can 1) “walk” forward from any cluster in any of the
+                "diced" SSNs to its progeny clusters in the SSN with the next
+                alignment score or 2) "walk" backward to its progenitor cluster
+                in in the SSN with the previous alignment score.
+                </p>
+                <p>The Explore
+                pages for the clusters provide several types of information
+                for determining  whether  the cluster is isofunctional:
+                convergence ratio of the  UniProt  IDs, number  of conserved
+                Cys residues, and genome  neighborhood  diagrams (GNDs).
+                </p>
+                <p>
+                <div class="btn btn-primary"><a id="dicedListLink" href="">Access the series of diced SSNs.</a></div>
+                </p>
+                <p>
+                Information  about <span class="diced-desc-cluster-id">Cluster</span> is provided  below.
+                </p>
+            </div>
         </div>
 
         <div class="container">
-            <div id="childTabs" style="display: none">
-                <ul class="nav nav-tabs nav-intro-tabs" id="childTabsHdr" role="tablist">
-                    <li class="nav-item"><a href="#childDownload"   id="tab-child-download" class="nav-link active" data-toggle="tab" role="tab" aria-controls="download"  aria-selected="false">Data File Download</a></li>
-                    <li class="nav-item"><a href="#childLogo"       id="tab-child-logo"     class="nav-link" data-toggle="tab" role="tab" aria-controls="logo"      aria-selected="false">WebLogos</a></li>
-                    <li class="nav-item" id="childConsResListItem"><a href="#childConsRes"    id="tab-child-cons-res" class="nav-link" data-toggle="tab" role="tab" aria-controls="cons-res"  aria-selected="false">Consensus Cys Residues</a></li>
-                    <li class="nav-item"><a href="#childHmm"        id="tab-child-hmm"      class="nav-link" data-toggle="tab" role="tab" aria-controls="hmm"       aria-selected="false">HMMs</a></li>
-                    <li class="nav-item"><a href="#childHisto"      id="tab-child-histo"    class="nav-link" data-toggle="tab" role="tab" aria-controls="histo"     aria-selected="false">Length Histograms</a></li>
-                </ul>
-                <div class="tab-content" id="childTabContent">
-                    <div class="tab-pane fade child-tab-pane show active"  id="childDownload"  role="tabpanel" aria-labelledby="tab-child-download">
-                    </div>
-                    <div class="tab-pane fade child-tab-pane show"         id="childLogo"      role="tabpanel" aria-labelledby="tab-child-logo">
-                    </div>
-                    <div class="tab-pane fade child-tab-pane show"         id="childConsRes"   role="tabpanel" aria-labelledby="tab-child-cons-res" style="min-height: 500px">
-                    </div>
-                    <div class="tab-pane fade child-tab-pane show"         id="childHmm"       role="tabpanel" aria-labelledby="tab-child-hmm">
-                    </div>
-                    <div class="tab-pane fade child-tab-pane show"         id="childHisto"     role="tabpanel" aria-labelledby="tab-child-histo">
-                    </div>
-                </div>
-            </div>
+            <!-- // THIS IS WHERE THE TABLE THAT SHOWS THE LIST OF SUB-CLUSTERS GOES ////////////// -->
             <div id="subgroupTable" style="display: none">
                 <h3 class="explore-heading">Sub-clusters (Segregated Into Higher Alignment Scores)</h3>
             </div>
@@ -144,7 +161,7 @@
                         No community annotations are available for this cluster.  
                         </p>
                         <p>
-                        We are accepting <a href="submit.html" id="submitAnnoLink">submissions for community-driven annotations</a>.
+                        We are accepting <a href="submit.php" id="submitAnnoLink">submissions for community-driven annotations</a>.
                         </p>
                     </div>
                     <div id="commAnnoTable"></div>
@@ -168,117 +185,86 @@
         </div> <!-- /container -->
 
         <!-- // DISPLAY THE VARIOUS DICINGS ///////////////////////////////////////////////////// -->
-        <div class="container" style="display: none">
+         <div class="container" id="dicedAscoreListContainer" style="display: none">
             <div class="container">
-                <div id="dicedIntroContainer" class="row border border-dark rounded p-2" style="display: none">
+                <div class="row border border-dark rounded p-2">
                     <ul class="nav nav-pills mb-3 border-bottom border-medium" id="dicedAscoreTabList" role="tablist">
                     </ul>
                     <div class="tab-content ml-2" id="dicedAscoreTabs">
                     </div>
                 </div>
+                <div id="dicedAscoreListClusterSize" class="cluster-size">Number of IDs: </div>
             </div>
 
-            <div id="altSsn">
+            <div>
                 <h3 class="explore-heading">Additional Alignment Score Segregations</h3>
-                <div id="altSsnPrimary" style="display: none">
+                <div id="dicedAscoreListOverview">
                     <p>
-                    This page displays the UniRef50 ID SSN of
-                    <span class="alt-cluster-id">Megacluster</span>,
-                    <span class="alt-cluster-sfld">SFLD</span> 
-                    generated with an alignment score of
-                    <span class="alt-cluster-default-as">N</span>
-                    that collects all of the sequences into a single cluster.  
+                    The clusters in the "diced" SSNs for <span class="diced-desc-cluster-id">Megacluster</span>
+                    can be viewed by clicking the alignment scores (a 
+                    cluster contains &ge;3 UniRef90 IDs/nodes).  As the alignment score increases, the clusters decrease in 
+                    size and complexity.  Also, as the alignment score increases, the number of clusters initially 
+                    increases as large clusters segregate and then decreases as clusters "dissociate" into individual 
+                    nodes.  The images do not include clusters with &le;2 nodes or singletons because Explore pages are not 
+                    provided for these.
                     </p>
                     
                     <p>
-                    Sequence-function space in <span class="alt-cluster-id">Megacluster</span> is
-                    very large and diverse, so a "top-down" analysis is not practical (segregation
-                    of the SSN into isofunctional clusters by a step-wise increase in alignment
-                    score).  To enable "genomic enzymology"-based discovery of new functions, we
-                    precomputed Color SSNs using UniRef90 IDs at a series of alignment scores (from
-                    25 to 125, in increments of 5) and provide access to each of the clusters in
-                    each of the SSNs (&ge;3 nodes).  For each cluster, we provide the SSN (xgmml
-                    file), WebLogo, MSA, HMM, UniRef90/UniProt ID Length Histograms, and
-                    UniProt/UniRef90 sequences (IDs and FASTA files).  The Color SSNs and their
-                    WebLogos, MSA, HMMs, and Length Histograms were generated with the EFI-EST
-                    Cluster Analysis utility.   
+                    <a href="" id="dicedDescNextAsLink">This link</a>
+                    provides access to the Explore page for <span class="diced-desc-cluster-id">Megacluster</span>-1
+                    in the SSN generated 
+                    with an alignment score of <span class="diced-desc-default-as">#</span>.
+                    On that (and any) Explore page, any cluster in the SSN can be selected; 
+                    also, SSNs generated with other alignment scores can be selected.
+                    </p>
+
+                    <p>
+                    Or, select an alignment score for a "diced" cluster in the
+                    image and click on its image to access its
+                    <span class="diced-desc-cluster-id">Megacluster</span>-1 Explore page.  
+                    
+                    <p>
+                    Each Explore page includes the "AS Walk-Through" button above the cluster image. Clicking the button 
+                    opens a window that identifies 1) the progenitor cluster in the previous SSN ("walk backward") and 2) 
+                    for the progeny clusters in the next SSN ("walk forward"). The cluster name is a link to its Explore 
+                    page. These connections may allow the discovery of divergent functions that share mechanistic 
+                    attributes. 
                     </p>
                     
                     <p>
-                    We also provide genome neighborhood diagrams (GNDs) for the UniRef90 node IDs
-                    in each cluster.  The GNDs provide information about both functional
-                    heterogeneity (one or several genome neighborhoods; one or more functions) and
-                    possible metabolic pathways (Pfam/InterPro families of proximal genes).  Note
-                    that the GNDs for the UniProt IDs in each UniRef90 node are available by
-                    clicking the "+" link adjacent to each UniRef90 GND.
+                    The <a href="search.php" target="_blank">Search</a>
+                    functions enables the user to identify the clusters in the "diced" SSNs that contain a 
+                    specified UniProt ID or homologues of a specified sequence.  
                     </p>
                     
                     <p>
-                    In contrast to the UniRef50 IDs used to generate the SSN shown above and
-                    segregate the superfamily into subgroups (see Subgroups), UniRef90 IDs are used
-                    so that isofunctional clusters can be obtained by increasing the alignment
-                    score (to achieve the same genome context).  The sequences in UniRef50 ID
-                    clusters often are functionally heterogeneous, so isofunctional clusters (same
-                    genome context) often cannot be obtained.
+                    When <a href="search.php" target="_blank">Find by UniProt ID</a>
+                    is used, the Results page provides a list of clusters in the "diced" SSNs that 
+                    contain the UniProt ID along with the number of UniProt IDs in the cluster, the number of cluster 
+                    nodes, and the UniProt ID convergence ratio (CR; described on the <b>Explore Pages</b> tab).  
                     </p>
                     
                     <p>
-                    On the Search page, the "Find by UniProt ID" and "Find by Sequence" functions
-                    can be used to identify the cluster in each Color SSN containing an ID/sequence
-                    of interest.  
+                    As the alignment score continues to increase, the ID may may be located in a cluster with &le;2 nodes or a 
+                    singleton.  No results will be returned for these alignment scores.
                     </p>
                     
                     <p>
-                    When using the "Find by UniProt ID" function, if the UniProt ID is in the
-                    dataset used to calculate the SSNs, the cluster containing the UniProt ID will
-                    be identified in each cluster if the cluster contains  &ge;3 nodes.  If the ID
-                    is located in a cluster with 2 nodes or a singleton, the ID will not be found
-                    as indicated by "ID not found".   The cluster name is a link to the page for
-                    that cluster.  Find by UniProt ID provides quick access to the clusters in the
-                    Color SSNs containing the ID; however, Find by Sequence likely is more useful
-                    (next paragraphs).
+                    When <a href="search.php" target="_blank">Find by Sequence</a>
+                    is used, the Results page provides a list of the three clusters at each alignment 
+                    score with the smallest e-values along with the number of UniProt IDs in the cluster, the number of 
+                    cluster nodes, and the UniProt ID convergence ratio. 
                     </p>
                     
                     <p>
-                    When using the "Find by Sequence" function, the sequence is searched against
-                    the HMMs calculated for all of the clusters with &ge;3 nodes in all of the
-                    Color SSNs (be patient!).  The "best" seven cluster hits (smallest e-values)
-                    will be reported for each Color SSN.   When perusing these results, the
-                    e-values for the Color SSNs generated with small alignment scores will be
-                    "large" because these clusters likely are functionally diverse.  However, as
-                    the alignment score increases, the e-value associated with the "best" hit will
-                    decrease substantially when the cluster is isofunctional.  The cluster name is
-                    a link to the page for that cluster.  Examination of the GNDs for the UniRef90
-                    node IDs in the cluster will provide additional information about
-                    functionality.
-                    </p>
-                    
-                    <p>
-                    Each cluster page provides a link to the cluster in the SSN generated with the
-                    previous alignment score ("progenitor").   The page also contains the link(s)
-                    to the cluster(s) in the SSN generated with the next alignment score that
-                    contains the sequences in the cluster ("progeny").  These links may leverage
-                    identification of clusters with related functions (assuming the progeny share
-                    mechanistic attributes with the progenitor).  In favorable cases, it may be
-                    possible to "walk" from one function to another, with the function of the
-                    progenitor providing clues about the function of the progeny.
-                    </p>
-                    
-                    <p>
-                    <a href="" id="alt-cluster-next-as-link">Click here</a>
-                    to proceed to the page for
-                    <span class="alt-cluster-id">Megacluster</span>-1
-                    in the Color SSN generated with an alignment score of
-                    <span class="alt-cluster-next-as">N</span>.
-                    On that (and any) cluster page, you can explore the clusters at the displayed 
-                    alignment score and, also, choose any other alignment score.  
-                    </p>
-                    
-                    <p>
-                    Or proceed to the <a href="search.html">Search page</a> to explore sequence relationships.
+                    As the alignment score increases, the "best" e-value typically decreases as the cluster becomes 
+                    orthologous/isofunctional as nonorthologous sequences are segregated.   As the alignment score 
+                    continues to increase, the "best" cluster can segregates into a cluster with &le;2 nodes or a singleton;  
+                    the Search results will identify clusters but the e-values likely will be larger than those identified 
+                    for the clusters with lower alignment scores.
                     </p>
                 </div>
-                <div id="altSsnSecondary" style="display: none">
+                <div id="dicedAscoreListImageDesc" style="display: none">
                     <p>
                     The SSN image was generated with the Color SSN function of the "Cluster Analysis" utility.  
                     The clusters are numbered and assigned a unique color in order of decreasing number of 
@@ -288,6 +274,43 @@
                 </div>
             </div>
         </div> <!-- /container -->
+        
+        <div class="container fullnetwork-text" style="display: none">
+            <p>The table provides a (mega)cluster directory for locating the SFLD subgroups:</p>
+
+            <table class="table table-sm w-75">
+                <thead>
+                    <th>SFLD Subgroup</th><th>Subgroup</th><th>Color</th><th>(Mega)cluster</th>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>7-carboxy-7-deazaguanine synthase-like </td><td>Teal</td><td>Mega-3</td></tr>
+                    <tr><td>2</td><td>Coproporphyrinogen III oxidase-like </td><td>Red</td><td>Mega-2</td></tr>
+                    <tr><td>3</td><td>Antiviral proteins (viperin) </td><td>--</td><td>Mega-1</td></tr>
+                    <tr><td>4</td><td>Avilamycin synthase </td><td>Pink</td><td>--</td></tr>
+                    <tr><td>5</td><td>B12-binding domain containing </td><td>Blue</td><td>Mega-2</td></tr>
+                    <tr><td>6</td><td>BATS domain containing </td><td>Orange</td><td>Mega-4</td></tr>
+                    <tr><td>7</td><td>DesII-like </td><td>Mauve</td><td>Mega-1</td></tr>
+                    <tr><td>8</td><td>ELP3/YhcC </td><td>Black</td><td>Mega-2</td></tr>
+                    <tr><td>9</td><td>F420, menaquinone cofactor biosynthesis  </td><td>Purple</td><td>Mega-4</td></tr>
+                    <tr><td>10</td><td>FeMo-cofactor biosynthesis protein </td><td>Mint green</td><td>Mega-1</td></tr>
+                    <tr><td>11</td><td>Lipoyl synthase like </td><td>Yellow</td><td>Cluster-8</td></tr>
+                    <tr><td>12</td><td>Methylthiotransferase </td><td>Verdun green</td><td>Mega-2</td></tr>
+                    <tr><td>13</td><td>Methyltransferase Class A </td><td>Dark brown</td><td>Cluster-6</td></tr>
+                    <tr><td>14</td><td>Methyltransferase Class D </td><td>Light pink</td><td>Mega-1</td></tr>
+                    <tr><td>15</td><td>Organic radical activating enzymes </td><td>Cyan</td><td>Mega-3</td></tr>
+                    <tr><td>16</td><td>PLP-dependent </td><td>Dark green</td><td>Cluster-7</td></tr>
+                    <tr><td>17</td><td>SPASM/twitch domain containing </td><td>Magenta</td><td>Mega-1</td></tr>
+                    <tr><td>18</td><td>Spectinomycin biosynthesis </td><td>White</td><td>--</td></tr>
+                    <tr><td>19</td><td>Spore photoproduct lyase </td><td>Green</td><td>Mega-5</td></tr>
+                    <tr><td>20</td><td>tRNA wybutosine-synthesizing </td><td>Brown</td><td>Cluster-9</td></tr>
+                    <tr><td></td><td>Protein MJ0683-like </td><td>Electric lime</td><td>Mega-5</td></tr>
+                    <tr><td></td><td>Uncharacterized protein family UPF0313 </td><td>Olive</td><td>Cluster-10</td></tr>
+                    <tr><td></td><td>DUF5131 </td><td>Light purple</td><td>Mega-5</td></tr>
+                    <tr><td></td><td>3',8-Cyclase/Mo cofactor synthesis </td><td>Dodger blue</td><td>Mega-1</td></tr>
+                </tbody>
+            </table>
+        </div>
+
 {% endblock %}
 
 {% block tail_content %}

@@ -30,11 +30,6 @@ AppData.prototype.getAlignmentScore = function() {
     //this.data.alignment_score = "22";
     return typeof this.data.alignment_score !== "undefined" ? this.data.alignment_score : "";
 }
-AppData.prototype.getDefaultAlignmentScore = function() {
-    //DEBUG:
-    //this.data.default_alignment_score = "11";
-    return typeof this.data.default_alignment_score !== "undefined" ? this.data.default_alignment_score : "";
-}
 AppData.prototype.getPageTitle = function() {
     return typeof this.data.title !== "undefined" ? this.data.title : "Title";
 }
@@ -46,9 +41,6 @@ AppData.prototype.getName = function() {
 }
 AppData.prototype.getImage = function() {
     return this.data.image;
-}
-AppData.prototype.getSubgroups = function() {
-    return Array.isArray(this.data.subgroups) ? this.data.subgroups : [];
 }
 AppData.prototype.getRegions = function() {
     return Array.isArray(this.data.regions) ? this.data.regions : [];

@@ -29,22 +29,22 @@ AppImage.prototype.setClusterImage = function (onFinishFn) {
 AppImage.prototype.setDicedClusterImage = function (dicedParent, onFinishFn) {
     var that = this;
     var imgPath = this.appMeta.DataDir + "/../" + dicedParent;
-    $("#parentImg").attr("src", imgPath + "_sm.png");
-    $("#dicedParentImg").show();
-    $("#toggleParentImg").click(function() {
+    $("#diced_parentImg").attr("src", imgPath + "_sm.png");
+    $("#diced_clusterParentImgContainer").show();
+    $("#diced_toggleParentImg").click(function() {
         if (!$(this).data("hidden") || $(this).data("hidden") == false) {
-            $("#toggleParentImgIcon").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
-            $("#toggleParentImgText").text("Show");
-            $("#parentImg").removeClass("w-50").addClass("h-70px");
+            $("#diced_toggleParentImgIcon").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
+            $("#diced_toggleParentImgText").text("Show");
+            $("#diced_parentImg").removeClass("w-50").addClass("h-70px");
             $(this).data("hidden", true);
         } else {
-            $("#toggleParentImgIcon").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
-            $("#toggleParentImgText").text("Hide");
-            $("#parentImg").removeClass("h-70px").addClass("w-50");
+            $("#diced_toggleParentImgIcon").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
+            $("#diced_toggleParentImgText").text("Hide");
+            $("#diced_parentImg").removeClass("h-70px").addClass("w-50");
             $(this).data("hidden", false);
         }
     });
-    $("#downloadDicedParentImage").click(function (e) {
+    $("#diced_downloadParentImage").click(function (e) {
         e.preventDefault();
         window.location.href = that.url.getDownloadUrl("net", dicedParent);
     });

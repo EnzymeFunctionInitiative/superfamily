@@ -1,17 +1,63 @@
 
 
-function AppDiced(appData, appMeta) {
+function AppDiced(appData, appMeta, dataFeat) {
     this.appData = appData;
     this.appMeta = appMeta;
+    this.dataFeat = dataFeat;
+}
+
+
+AppDiced.prototype.initDicedSsnOverview = function(ascores) {
+    this.dataFeat.addClusterSize();
+    var altDiv = $("#dicedAscoreListContainer");
+    altDiv.show();
+    
+    var clusterName = this.appData.getName();
+
+    var tabList = $("#dicedAscoreTabList");
+    var tabs = $("#dicedAscoreTabs");
+    for (var i = 0; i < ascores.length; i++) {
+        var as = ascores[i];
+        var fileName = this.appData.getImage();
+        var filePath = this.appMeta.DataDir + '/dicing-' + as + '/' + fileName + '_sm.png';
+        var style = i == 0 ? "active" : "";
+        var style2 = i == 0 ? "show" : "";
+
+        //var link = $('<a class="nav-link ' + style + '" id="ascore-pills-ascore-' + as + '-tab" data-toggle="pill" href="#ascore-tabs-ascore-' + as + '" role="tab">AS ' + as + '</a>');
+        var link = $('<li class="nav-item"><a class="nav-link ' + style + '" id="ascore-pills-ascore-' + as + '-tab" data-toggle="pill" href="#ascore-tabs-ascore-' + as + '" role="tab">AS ' + as + '</a></li>');
+        tabList.append(link);
+
+        var theUrl = getUrlFn(this.appMeta.Id+"-1", this.appMeta.Version, as);
+        var tab = $('<div class="tab-pane fade ' + style2 + ' ' + style + '" id="ascore-tabs-ascore-' + as + '"><h4>Alignment Score ' + as + '</h4></div>');
+        var img = $('<img src="' + filePath + '" class="img-fluid" alt="Overview image for AS ' + as + '">');
+        var imgLink = $('<a href="' + theUrl + '"></a>');
+        imgLink.append(img);
+        tab.append(imgLink);
+        tab.append('<div class="center btn btn-primary m-1"><a href="' + theUrl + '">Go to the first sub-cluster in ' + clusterName + '.</a></div>');
+
+        tabs.append(tab);
+    }
+
+    $("#submitAnnoLink").attr("href", $("#submitAnnoLink").attr("href") + "?id=" + this.appMeta.Id);
+    $("#downloadClusterImage").hide();
 }
 
 
 AppDiced.prototype.addAscoreTabs = function() {
-    $("#clusterImgContainer").hide();
+    //$("#clusterImgContainer").hide();
     var ascores = this.appData.getAltSsns();
     //TODO:
-    $("#dicedIntroContainer").show();
 }
+
+
+AppDiced.prototype.initDicedDescText = function(nextAs) {
+    $(".diced-desc-cluster-id").text(this.appData.getName());
+    $(".diced-desc-default-as").text(nextAs);
+    $(".diced-desc-sfld").text(this.appData.getSfldDesc());
+    $(".diced-desc-next-as").text(nextAs);
+}
+
+
 AppDiced.prototype.addDicedNav = function(isParent = false) {
     var that = this;
 
@@ -108,4 +154,5 @@ AppDiced.prototype.addDicedNav = function(isParent = false) {
         $("#dicedNav").append(asNavBtn);
     }
 }
+
 

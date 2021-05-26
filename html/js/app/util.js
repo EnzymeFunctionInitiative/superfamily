@@ -22,7 +22,7 @@ function applyRowClickableFn(version) {
 function getPageClusterId() {
     var paramStr = window.location.search.substring(1);
     var params = paramStr.split("&");
-    var reqId = "", version = DEFAULT_VERSION, as = "";
+    var reqId = "", version = DEFAULT_VERSION, as = "", dicedList = false;
     for (var i = 0; i < params.length; i++) {
         var parts = params[i].split("=");
         if (parts[0] === "id")
@@ -31,6 +31,8 @@ function getPageClusterId() {
             version = parts[1];
         else if (parts[0] === "as")
             as = parts[1];
+        else if (parts[0] === "d" && parts[1] === "l")
+            dicedList = true;
     }
     //TODO: validate version
     var data = {network_id: "", version: version}
@@ -38,6 +40,7 @@ function getPageClusterId() {
         data.network_id = reqId;
     if (!isNaN(as))
         data.alignment_score = as;
+    data.show_diced_list_page = dicedList;
     return data;
 }
 function getUrlFn(id, version, alignmentScore = "") {
