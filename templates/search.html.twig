@@ -4,7 +4,7 @@
 {% set extra_css = ['css/typeahead.css?v=3'] %}
 {% set extra_js = [ 'js/typeahead.bundle.js',
                     'js/app/app_data.js?v=12',
-                    'js/app/search.js?v=14',
+                    'js/app/search.js?v=17',
                     'js/app/progress.js?v=1',
                     'js/app/color.js?v=1',
                   ] %}
@@ -125,11 +125,14 @@
                 <div class="form-group">
                     <input class="form-control w-50" type="text" name="searchTaxTerm" id="searchTaxTerm" placeholder="Species" />
                 </div>
-                <div class="mt-1"><button class="btn btn-primary btn-sm" id="searchTaxTermBtn">Find Clusters</button></div>
+                <div class="mt-1"><button class="btn btn-primary btn-sm" id="searchTaxTermBtn">Find Sequences</button></div>
             </div>
         </div>
 
-        <div class="container" id="searchResults" style="display: none">
+        <div class="container" id="searchResultsContainer" style="display: none">
+            <h2 class="text-center"><a href="search.php"><i class="fas fa-redo-alt"></i> New Search</a></h2>
+            <div class="container" id="searchResults">
+            </div>
         </div>
 {% endblock %}
 
