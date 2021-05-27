@@ -54,32 +54,62 @@ if ($type == "seq") {
         $hmmdb = functions::get_hmmdb_path($version, "all");
         $matches_raw = hmmscan($out_dir, $hmmdb[0], $seq_file);
 
-        $make_sql = function($cluster, $use_diced = false) {
-            $table_prefix = "";
-            $name_col = "NET.name AS name";
-            $name_join = "";
-            if ($use_diced) {
-                $table_prefix = "diced_";
-                $name_join = "LEFT JOIN network ON network.cluster_id = NET.parent_id";
-                $name_col = "network.name AS name";
-            }
+        $make_sql = function($cluster, $use_diced = false, $ascore = "") {
+            $table_prefix = $use_diced ? "diced_" : "";
 
+            $join_sql = "";
+            $name_table = "";
+            $ascore_sql = "";
+            if ($use_diced) {
+                $name_table = "network";
+                $join_sql =
+                    " LEFT JOIN network ON network.cluster_id = NET.parent_id"
+                  . " LEFT JOIN ${table_prefix}conv_ratio AS CR ON (SZ.cluster_id = CR.cluster_id AND SZ.ascore = CR.ascore)"
+                  . " LEFT JOIN ${table_prefix}network AS NET ON (SZ.cluster_id = NET.cluster_id AND SZ.ascore = NET.ascore)"
+                  ;
+                $ascore_sql = " AND SZ.ascore = '$ascore'";
+            } else {
+                $name_table = "NET";
+                $join_sql =
+                    " LEFT JOIN ${table_prefix}conv_ratio AS CR ON SZ.cluster_id = CR.cluster_id"
+                    . " LEFT JOIN ${table_prefix}network AS NET ON SZ.cluster_id = NET.cluster_id"
+                    ;
+            }
             $sql = 
                   " SELECT SZ.uniprot AS uniprot, SZ.uniref90 AS uniref90,"
                   . " CR.conv_ratio AS conv_ratio,"
-                  . " $name_col"
+                  . " $name_table.name AS name"
                   . " FROM ${table_prefix}size AS SZ"
-                  . " LEFT JOIN ${table_prefix}conv_ratio AS CR ON SZ.cluster_id = CR.cluster_id"
-                  . " LEFT JOIN ${table_prefix}network AS NET ON SZ.cluster_id = NET.cluster_id"
-                  . " $name_join"
-                  . " WHERE SZ.cluster_id = '$cluster'";
+                  . $join_sql
+                  . " WHERE SZ.cluster_id = '$cluster'"
+                  . $ascore_sql
+                ;
             return $sql;
+//            $table_prefix = "";
+//            $name_col = "NET.name AS name";
+//            $name_join = "";
+//            if ($use_diced) {
+//                $table_prefix = "diced_";
+//                $name_join = "LEFT JOIN network ON network.cluster_id = NET.parent_id";
+//                $name_col = "network.name AS name";
+//            }
+//
+//            $sql = 
+//                  " SELECT SZ.uniprot AS uniprot, SZ.uniref90 AS uniref90,"
+//                  . " CR.conv_ratio AS conv_ratio,"
+//                  . " $name_col"
+//                  . " FROM ${table_prefix}size AS SZ"
+//                  . " LEFT JOIN ${table_prefix}conv_ratio AS CR ON SZ.cluster_id = CR.cluster_id"
+//                  . " LEFT JOIN ${table_prefix}network AS NET ON SZ.cluster_id = NET.cluster_id"
+//                  . " $name_join"
+//                  . " WHERE SZ.cluster_id = '$cluster'";
+//            return $sql;
         };
 
-        $process_cluster = function($matches_raw, $use_diced = false) use ($make_sql, $db) {
+        $process_cluster = function($matches_raw, $use_diced = false, $ascore = "") use ($make_sql, $db) {
             $data = array();
             foreach ($matches_raw as $match) {
-                $sql = $make_sql($match[0], $use_diced);
+                $sql = $make_sql($match[0], $use_diced, $ascore);
 //                print "$sql\n\n\n";
                 $results = $db->query($sql);
                 $row = $results->fetchArray();
@@ -99,14 +129,7 @@ if ($type == "seq") {
     
         $dmatches = array();
         $diced_db = functions::get_hmmdb_path($version, "diced");
-//        $ascore_sql = "SELECT DID.cluster_id AS cluster_id, DID.ascore AS ascore,"
-//            . " DS.uniprot AS uniprot, DS.uniref90 AS uniref90,"
-//            . " CR.conv_ratio AS conv_ratio"
-//            . " FROM diced_id_mapping AS DID"
-//            . " LEFT JOIN diced_size AS DS ON (DID.cluster_id = DS.cluster_id AND DID.ascore = DS.ascore)"
-//            . " LEFT JOIN diced_conv_ratio AS CR ON (DID.cluster_id = CR.cluster_id AND DID.ascore = CR.ascore)"
-//            . " WHERE DID.uniprot_id = '$id'";
-//
+        
         // Check if matches are the parent diced cluster.  If so, then we search the diced clusters.
         if (count($matches_raw) > 0) {
             $dicings = get_parent($diced_db, $matches_raw[0][0]);
@@ -120,11 +143,9 @@ if ($type == "seq") {
                         $row = $results->fetchArray();
                         $parent = $row["name"];
                         foreach ($cluster_raw as $ascore => $dmatches_raw) {
-                            $data = $process_cluster($dmatches_raw, true);
+                            $data = $process_cluster($dmatches_raw, true, $ascore);
                             array_push($dmatches, array("ascore" => $ascore, "parent" => $parent, "clusters" => $data));
-                            //array_push($cluster_data, array("ascore" => $ascore, "parent" => "TODO", "clusters" => $data));
                         }
-                        //array_push($dmatches, $cluster_data);
                     }
                 }
             }
@@ -166,9 +187,11 @@ if ($type == "seq") {
         $data = array();
         while ($row = $results->fetchArray()) {
             $parts = explode("-", $row["cluster_id"]);
+            $num = $parts[count($parts)-1];
             array_splice($parts, count($parts)-1);
             $parent = implode("-", $parts);
-            $out_row = array("cluster" => $row["cluster_id"], "num_up" => $row["uniprot"], "num_ur" => $row["uniref90"], "cr" => $row["conv_ratio"]);
+            $name = $row["name"] . "-$num";
+            $out_row = array("cluster" => $row["cluster_id"], "num_up" => $row["uniprot"], "num_ur" => $row["uniref90"], "cr" => $row["conv_ratio"], "name" => $name);
             array_push($data, array("clusters" => array($out_row), "ascore" => $row["ascore"], "parent" => $row["name"]));
             $cluster_id[$row["ascore"]] = $row["cluster_id"];
         }
@@ -186,10 +209,16 @@ if ($type == "seq") {
         $db->close();
         
         $job_id = functions::get_id();
-        if ((is_array($cluster_id) && count($cluster_id) > 0) || (!is_array($cluster_id) && $cluster_id))
-            $json = json_encode(array("status" => true, "cluster_data" => $data, "id" => $job_id, "query" => $id));
-        else
-            $json = json_encode(array("status" => false, "message" => "ID not found"));
+        $output_data = array("status" => true, "id" => $job_id, "query" => $id);
+        if (is_array($cluster_id) && count($cluster_id) > 0) {
+            #"cluster_data" => $data, 
+            $output_data["cluster_data"] = $data;
+        } else if (!is_array($cluster_id) && $cluster_id) {
+            $output_data["cluster_id"] = $cluster_id;
+        } else {
+            $output_data = array("status" => false, "message" => "ID not found");
+        }
+        $json = json_encode($output_data);
     
         $out_dir = settings::get_tmpdir_path() . "/" . $job_id;
         $cache_file = "$out_dir/$cache_file";
@@ -211,28 +240,59 @@ if ($type == "seq") {
         $file = settings::get_cluster_db_path($version);
         $db = new SQLite3($file);
 
-        $search_fn = function($results, $has_ascore, $excludes = array()) {
-            $count = array();
-            $clusters = array();
-            $diced_parents = array();
+        $get_uniprots_fn = function($query) use ($db, $field) {
+            $sql = "SELECT T.species AS species, T.uniprot_id AS uniprot_id"
+                . " FROM taxonomy AS T"
+                . " WHERE T.$field LIKE '%$query%'";
+            $results = $db->query($sql);
+            $tax_data = array();
             while ($row = $results->fetchArray()) {
-                $cid = $row["cluster_id"] . ($has_ascore ? "-AS" . $row["ascore"] : "");
-                if ($has_ascore) {
-                    $parent = implode("-", array_slice(explode("-", $row["cluster_id"]), 0, 3));
-                    $diced_parents[$parent] = 1;
-                }
-                if (isset($excludes[$cid]))
-                    continue;
-                if (!isset($count[$cid])) {
-                    $count[$cid] = 0;
-                    array_push($clusters, $cid);
-                }
-                $count[$cid]++;
+                $tax_data[$row["uniprot_id"]] = $row["species"];
             }
-        
-            usort($clusters, function($a, $b) {
-                $ap = explode("-", $a);
-                $bp = explode("-", $b);
+            $data = array();
+            foreach ($tax_data as $id => $species) {
+                $sql = "SELECT function FROM swissprot WHERE uniprot_id = '$id'";
+                $results = $db->query($sql);
+                $row = $results->fetchArray();
+                if ($results && isset($row["function"]))
+                    $status = "sp";
+                else
+                    $status = "tr";
+
+                $sql = "SELECT cluster_id FROM id_mapping WHERE uniprot_id = '$id' ORDER BY LENGTH(cluster_id) DESC";
+                $results = $db->query($sql);
+                $row = $results->fetchArray();
+                $cluster_id = $row["cluster_id"];
+                $out_row = array("cluster" => $cluster_id, "organism" => $species, "uniprot_id" => $id, "status" => $status, "name" => "", "parent" => "");
+
+                $sql = "SELECT name AS name FROM network WHERE cluster_id = '$cluster_id'";
+                $results = $db->query($sql);
+                $row = $results->fetchArray();
+                if ($row)
+                    $out_row["name"] = $row["name"];
+                array_push($data, $out_row);
+            }
+
+            $sort_org_cmp = function($a, $b) {
+            };
+
+
+            usort($data, function($a, $b) {
+                $aa = $a["cluster"];
+                $bb = $b["cluster"];
+                
+                $ao = $a["organism"];
+                $bo = $b["organism"];
+                //if (strlen($ao) < strlen($bo))
+                //    return -1;
+                //else if (strlen($ao) > strlen($bo))
+                //    return 1;
+                $cmp = strcmp($ao, $bo);
+                if ($cmp !== 0)
+                    return $cmp;
+
+                $ap = explode("-", $aa);
+                $bp = explode("-", $bb);
                 $maxidx = count($ap) < count($bp) ? count($ap) : count($bp);
                 for ($i = 1; $i < $maxidx; $i++) {
                     $ai = preg_replace("/[^0-9]/", "", $ap[$i]);
@@ -241,59 +301,17 @@ if ($type == "seq") {
                         return $ai - $bi;
                 }
                 return 0;
-        
             });
 
-            return array($count, $clusters, $diced_parents);
+            return $data;
         };
 
-
-        $sql = "SELECT cluster_id, ascore, species FROM taxonomy INNER JOIN diced_id_mapping ON taxonomy.uniprot_id = diced_id_mapping.uniprot_id WHERE $field LIKE '%$query%' ORDER BY cluster_id, ascore";
-        $results = $db->query($sql);
-        list($diced_count, $diced_clusters, $diced_parents) = $search_fn($results, true);
-
-        $query = $db->escapeString($query);
-        $sql = "SELECT cluster_id, species FROM taxonomy INNER JOIN id_mapping ON taxonomy.uniprot_id = id_mapping.uniprot_id WHERE $field LIKE '%$query%' ORDER BY cluster_id";
-        $results = $db->query($sql);
-
-        list($count, $clusters) = $search_fn($results, false, $diced_parents);
-
-        $matches = array();
-        for ($i = 0; $i < count($clusters); $i++) {
-            array_push($matches, array($clusters[$i], $count[$clusters[$i]]));
-        }
-
-        $diced_matches = array();
-        for ($i = 0; $i < count($diced_clusters); $i++) {
-            $ascore_match = array();
-            $ascore = "";
-            $cluster = $diced_clusters[$i];
-            if (preg_match("/^(.+)-AS(\d+)$/", $cluster, $ascore_match)) {
-                $cluster = $ascore_match[1];
-                $ascore = $ascore_match[2];
-            }
-            array_push($diced_matches, array($cluster, $ascore, $diced_count[$diced_clusters[$i]]));
-        }
-
-        usort($diced_matches, function($a, $b) {
-            $ap = explode("-", $a[0]);
-            $bp = explode("-", $b[0]);
-            $aa = implode("-", array_slice($ap, 0, 2));
-            $bb = implode("-", array_slice($bp, 0, 2));
-            $cmp = strcmp($aa, $bb);
-            if (!$cmp) { // same
-                $cmp = $a[1] - $b[1];
-                if (!$cmp) // same
-                    return $ap[3] - $bp[3];
-                else
-                    return $cmp;
-            } else {
-                return $cmp;
-            }
-        });
+        $query = trim($query);
+        $matches = $get_uniprots_fn($query);
 
         $job_id = functions::get_id();
-        $json = json_encode(array("status" => true, "matches" => $matches, "diced_matches" => $diced_matches, "id" => $job_id));
+        $output_data = array("status" => true, "matches" => $matches, "id" => $job_id, "query" => $query);
+        $json = json_encode($output_data);
         $out_dir = settings::get_tmpdir_path() . "/" . $job_id;
         $cache_file = "$out_dir/$cache_file";
         mkdir($out_dir);

@@ -1,0 +1,87 @@
+
+                    <div>
+                        <p>
+                        Three Search functions are provided for locating clusters (with ≥3 UniRef IDs/nodes) using a UniProt ID, Sequence, or
+                        taxonomy as query.
+                        </p>
+
+                        <ul class="nav nav-tabs nav-intro-tabs" id="cur_rel_subtabs" role="tablist">
+                            <li class="nav-item"><a href="#search_id" id="tab-search_id" class="nav-link active" data-toggle="tab" role="tab">UNIPROT ID</a></li>
+                            <li class="nav-item"><a href="#search_seq" id="tab-search_seq" class="nav-link" data-toggle="tab" role="tab">SEQUENCE</a></li>
+                            <li class="nav-item"><a href="#search_tax" id="tab-search_tax" class="nav-link" data-toggle="tab" role="tab">TAXONOMY</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="search_id" role="tabpanel">
+                                <p><b>Find by UniProt ID</b></p>
+
+                                <p>
+                                The user inputs a UniProt ID to identify the cluster in which it is located.  The search opens the Explore page for
+                                the cluster that contains the UniProt ID. 
+                                </p>
+
+                                <p>
+                                In some SSNs, the query UniProt ID may be located in a cluster with ≤2 nodes or represented as a singleton. The Search
+                                will report: "ID not found". 
+                                </p>
+
+                                <p>
+                                If the cluster is in Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain), Megacluster-2-1 (SFLD Subgroup 5,
+                                B12-binding domain), Megacluster-2-2 (SFLD Subgroup 2, anaerobic coproporphyrinogen-III oxidase-like), or Cluster-7
+                                ((SFLD Subgroup 16, PLP-dependent), the clusters in the “diced” SSNs for the (mega)cluster (series of increasing
+                                alignment scores) are listed.  The number of UniProt IDs, number of cluster nodes, and UniProt ID convergence ratio
+                                (CR; described on the Subgroups tab) are provided for each identified cluster.
+                                </p>
+
+                            </div>
+                            <div class="tab-pane fade" id="search_seq" role="tabpanel">
+                                <p><b>Find by Sequence</b></p>
+
+                                <p>
+                                The user inputs a sequence (with/without a FASTA header) that is used to query the HMMs for all clusters (≥3 UniRef
+                                IDs/nodes) using hmmscan. 
+                                </p>
+
+                                <p>
+                                The Results page reports the three clusters with the smallest e-values.  The cluster number is a link to the Explore
+                                page for the cluster.
+                                </p>
+
+                                <p>
+                                If the cluster with the lowest e-value is in Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain), Megacluster-2-1
+                                (SFLD Subgroup 5, B12-binding domain), Megacluster-2-2 (SFLD Subgroup 2, anaerobic coproporphyrinogen-III
+                                oxidase-like), or Cluster-7 ((SFLD Subgroup 16, PLP-dependent), the three clusters with the smallest e-values in each
+                                of the “diced” SSNs are listed.  The number of UniProt IDs, number of cluster nodes, and UniProt ID convergence ratio
+                                (CR; described on the Subgroups tab) are provided for each identified cluster.
+                                </p>
+
+                                <p>
+                                The “Exploring Subgroups” subtab of the Functional Diverse Subgroups tab provides additional information for exploring
+                                these functionally diverse (mega)clusters.
+                                </p>
+
+                            </div>
+                            <div class="tab-pane fade" id="search_tax" role="tabpanel">
+                                <p><b>Find by Taxonomy</b></p>
+
+                                <p>
+                                The user provides the genus/species/strain for an organism to identify the clusters in which its members are located. 
+                                </p>
+
+                                <p>
+                                If only the genus is entered, a pop-up list of matching genus-species-strains is provided for selection of the desired
+                                genus/species/strain. If the genus and species are entered, a pop-up list of matching genus-species-strains is
+                                provided for selection of the desired genus/species/strain.
+                                </p>
+
+                                <p>
+                                The search provides a list of sequences in the RSS.   The list provides the
+                                UniProt ID (link to the UniProt page for sequence), UniProt description,
+                                organism name, UniProt annotation status (SwissProt or TrEMBL), and link to its
+                                Explore page.   
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+

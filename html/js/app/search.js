@@ -6,6 +6,7 @@ const STATE_TAX = 4;
 
 
 $(document).ready(function() {
+
     var searchApp = "search_do.php";
 
     var getVersion = function() {
@@ -15,6 +16,8 @@ $(document).ready(function() {
 
     var colors = generateColor("#ff0000", "#000000", 15)
     var getColor = function(val) {
+        if (val >= 1)
+            return colors[colors.length-1];
         var idx = Math.floor(val * colors.length);
         return colors[idx];
     };
@@ -33,10 +36,10 @@ $(document).ready(function() {
     $(window).on("popstate", function (e) {
         var state = e.originalEvent.state;
         if (state.state == STATE_HOME) {
-            $("#searchResults").hide();
+            $("#searchResultsContainer").hide();
             $("#searchUi").show();
         } else {
-            $("#searchResults").show();
+            $("#searchResultsContainer").show();
             $("#searchUi").hide();
         }
     });
@@ -59,9 +62,8 @@ $(document).ready(function() {
 
     var addClusterTableFn = function(data, multiBody = false, showClusterHeader = false) {
         var hasEvalue = (data.length > 0 && typeof data[0].clusters[0].evalue !== "undefined");
-        var table = $('<table class="table table-sm"></table>');
-        table.append('<thead><tr><th>' + (showClusterHeader ? 'Cluster' : '') + '</th>' + (hasEvalue ? '<th>E-Value</th>' : '') + '<th>UniProt IDs</th><th>Nodes</th><th>UniProt ID CR</th></thead>');
-        console.log(data);
+        var table = $('<table class="table table-sm w-75"></table>');
+        table.append('<thead><tr><th>' + (showClusterHeader ? 'Cluster' : '') + '</th>' + (hasEvalue ? '<th>E-Value</th>' : '') + '<th class="text-right">UniProt IDs</th><th class="text-right">Nodes</th><th class="text-right">UniProt ID CR</th></thead>');
         for (var i = 0; i < data.length; i++) {
             var DD = data[i];
             var cellStyle = i ? 'pt-5' : '';
@@ -79,16 +81,16 @@ $(document).ready(function() {
                 var numUniRef90 = D.num_ur;
                 var convRatio = D.cr;
                 var netName = typeof D.name !== "undefined" ? D.name : clusterId;
-                if (parentNetName.toLowerCase().startsWith("mega"))
-                    netName = "Mega" + netName;
+                //if (parentNetName.toLowerCase().startsWith("mega"))
+                //    netName = "Mega" + netName;
 
                 var row = $('<tr></tr>');
                 row.append('<td><a href="' + getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td>');
                 if (hasEvalue)
                     row.append('<td>' + D.evalue + '</td>');
-                row.append('<td>' + numUniProt + '</td>');
-                row.append('<td>' + numUniRef90 + '</td>');
-                var cell = $('<td style="color: #' + getColor(convRatio) + '"></td>');
+                row.append('<td class="text-right">' + numUniProt + '</td>');
+                row.append('<td class="text-right">' + numUniRef90 + '</td>');
+                var cell = $('<td class="text-right" style="color: #' + getColor(convRatio) + '"></td>');
                 cell.append(convRatio > 0.7 ? ('<b>' + convRatio + '</b>') : convRatio);
                 row.append(cell);
     
@@ -96,7 +98,8 @@ $(document).ready(function() {
             }
     	    table.append(body);
         }
-        $("#searchResults").append(table).show();
+        $("#searchResults").append(table);
+        $("#searchResultsContainer").show();
         $("#searchUi").hide();
     };
 
@@ -132,6 +135,9 @@ $(document).ready(function() {
                     addClusterTableFn(data.diced_matches, true);
                 }
             }
+
+            if (typeof id === "function")
+                id(data.id);
             progress.stop();
         });
     };
@@ -156,6 +162,8 @@ $(document).ready(function() {
                 } else {
                     window.location.href = getResultsUrl(data.cluster_id);
                 }
+                if (typeof id === "function")
+                    id(data.id);
             }
         });
     };
@@ -181,49 +189,53 @@ $(document).ready(function() {
             if (data.status !== true) {
                 $("#searchTaxTermErrorMsg").text(data.message).show();
             } else {
-                var processFn = function(network, matches, isDiced = false) {
-                    var table = $('<table class="table table-sm w-50"></table>');
-                    if (isDiced)
-        		        table.append('<thead><tr><th>Cluster</th><th>Alignment Score</th><th>Number of Hits</th></thead>');
-                    else
-        		        table.append('<thead><tr><th>Cluster</th><th>Number of Hits</th></thead>');
+                $("#searchUi").hide();
+
+                var processFn = function(matches, isDiced = false) {
+                    var table = $('<table class="table table-sm w-100"></table>');
+        		    table.append('<thead><tr><th>UniProt ID</th><th>Cluster</th><th>Organism</th><th>TrEMBL/SwissProt</th></thead>');
+        		    //table.append('<thead><tr><th>UniProt ID</th><th>Cluster</th><th>Description</th><th>Organism</th><th>TrEMBL/SwissProt</th></thead>');
+        		    //table.append('<thead><tr><th>UniProt ID</th><th>Cluster</th>' + (isDiced ? '<th>Alignment Score</th>' : '') + '<th>Description</th><th>Organism</th><th>TrEMBL/SwissProt</th></thead>');
     		        var body = $('<tbody>');
             		table.append(body);
                     for (var i = 0; i < matches.length; i++) {
-                        var clusterId = matches[i][0];
-                        var netName = typeof network !== 'undefined' ? network.getNetworkMapName(clusterId) : clusterId;
-                        var ascore = isDiced ? matches[i][1] : "";
-                        if (netName) {
-                            var tr = $('<tr>');
-                            tr.append($('<td><a href="' + getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td>'));
-                            if (isDiced)
-                                tr.append($('<td>' + matches[i][1] + '</td>'));
-                            tr.append($('<td>' + matches[i][isDiced ? 2 : 1] + '</td>'));
-                            body.append(tr);
-                        }
+                        var D = matches[i];
+                        var netName = typeof D.name !== "undefined" ? D.name : D.cluster;
+                        if (D.parent.toLowerCase().startsWith("mega"))
+                            netName = "Mega" + netName;
+                        var ascore = isDiced ? D.ascore : '';
+                        var ascoreText = isDiced ? (' AS ' + D.ascore) : '';
+                        var tr = $('<tr>');
+                        tr.append('<td><a href="https://www.uniprot.org/uniprot/' + D.uniprot_id + '">' + D.uniprot_id + '</a></td>');
+                        tr.append('<td><a href="' + getResultsUrl(D.cluster, ascore) + '">' + netName + ascoreText + '</a></td>');
+                        //tr.append('<td></td>');
+                        tr.append('<td>' + D.organism + '</td>');
+                        tr.append('<td>' + D.status + '</td>');
+                        body.append(tr);
                     }
-                    if (!isDiced)
-                        $("#searchResults").empty();
-                    $("#searchResults").append(table).show();
-                    $("#searchUi").hide();
-                    if (typeof id === "function")
-                        id(data.id);
+                    $("#searchResults").append(table);
                 };
 
-                $.get("getdata.php", {a: "netinfo", v: version}, function (netDataStr) {
-                    var netData = parseNetworkJson(netDataStr);
-                    var network;
-                    if (netData !== false) {
-                        if (netData.valid) {
-                            network = new AppData("", netData);
-                        }
-                    }
-                    processFn(network, data.matches);
-                    if (typeof data.diced_matches !== "undefined" && data.diced_matches.length > 0) {
-                        processFn(network, data.diced_matches, true);
-                    }
-                    progress.stop();
-                });
+                var numSeq = data.matches.length;
+                
+                $("#searchResults").empty();
+                $("#searchResults").append('<div class="my-5 bigger">Query:<br><b>' + data.query + '</b><br>Number of Sequences Found: ' + numSeq + '</div>');
+
+                processFn(data.matches);
+
+                $("#searchResults").append('<div class="my-5"></div>');
+                
+                if (typeof data.diced_matches !== "undefined" && data.diced_matches.length > 0) {
+                    $("#searchResults").append('<div class="mt-5"><h4>Diced Clusters</h4></div>');
+                    processFn(data.diced_matches);
+                }
+
+                $("#searchResultsContainer").show();
+                
+                if (typeof id === "function")
+                    id(data.id);
+
+                progress.stop();
             }
         });
     };
@@ -238,7 +250,7 @@ $(document).ready(function() {
             searchSeqFn(jid);
         else if (t == STATE_TAX)
             searchTaxFn(jid);
-        $("#searchResults").show();
+        $("#searchResultsContainer").show();
         $("#searchUi").hide();
     }
 

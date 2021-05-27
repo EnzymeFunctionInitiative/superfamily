@@ -1,0 +1,318 @@
+
+                    <div>
+                        <p>
+                        <b>SFLD subgroup 2</b> (Megacluster-2-2; oxygen-independent coproporphyrinogen III oxidase like; red nodes in the SSN),
+                        <b>SFLD subgroup 5</b> (Megacluster-2-1; B12-binding domain; blue nodes),
+                        <b>SFLD subgroup 16</b> (Cluster-7; PLP-dependent; green nodes) and
+                        <b>SFLD subgroup 17</b> (Megacluster-1-1; SPASM/Twitch domain-containing; magenta nodes) are large and functionally diverse.  Segregation
+                        of the SSNs for these subgroups into isofunctional families/clusters is not easy, e.g., a single alignment score threshold
+                        cannot be used to segregate the SSN into isofunctional clusters.  
+                        </p>
+
+                        <ul class="nav nav-tabs nav-intro-tabs" id="func_subtabs" role="tablist">
+                            <li class="nav-item"><a href="#func_strat" id="tab-func_strat" class="nav-link active" data-toggle="tab" role="tab">ANALYSIS STRATEGY</a></li>
+                            <li class="nav-item"><a href="#func_mega11" id="tab-func_mega11" class="nav-link" data-toggle="tab" role="tab">MEGA-1-1 (SPASM/TWITCH)</a></li>
+                            <li class="nav-item"><a href="#func_mega21" id="tab-func_mega21" class="nav-link" data-toggle="tab" role="tab">MEGA-2-1 (B12-BINDING)</a></li>
+                            <li class="nav-item"><a href="#func_mega22" id="tab-func_mega22" class="nav-link" data-toggle="tab" role="tab">MEGA-2-2 (COPRO III-LIKE)</a></li>
+                            <li class="nav-item"><a href="#func_cluster7" id="tab-func_cluster7" class="nav-link" data-toggle="tab" role="tab">CLUSTER-7 (PLP-DEPENDENT)</a></li>
+                            <li class="nav-item"><a href="#func_explore" id="tab-func_explore" class="nav-link" data-toggle="tab" role="tab">EXPLORING SUBGROUPS</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="func_strat" role="tabpanel">
+                                <h5>Analysis Strategy</h5>
+
+                                <p>
+                                The SSN for the RSS was generated with UniRef50 clusters/IDs.  This coarse granularity is sufficient for identifying
+                                subgroups (SFLD-curated and uncharacterized clusters).  However, these nodes that conflate sequences sharing ≥50%
+                                sequence identity can result in nodes and SSN clusters that are heterofunctional even as the alignment scores is
+                                increased, thereby confusing interpretation of MSAs and genome context.  Therefore, UniRef90 clusters/IDs were used to
+                                generate the SSNs for these subgroups to maximize the likelihood that as the alignment score is increased, the SSN
+                                clusters will become isofunctional.  
+                                </p>
+
+                                <p>
+                                Segregation of the SSNs for these subgroups into isofunctional families/clusters is not easy, e.g., a single alignment
+                                score threshold cannot be used to segregate the SSN into isofunctional clusters.  
+                                </p>
+
+                                <p>
+                                To solve this problem, for each subgroup a series of SSNs was generated with increasing alignments scores.  As the
+                                alignment score increases, both the sizes of the clusters and their functional complexity decrease, with isofunctional
+                                clusters segregating at alignment scores that are characteristic of the function.  We refer to this strategy as
+                                “dicing”.
+                                </p>
+
+                                <p>
+                                The “AS Walk-Through” function is provided so that the user can 1) “walk” forward from any cluster to its progeny
+                                clusters in the SSN with the next alignment score or 2) “walk” backward to its progenitor cluster in in the SSN with
+                                the previous alignment score.  These connections may allow the discovery of divergent functions that share mechanistic
+                                attributes.
+                                </p>
+
+                                <p>
+                                For each cluster in each SSN, the Explore page provides information to assess whether the cluster is isofunctional,
+                                e.g., convergence ratio, number of conserved Cys residues, and, most importantly, genome neighborhood diagrams (GNDs)
+                                for the sequences in the clusters.
+                                </p>
+
+                                <p>
+                                As described in the description of the Search function, the clusters in the SSNs can be searched with a UniProt ID or
+                                sequence.
+                                </p>
+                            </div>
+                            <div class="tab-pane fade" id="func_mega11" role="tabpanel">
+                                <h5>Megacluster-1-1, Subgroup 17 (SPASM/Twitch domain) </h5>
+
+                                <img src="img/intro/func_mega11.png">
+
+                                <p>
+                                The UniRef50 nodes/IDs in Megacluster-1-1 (obtained as described in the Megacluster-1 subtab of the Subgroup tab) were
+                                expanded to UniRef90 nodes/IDs.  The SSN was generated with Option D of EFI-EST followed by analyses using a series of
+                                33 alignment scores (from 25 to 70 increments of 5, from 80 to 300 in increments of 10).  
+                                </p>
+
+                                <p>
+                                The Explore page for Megacluster-1-1 displays the SSN generated with an alignment score of 11 and provides access
+                                various types of bioinformatic information about Megacluster-1-1.  The Explore page provides a link to the Diced SSNs
+                                page. The clusters in each of the 33 “diced” SSNs can be viewed by selecting the alignment score (a cluster contains
+                                ≥3 UniRef90 IDs/nodes).  As the alignment score increases, the clusters decrease in size and complexity.  Also, as the
+                                alignment score increases, the number of clusters initially increases as the large clusters segregate and then
+                                decreases as the small clusters “dissociate” into individual nodes.  
+                                </p>
+
+                                <p>
+                                The Click here link on the Diced SSNs page accesses the Explore page for Megacluster-1-1-1 in the SSN generated with
+                                an alignment score of 25.  On that (and any) Explore page, any cluster in the current SSN can be selected; also, SSNs
+                                generated with other alignment scores can be selected.
+                                </p>
+
+                                <p>
+                                 Each Explore page includes the “AS Walk-Through” button above the image for the cluster.  The “AS Walk-Through”
+                                function allows the user to “walk through” the series of “diced” SSNs, allowing identification of the progeny of a
+                                cluster (walking forward) or the progenitor of a cluster (walking backward).   This function allows, for example,
+                                analyses of 1) speciation of orthologues (with the taxonomic distribution of the cluster available via the TAXONOMY
+                                button) and 2) divergent evolution of functions from a common progenitor.
+                                </p>
+
+                                <p>
+                                Clicking the “AS Walk-Through” button opens a window that identifies 1) the cluster in the previous SSN in the series
+                                that contained the sequences in the cluster and 2) the cluster(s) in the next SSN that contain(s) the sequences in the
+                                cluster.   For each cluster in the window, the number of nodes and CR are provided as well as a button, if present,
+                                that expands to provide a list of the SwissProt functions in the cluster.   The cluster is a link to the cluster;
+                                clicking the link opens the Explore page for the cluster.
+                                </p>
+                                
+                                <p>
+                                Several “diced” clusters that lack conserved Cys motifs in a C-terminal domain can be identified (Megacluster-1-1 was
+                                identified using pairwise sequence similarity using all UniRef50 IDs in the RSS, so some “outliers” can be expected).
+                                And, although Subgroup 17 has been designed as “SPASM/Twitch domain-containing” (PF13186 and IPR023885), inspection of
+                                the Explore pages reveals that clusters contain a wide variety of C-terminal (and N-terminal) domain Cys-rich motifs,
+                                ranging in number from 1 to 27 Cys residues (the paradigm SPASM domain contains 8 Cys residues for two Fe4S4 clusters;
+                                the paradigm Twitch domain contains 4 Cys for one Fe4S4 cluster<sup>1</sup>).  
+                                </p>
+
+                                <p>
+                                <sup>1</sup> doi: <a href="https://dx.doi.org/10.1128/JB.00040-11">10.1128/JB.00040-11</a><br>
+                                doi: <a href="https://dx.doi.org/10.1074/jbc.R114.581249">10.1074/jbc.R114.581249</a><br>
+                                doi: <a href="https://dx.doi.org/10.1016/j.bbamcr.2015.01.002">10.1016/j.bbamcr.2015.01.002</a><br>
+                                doi: <a href="https://dx.doi.org/10.1074/jbc.RA118.005369">10.1074/jbc.RA118.005369</a><br>
+                                </p>
+
+                            </div>
+                            <div class="tab-pane fade" id="func_mega21" role="tabpanel">
+                                <h5>Subgroup 5, Megacluster-2-1 (B12-binding domain)</h5>
+
+                                <img src="img/intro/func_mega21.png">
+
+                                <p>
+                                The UniRef50 IDs in Megacluster-2-1 (obtained as described in the Megacluster-2 Subgroup tab) were expanded to
+                                UniRef90 nodes/IDs.  The SSN was generated with Option D of EFI-EST followed by analyses using a series of 30
+                                alignment scores (from 35 to 325 in increments of 10).  
+                                </p>
+
+                                <p>
+                                The Explore page for Megacluster-2-1 displays the SSN generated with an alignment score of 11 and provides access
+                                various types of bioinformatic information about Megacluster-2-1.  The Explore page provides a link to the Diced
+                                SSNs page. The clusters in each of the 30 “diced” SSNs can be viewed by selecting the alignment score (a cluster
+                                contains ≥3 UniRef90 IDs/nodes).  As the alignment score increases, the clusters decrease in size and complexity.
+                                Also, as the alignment score increases, the number of clusters initially increases as the large clusters segregate
+                                and then decreases as the small clusters “dissociate” into individual nodes.  
+                                </p>
+
+                                <p>
+                                The Click here link on the Diced SSNs page accesses the Explore page for Megacluster-2-1-1 in the SSN generated
+                                with an alignment score of 35.  On that (and any) Explore page, any cluster in the current SSN can be selected;
+                                also, SSNs generated with other alignment scores can be selected.
+                                </p>
+
+                                <p>
+                                 Each Explore page includes the “AS Walk-Through” button above the image for the cluster.  The “AS Walk-Through”
+                                function allows the user to “walk through” the series of “diced” SSNs, allowing identification of the progeny of a
+                                cluster (walking forward) or the progenitor of a cluster (walking backward).   This function allows, for example,
+                                analyses of 1) speciation of orthologues (with the taxonomic distribution of the cluster available via the
+                                TAXONOMY button) and 2) divergent evolution of functions from a common progenitor.
+                                </p>
+
+                                <p>
+                                Clicking the “AS Walk-Through” button opens a window that identifies 1) the cluster in the previous SSN in the
+                                series that contained the sequences in the cluster and 2) the cluster(s) in the next SSN that contain(s) the
+                                sequences in the cluster.   For each cluster in the window, the number of nodes and CR are provided as well as a
+                                button, if present, that expands to provide a list of the SwissProt functions in the cluster.   The cluster is a
+                                link to the cluster; clicking the link opens the Explore page for the cluster.
+                                </p>
+
+                                <p>
+                                Several “diced” clusters that lack the B12-binding domain (PF02310) can be identified (Megacluster-2-1 was
+                                identified using pairwise sequence similarity using all UniRef50 IDs in the RSS, so some “outliers” can be
+                                expected).  
+                                </p>
+
+                            </div>
+                            <div class="tab-pane fade" id="func_mega22" role="tabpanel">
+                                <h5>Subgroup 2, Megacluster-2-2 (Oxygen-independent coproporphyrinogen III oxidase-like)</h5>
+
+                                <img src="img/intro/func_mega22.png">
+                                     
+                                <p>
+                                The UniRef50 nodes/IDs in Megacluster-2-2 (obtained as described in the Megacluster-2 subtab of the Subgroup tab)
+                                were expanded to UniRef90 nodes/IDs.  The SSN was generated with Option D of EFI-EST followed by analyses using a
+                                series of 20 alignment scores (60 to 250 in increments of 10).  
+                                </p>
+
+                                <p>
+                                The Explore page for Megacluster-2-2 displays the SSN generated with an alignment score of 11 and provides access
+                                various types of bioinformatic information about Megacluster-2-2.  The Explore page provides a link to the Diced
+                                SSNs page. The clusters in each of the 20 “diced” SSNs can be viewed by selecting the alignment score (a cluster
+                                contains ≥3 UniRef90 IDs/nodes).  As the alignment score increases, the clusters decrease in size and complexity.
+                                Also, as the alignment score increases, the number of clusters initially increases as the large clusters segregate
+                                and then decreases as the small clusters “dissociate” into individual nodes.  
+                                </p>
+
+                                <p>
+                                The Click here link on the Diced SSNs page accesses the Explore page for Megacluster-2-2-1 in the SSN generated
+                                with an alignment score of 60.  On that (and any) Explore page, any cluster in the current SSN can be selected;
+                                also, SSNs generated with other alignment scores can be selected.
+                                </p>
+
+                                <p>
+                                 Each Explore page includes the “AS Walk-Through” button above the image for the cluster.  The “AS Walk-Through”
+                                function allows the user to “walk through” the series of “diced” SSNs, allowing identification of the progeny of a
+                                cluster (walking forward) or the progenitor of a cluster (walking backward).   This function allows, for example,
+                                analyses of 1) speciation of orthologues (with the taxonomic distribution of the cluster available via the
+                                TAXONOMY button) and 2) divergent evolution of functions from a common progenitor.
+                                </p>
+
+                                <p>
+                                Clicking the “AS Walk-Through” button opens a window that identifies 1) the cluster in the previous SSN in the
+                                series that contained the sequences in the cluster and 2) the cluster(s) in the next SSN that contain(s) the
+                                sequences in the cluster.   For each cluster in the window, the number of nodes and CR are provided as well as a
+                                button, if present, that expands to provide a list of the SwissProt functions in the cluster.   The cluster is a
+                                link to the cluster; clicking the link opens the Explore page for the cluster.
+                                </p>
+
+                            </div>
+                            <div class="tab-pane fade" id="func_cluster7" role="tabpanel">
+                                <h5>Subgroup 16, Cluster-7 (PLP-dependent)</h5>
+
+                                <img src="img/intro/func_cluster7.png">
+
+                                <p>
+                                The UniRef50 IDs in Cluster-7 (obtained as described in the Clusters subtab of the Subgroup tab) were expanded to
+                                UniRef90 nodes/IDs.  The SSN was generated with Option D of EFI-EST followed by analyses using a series of 20
+                                alignment scores (60 to 250 in increments of 10).  
+                                </p>
+
+                                <p>
+                                The Explore page for Cluster-7 displays an image of the SSN generated with an alignment score of 11 and provides
+                                access various types of bioinformatic information about Cluster-7.  The Explore page provides a link to the Diced
+                                SSNs page. The clusters in each of the 20 “diced” SSNs can be viewed by selecting the alignment score (a cluster
+                                contains ≥3 UniRef90 IDs/nodes).  As the alignment score increases, the clusters decrease in size and complexity.
+                                Also, as the alignment score increases, the number of clusters initially increases as the large clusters segregate
+                                and then decreases as the small clusters “dissociate” into individual nodes.  
+                                </p>
+
+                                <p>
+                                The Click here link on the Diced SSNs page accesses the Explore page for Cluster-7-1 in the SSN generated with an
+                                alignment score of 60.  On that (and any) Explore page, any cluster in the current SSN can be selected; also, SSNs
+                                generated with other alignment scores can be selected.
+                                </p>
+
+                                <p>
+                                 Each Explore page includes the “AS Walk-Through” button above the image for the cluster.  The “AS Walk-Through”
+                                function allows the user to “walk through” the series of “diced” SSNs, allowing identification of the progeny of a
+                                cluster (walking forward) or the progenitor of a cluster (walking backward).   This function allows, for example,
+                                analyses of 1) speciation of orthologues (with the taxonomic distribution of the cluster available via the
+                                TAXONOMY button) and 2) divergent evolution of functions from a common progenitor.
+                                </p>
+
+                                <p>
+                                Clicking the “AS Walk-Through” button opens a window that identifies 1) the cluster in the previous SSN in the
+                                series that contained the sequences in the cluster and 2) the cluster(s) in the next SSN that contain(s) the
+                                sequences in the cluster.   For each cluster in the window, the number of nodes and CR are provided as well as a
+                                button, if present, that expands to provide a list of the SwissProt functions in the cluster.   The cluster is a
+                                link to the cluster; clicking the link opens the Explore page for the cluster.
+                                </p>
+
+
+                            </div>
+                            <div class="tab-pane fade" id="func_explore" role="tabpanel">
+                                <h5>Exploring subgroups</h5>
+
+                                <p>
+                                This section describes the Search function results when the input UniProt ID or sequence matches a sequence located in
+                                a cluster (≥3 UniRef90 nodes) in the functionally diverse subgroups 2, 5, 16, and 17.  Refer to the description of the
+                                Search tab for results when the input matches one of the other subgroups.
+                                </p>
+
+                                <p>
+                                With the Find by UniProt ID function, the user provides a UniProt ID for searching all of the clusters in
+                                RadicalSAM.org.  When the ID is located in the “diced” SSNs of a functionally diverse subgroup, the Results page
+                                provides a list of clusters in the “diced” SSNs that contain the UniProt ID along with the number of UniProt IDs,
+                                number of cluster nodes, and UniProt ID convergence ratio (CR; described on the Explore Pages tab).  The clusters are
+                                links to the Explore page for that cluster (see Explore Pages tab for a description of the information provided on the
+                                Explore page).
+                                </p>
+
+                                <p>
+                                As the alignment score used to generate the diced clusters increases, a UniProt ID may located in a cluster with ≤2
+                                UniRef90 ID nodes.  When this occurs, the Search will report "ID not found".  Generation of the MSA, WebLogo, HMM,
+                                Length Histograms, tables of Conserved Cys Residues, and files with IDs and FASTA sequences for a cluster requires
+                                that the cluster contain ≥3 UniRef90 nodes.
+                                </p>
+
+                                <p>
+                                With the Find by Sequence function, the user provides a sequence (with/without a FASTA header) for first searching the
+                                HMMs of the subgroups to identify the subgroup with smallest e-value.  If the smallest e-value is for a functionally
+                                diverse subgroup (SFLD subgroup 2, 5, 16, or 17; Megaclusters-1-1, -2-1, or -2-2 or Cluster-7), the HMMs for all of
+                                the clusters in the series of “diced” SSNs in that subgroup are searched.  
+                                </p>
+
+                                <p>
+                                The Results page provides a list of the three clusters at each alignment score with the smallest e-values along with
+                                the number of UniProt IDs, number of cluster nodes, and UniProt ID convergence ratio (CR; described on the Explore
+                                Pages tab).  The cluster identifiers are links to the Explore page for that cluster (see Explore Pages tab for a
+                                description of the information provided on the Explore page).
+                                </p>
+
+                                <p>
+                                As the alignment score used to generate the “diced” SSN increases, the e-value typically decreases as the alignment
+                                score increases and the cluster becomes orthologous/isofunctional as nonorthologous sequences are removed.  
+                                As the alignment score used to generate the diced clusters increases and if/when the user-provided sequence segregates
+                                into a cluster with ≤2 UniRef90 ID nodes for which an HMM is not generated, the Search results will continue to
+                                identify the three best clusters but the e-values likely will be larger than those identified for clusters containing
+                                the sequence.
+                                </p>
+
+                                <p>
+                                An image of the cluster is presented on its Explore pages:  an isofunctional cluster likely will be “spherical”, with
+                                each node/sequence connected to all other nodes with an edge so the value of CR will approach 1.0.  Functional
+                                homogeneity within each cluster also can be assessed by inspection of the Conserved Cys Residue table as well as the
+                                genome neighborhood diagrams (GNDs) for the UniRef90 node IDs and the UniProt IDs.
+                                </p>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+

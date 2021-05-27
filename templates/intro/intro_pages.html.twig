@@ -1,0 +1,36 @@
+
+{% set pages = [
+    {'id': 'background', 'file': 'intro/background.html.twig', 'name': 'Background', 'default': 'true'},
+    {'id': 'cur_release', 'file': 'intro/cur_release.html.twig', 'name': 'Current Release'},
+    {'id': 'subgroups', 'file': 'intro/subgroups.html.twig', 'name': 'Subgroups'},
+    {'id': 'func_subgroups', 'file': 'intro/func_subgroups.html.twig', 'name': 'Functionally Diverse Subgroups'},
+    {'id': 'explore', 'file': 'intro/explore.html.twig', 'name': 'Explore Pages'},
+    {'id': 'search', 'file': 'intro/search.html.twig', 'name': 'Search Functions'},
+    {'id': 'anno', 'file': 'intro/anno.html.twig', 'name': 'Community Annotation'},
+] %}
+
+<!--
+-->
+
+                <ul class="nav nav-tabs nav-intro-tabs" id="intro-master-tabs" role="tablist">
+                {% for item in pages %}
+                    {% set style = "" %}
+                    {% if item.default is defined %}
+                        {% set style = "active" %}
+                    {% endif %}
+                    <li class="nav-item"><a href="#{{ item.id }}" id="tab-{{ item.id }}" class="nav-link {{ style }}" data-toggle="tab" role="tab" aria-controls="{{ item.id }}" aria-selected="false">{{ item.name }}</a></li>
+                {% endfor %}
+                </ul>
+
+                <div class="tab-content">
+                {% for item in pages %}
+                    {% set style = "" %}
+                    {% if item.default is defined %}
+                        {% set style = "active" %}
+                    {% endif %}
+                    <div class="tab-pane fade show {{ style }}" id="{{ item.id }}" role="tabpanel" aria-labelledby="tab-{{ item.id }}">
+                    {% include item.file %}
+                    </div>
+                {% endfor %}
+                </div>
+
