@@ -134,6 +134,17 @@ ul.expandable li:before {
     font-size: 4em;
 }
 
+.progress-loader-tax {
+    position: fixed;
+    top:  50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+}
+.progress-loader-tax i {
+    font-size: 4em;
+}
+
 .progress-loader-sm {
     font-size: 2em;
 }
