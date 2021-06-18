@@ -3,9 +3,10 @@
 // SUNBURST
 //
 
-function AppSunburst(network, uniref) {
+function AppSunburst(network, appMeta, uniref) {
     this.network = network;
     this.uniref = uniref;
+    this.alignmentScore = appMeta.Ascore;
 }
 
 AppSunburst.prototype.addSunburstFeature = function() {
