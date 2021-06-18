@@ -118,7 +118,6 @@ function get_diced_nav($db, $cluster_id, $ascore, $forward, $qversion, $parent_i
     }
     $diced_ssn_table = DICED_NETWORK;
     $next_sql = "SELECT ascore FROM $diced_ssn_table WHERE cluster_id = '$cluster_id' AND CAST(ascore AS INTEGER) $dir :as ORDER BY CAST(ascore AS INTEGER) $order LIMIT 1";
-//    die($next_sql);
     $sth = $db->prepare($next_sql);
     $sth->bindValue("as", $ascore);
     $sth->execute();
@@ -771,7 +770,6 @@ function get_tax_data($db, $cluster_id, $ascore, $qversion) {
     $uniref_join = "LEFT JOIN uniref_map ON taxonomy.uniprot_id = uniref_map.uniprot_id";
     $uniref_parm = ", uniref_map.uniref50_id, uniref_map.uniref90_id";
     $sql = get_generic_join_sql($qversion, "taxonomy", "taxonomy.* $uniref_parm", "", $ascore, false, $uniref_join);
-    //$sql = get_generic_join_sql("taxonomy", "*", "", $ascore);
     $sth = $db->prepare($sql);
     if (!$sth)
         return array();

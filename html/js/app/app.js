@@ -88,7 +88,7 @@ App.prototype.init = function(appData, gndKey, showDicedListPage) {
 
     this.dataFeat = new AppDataFeatures(this.appData, this.appMeta, this.url);
     this.diced = new AppDiced(this.appData, this.appMeta, this.dataFeat);
-    this.sunburst = new AppSunburst(this.appData, this.uniref);
+    this.sunburst = new AppSunburst(this.appData, this.appMeta, this.uniref);
 
     var hasRegions = this.appData.getRegions().length > 0;
     var hasChildren = this.appData.getChildren().length > 0;
