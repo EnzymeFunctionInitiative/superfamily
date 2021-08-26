@@ -1,17 +1,28 @@
 {
+    "repositories" : [
+        {
+            "type": "vcs",
+            "url": "https://www.github.com/IGBIllinois/IGBIllinois-php"
+        }
+    ],
 	"require": {
-		"php":	">=7.2",
-		"phpoffice/phpspreadsheet": "1.11.0",
+        "igbillinois/igbillinois-php": ">=1.2",
 		"components/jquery": "3.4.1",
-                "components/jqueryui": "1.12.1",
+        "components/jqueryui": "1.12.1",
 		"twbs/bootstrap": "4.4.1",
 		"fortawesome/font-awesome": "5.12.1",
-		"twig/twig": "^3.0",
-		"pear/mail_mime": "1.10.1",
-		"pear/mail": "1.4.1"
+		"twig/twig": "^3.0"
     },
-    "config": {
-        "vendor-dir": "html/vendor"
+    "scripts": {
+        "post-update-cmd": [
+            "mkdir -p html/vendor/twbs",
+            "mkdir -p html/vendor/components",
+            "mkdir -p html/vendor/fortawesome",
+            "cp -R vendor/twbs/bootstrap html/vendor/twbs/",
+            "cp -R vendor/components/jquery html/vendor/components/",
+            "cp -R vendor/components/jqueryui html/vendor/components/",
+            "cp -R vendor/fortawesome/font-awesome html/vendor/fortawesome/"
+        ]
     }
 }
 

@@ -1,5 +1,5 @@
 {% extends "base.html.twig" %}
-{% set page_title = 'Contact' %}
+{% set page_title = 'Send Feedback or Questions about RadicalSAM.org' %}
 {% set page_active = 'contact' %}
 
 {% block content %}
@@ -9,14 +9,46 @@
         </p>
         <div class="mt-5">
             <div class="w-auto mt-5">
-                <div>
-                    <textarea rows="6" cols="60"></textarea>
-                </div>
-                <div class="mt-3">
-                    <button type="button" class="btn btn-primary">Submit</button>
-                </div>
+                <form class="needs-validation" action="contact_do.php" method="POST" novalidate>
+                    <div class="form-group w-50">
+                        <label for="inputName">Your name</label>
+                        <input type="text" class="form-control" id="inputName" name="inputName" placeholder="Enter name" required>
+                        <div class="valid-feedback">Looks good!</div>
+                    </div>
+                    <div class="form-group w-50">
+                        <label for="inputEmail">Your email</label>
+                        <input type="email" class="form-control" id="inputEmail" name="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
+                        <small id="emailHelp" class="form-text text-muted">Your email address will never be shared.</small>
+                        <div class="valid-feedback">Looks good!</div>
+                    </div>
+                    <div class="form-group w-50">
+                        <label for="inputInstitution">Your institution</label>
+                        <input type="input" class="form-control" id="inputInstitution" name="inputInstitution" aria-describedby="institutionHelp" placeholder="Enter institution">
+                        <small id="institutionHelp" class="form-text text-muted"></small>
+                    </div>
+                    <div class="form-group required w-50">
+                        <label for="inputComments">Comments:</label>
+                        <textarea class="form-control" id="inputComments" name="inputComments" rows="5" aria-describedby="commentsHelp" placeholder="" required></textarea>
+                        <small id="commentsHelp" class="form-text text-muted">Fill in comments.</small>
+                        <div class="invalid-feedback">This field is mandatory.</div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <div id="errorMsg" style="display: none"></div>
+                        <button type="submit" class="btn btn-primary">Submit Annotation</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block body_javascript %}
+    <script src="js/app/forms.js?v=1"></script>
+    <script>
+        $(document).ready(function () {
+            var postSubmitPage = "contact_ok.php";
+            validateForm(postSubmitPage); // Comes from forms.js
+        });
+    </script>
 {% endblock %}
 

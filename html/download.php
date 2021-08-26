@@ -1,8 +1,7 @@
 <?php
-
-require(__DIR__ . "/../libs/settings.class.inc.php");
-require(__DIR__ . "/../libs/functions.class.inc.php");
-
+require_once(__DIR__ . "/../init.php");
+require_once(__DIR__ . "/../libs/settings.class.inc.php");
+require_once(__DIR__ . "/../libs/functions.class.inc.php");
 
 $type = filter_input(INPUT_GET, "t", FILTER_SANITIZE_STRING);
 $cluster_id = filter_input(INPUT_GET, "c", FILTER_SANITIZE_STRING);

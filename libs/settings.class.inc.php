@@ -66,5 +66,24 @@ class settings {
     public static function get_default_version() {
         return __DEFAULT_VERSION__;
     }
+
+    public static function get_smtp_host() {
+        return defined("__SMTP_HOST__") ? __SMTP_HOST__ : "";
+    }
+    public static function get_smtp_port() {
+        return defined("__SMTP_PORT__") ? __SMTP_PORT__ : "";
+    }
+    public static function get_smtp_user() {
+        return defined("__SMTP_USER__") ? __SMTP_USER__ : "";
+    }
+    public static function get_smtp_password() {
+        return defined("__SMTP_PASSWORD__") ? __SMTP_PASSWORD__ : "";
+    }
+    public static function get_from_email() {
+        return defined("__FROM_EMAIL__") ? __FROM_EMAIL__ : "";
+    }
+    public static function get_to_email() {
+        return defined("__TO_EMAIL__") ? __TO_EMAIL__ : "";
+    }
 }
 

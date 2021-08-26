@@ -47,7 +47,7 @@ class functions {
         return $version;
     }
     public static function filter_version2($version = "") {
-        if (!$version)
+        if (!$version && isset($_GET["v"]))
             $version = $_GET["v"];
         if (!$version)
             $version = settings::get_default_version();

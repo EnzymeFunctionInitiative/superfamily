@@ -1,6 +1,5 @@
 <?php
-
-require_once(__DIR__ . "/includes/main.inc.php");
+require_once(__DIR__ . "/../init.php");
 
 $twig_variables = array();
 $loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());

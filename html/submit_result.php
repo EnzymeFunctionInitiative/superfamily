@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . "/../init.php");
 require_once(__DIR__ . "/../libs/settings.class.inc.php");
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {

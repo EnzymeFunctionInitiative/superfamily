@@ -8,7 +8,7 @@
     <title>{% if page_title is defined %} {{ page_title }} | {% endif %} RadicalSAM.org</title>
 
 	<link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
-    <link href="css/custom.css?v=4" rel="stylesheet">
+    <link href="css/custom.css?v=5" rel="stylesheet">
     <link href="css/font/css/all.css" rel="stylesheet" />
 {% if extra_css is defined %}
 {% for item in extra_css %}
@@ -50,7 +50,10 @@
     {% endblock %}
 
     <footer class="container">
-        <hr class="w-25" />
+        <hr class="w-50" />
+        <div class="text-center bigger contact">
+            <a href="contact.php">Click here to contact us for help, reporting issues, or suggestions</a>
+        </div>
         <div class="text-center">
             radicalSAM.org <span class="pl-4"></span> Gerlt, Mitchell, and Oberg, 2021 <span class="pl-4"></span> <a href="https://efi.igb.illinois.edu">EFI</a> at <a href="https://igb.illinois.edu">Institute for Genomic Biology, University of Illinois</a>
         </div>

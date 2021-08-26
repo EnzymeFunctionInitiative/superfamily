@@ -1,7 +1,7 @@
 <?php
-
-require(__DIR__ . "/../libs/settings.class.inc.php");
-require(__DIR__ . "/../libs/functions.class.inc.php");
+require_once(__DIR__ . "/../init.php");
+require_once(__DIR__ . "/../libs/settings.class.inc.php");
+require_once(__DIR__ . "/../libs/functions.class.inc.php");
 
 const MAX_RESULTS = 3;
 

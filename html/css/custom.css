@@ -245,3 +245,14 @@ td.file-header-row {
     font-size: 1.2em;
 }
 
+footer a {
+    color: #007bff;
+}
+
+table.feedback td {
+    padding-right: 20px;
+    padding-bottom: 10px;
+}
+table.feedback tr {
+}
+
