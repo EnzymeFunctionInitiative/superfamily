@@ -4,17 +4,17 @@
 {% set extra_js = [
                       'js/app/progress.js?v=1',
                           'js/app/util.js?v=1',
-                     'js/app/swissprot.js?v=1',
+                     'js/app/swissprot.js?v=2',
                         'js/app/uniref.js?v=1',
                       'js/app/sunburst.js?v=2',
                     'js/app/navigation.js?v=1',
-                 'js/app/data_features.js?v=3',
+                 'js/app/data_features.js?v=4',
                       'js/app/app_meta.js?v=2',
                          'js/app/image.js?v=1',
                            'js/app/url.js?v=1',
-                         'js/app/diced.js?v=3',
-                      'js/app/app_data.js?v=13',
-                           'js/app/app.js?v=43',
+                         'js/app/diced.js?v=4',
+                      'js/app/app_data.js?v=14',
+                           'js/app/app.js?v=44',
                     'js/sunburst/sunburst-chart.min.js', 'js/sunburst/circlepack-chart.min.js', 'js/sunburst/sunburst_helpers.js',
                     'js/imageMapResizer.min.js', 'js/jquery.maphilight.min.js', 'js/jquery.lazy.min.js'
                   ] %}
@@ -337,7 +337,7 @@
         </div>
     </div>
     <div id="clusterAsNavModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Alignment Score Walk-Through</h5>
@@ -406,6 +406,25 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default mr-auto copy-btn" data-id="pdbIdListClip">Copy <i class="far fa-copy"></i></button>
+                    <button type="button" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="annoModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Annotations for Proteins in Cluster</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div id="annoIdList">
+                    </div>
+                    <textarea id="annoIdListClip" style="display: none"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default mr-auto copy-btn" data-id="annoIdListClip">Copy <i class="far fa-copy"></i></button>
                     <button type="button" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>

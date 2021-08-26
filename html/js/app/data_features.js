@@ -89,6 +89,31 @@ AppDataFeatures.prototype.addPdb = function () {
     $("#pdbIdModal").modal();
     $("#dataAvailablePdb").click(function() { $("#pdbModal").modal(); }).enableDataAvailableButton();
 }
+AppDataFeatures.prototype.addAnno = function () {
+    var anno = this.appData.getAnno();
+    if (anno.length == 0)
+        return;
+    var table = $('<table class="table table-sm w-auto"></table>');
+    table.append('<thead><tr><th>UniProt ID</th><th>DOI</th></thead>');
+    var body = $('<tbody></tbody>');
+    table.append(body);
+    $("#annoIdList").append(table);
+    for (var i = 0; i < anno.length; i++) {
+        var uniprotId = anno[i][0];
+        var dois = anno[i][1];
+        for (var j = 0; j < dois.length; j++) {
+            var row = $("<tr></tr>");
+            var link = '<a href="https://www.uniprot.org/uniprot/' + uniprotId + '" target="_blank">' + uniprotId + '</a>';
+            row.append("<td>" + link + "</td>");
+            row.append("<td>" + '<a href="' + dois[j] + '" target="_blank">' + dois[j] + '</a></td>');
+            //$("#annoIdList").append(uniprotId + ' <a href="' + dois[j] + '">' + dois[j] + '</a><br>');
+            body.append(row);
+            $("#annoIdListClip").append(uniprotId + "\t" + dois[j] + "\n");
+        }
+    }
+    $("#annoIdModal").modal();
+    $("#dataAvailableAnno").click(function() { $("#annoModal").modal(); }).enableDataAvailableButton();
+}
 AppDataFeatures.prototype.addGndFeature = function() {
     var feat = this.appData.getDisplayFeatures();
     if (!feat.hasOwnProperty("gnd") || this.appData.getChildren().length > 0)

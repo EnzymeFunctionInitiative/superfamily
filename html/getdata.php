@@ -149,6 +149,8 @@ function get_diced_nav($db, $cluster_id, $ascore, $forward, $qversion, $parent_i
             $data[$i]["num_nodes"] = $row["uniref90"];
             $sp = get_swissprot($db, $xcid, $xascore, $qversion);
             $data[$i]["sp"] = $sp;
+            $anno = get_annotations($db, $xcid, $xascore, $qversion);
+            $data[$i]["anno"] = $anno;
         }
 
         $sql = "SELECT conv_ratio FROM diced_conv_ratio WHERE cluster_id = '$xcid' AND ascore = $xascore";
@@ -190,6 +192,7 @@ function get_cluster($db, $cluster_id, $ascore, $version, $qversion, &$timings) 
         "public" => array(
             "has_kegg" => false,
             "swissprot" => array(),
+            "anno" => array(),
             "pdb" => array(),
         ),
         "anno" => array(),
@@ -285,6 +288,9 @@ $timings["get_pdb"] = microtime(true) - $start;
 $start = microtime(true);
     $data["families"]["tigr"] = get_tigr($db, $cluster_id);
 $timings["get_tigr"] = microtime(true) - $start;
+
+    $data["public"]["anno"] = get_annotations($db, $cluster_id, $ascore, $qversion);
+
 $start = microtime(true);
     $data["display"] = get_display($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
 $timings["get_display"] = microtime(true) - $start;
@@ -582,6 +588,17 @@ function get_kegg($db, $cluster_id, $ascore = "", $check_only = false, $qversion
 function get_swissprot($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
     $sql = get_generic_join_sql($qversion, "swissprot", "function, GROUP_CONCAT(swissprot.uniprot_id) AS ids", "AND function IS NOT NULL AND function != \"\" GROUP BY function ORDER BY function", $ascore, $check_only);
     $row_fn = function($row) { return ($row["function"] && $row["ids"]) ? array($row["function"], $row["ids"]) : false; };
+    return get_generic_fetch($db, $cluster_id, $sql, $row_fn);
+}
+
+function get_annotations($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
+    $sql = get_generic_join_sql($qversion, "annotations", "annotations.uniprot_id, doi", "AND doi IS NOT NULL AND doi != \"\"", $ascore, $check_only);
+    $row_fn = function($row) {
+        if (!$row["doi"] || !$row["uniprot_id"])
+            return false;
+        $parts = explode("`", $row["doi"]);
+        return array($row["uniprot_id"], $parts);
+    };
     return get_generic_fetch($db, $cluster_id, $sql, $row_fn);
 }
 

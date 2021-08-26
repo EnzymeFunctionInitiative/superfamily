@@ -210,6 +210,7 @@ App.prototype.initLeafPage = function(hideInfoForDiced = false) {
     if (hasData) {
         this.dataFeat.addSwissProtFunctions();
         this.dataFeat.addPdb();
+        this.dataFeat.addAnno();
         if (!hideInfoForDiced)
             this.dataFeat.addGndFeature();
         this.sunburst.addSunburstFeature();

@@ -162,6 +162,9 @@ AppData.prototype.getSwissProtFunctions = function () {
 AppData.prototype.getPdb = function () {
     return Array.isArray(this.data.public.pdb) ? this.data.public.pdb: [];
 }
+AppData.prototype.getAnno = function () {
+    return Array.isArray(this.data.public.anno) ? this.data.public.anno: [];
+}
 AppData.prototype.getEnzymeCodes = function () {
     return typeof this.enzymecodes !== "undefined" ? this.enzymecodes : {};
 }

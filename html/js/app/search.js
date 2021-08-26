@@ -63,7 +63,23 @@ $(document).ready(function() {
     var addClusterTableFn = function(data, multiBody = false, showClusterHeader = false) {
         var hasEvalue = (data.length > 0 && typeof data[0].clusters[0].evalue !== "undefined");
         var table = $('<table class="table table-sm w-75"></table>');
-        table.append('<thead><tr><th>' + (showClusterHeader ? 'Cluster' : '') + '</th>' + (hasEvalue ? '<th>E-Value</th>' : '') + '<th class="text-right">UniProt IDs</th><th class="text-right">Nodes</th><th class="text-right">UniProt ID CR</th></thead>');
+
+        var thead = $('<thead></thead>');
+        table.append(thead);
+        var headrow = $('<tr></tr>');
+        thead.append(headrow);
+        headrow.append('<th>' + (showClusterHeader ? 'Cluster' : '') + '</th>');
+        if (hasEvalue)
+            headrow.append('<th>E-Value</th>');
+        headrow.append('<th class="text-right"># of UniProt IDs</th>');
+        headrow.append('<th class="text-right"># of UniRef90 IDs</th>');
+        var crcell = $('<th class="text-right">UniProt ID </th>');
+        headrow.append(crcell);
+        var ttText = 'The CR is the ratio of the number of sequence pairs with edge alignment score values (derived from BLAST e-values/bit scores) &ge; the minimum alignment score threshold used to generate the SSN to the total number of sequence pairs.';
+        var po = $('<a href="index.php?#explore_conv" target="_blank" data-toggle="tooltip" title="' + ttText + '"><i class="fas fa-question-circle"></i></a>').tooltip();
+        //po.popover({trigger: 'focus', html: true,
+        //    content: 'The CR is the ratio of the number of sequence pairs with edge alignment score values (derived from BLAST e-values/bit scores) ≥ the minimum alignment score threshold used to generate the SSN to the total number of sequence pairs. <a href="index.php?#explore_conv" target="_blank">More...</a>'})
+        crcell.append(po);
         for (var i = 0; i < data.length; i++) {
             var DD = data[i];
             var cellStyle = i ? 'pt-5' : '';
@@ -90,9 +106,10 @@ $(document).ready(function() {
                     row.append('<td>' + D.evalue + '</td>');
                 row.append('<td class="text-right">' + numUniProt + '</td>');
                 row.append('<td class="text-right">' + numUniRef90 + '</td>');
-                var cell = $('<td class="text-right" style="color: #' + getColor(convRatio) + '"></td>');
-                cell.append(convRatio > 0.7 ? ('<b>' + convRatio + '</b>') : convRatio);
-                row.append(cell);
+                row.append('<td class="text-right">' + convRatio + '</td>');
+                //var cell = $('<td class="text-right" style="color: #' + getColor(convRatio) + '"></td>');
+                //cell.append(convRatio > 0.7 ? ('<b>' + convRatio + '</b>') : convRatio);
+                //row.append(cell);
     
                 body.append(row);
             }

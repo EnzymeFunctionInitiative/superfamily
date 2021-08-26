@@ -68,3 +68,17 @@
         </div>
 {% endblock %}
 
+{% block body_javascript %}
+
+    <script>
+        $(document).ready(function () {
+            var hash = window.location.hash;
+            if (hash) {
+                hash.startsWith("#explore") && $('ul.nav a[href="#explore"]').tab('show');
+                $('ul.nav a[href="' + hash + '"]').tab('show');
+            }
+        });
+    </script>
+
+{% endblock %}
+

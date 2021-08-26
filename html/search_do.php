@@ -380,7 +380,7 @@ function hmmscan($out_dir, $hmmdb, $seq_file) {
         $parts = preg_split("/\s+/", $lines[$i]);
         if (count($parts) >= 5) {
             $evalue = floatval($parts[4]);
-            if ($evalue < 1e-10)
+            if ($evalue < 1e-1)
                 array_push($matches, array($parts[0], $parts[4]));
             if (count($matches) == MAX_RESULTS)
                 break;

@@ -118,37 +118,58 @@ AppDiced.prototype.addDicedNav = function(isParent = false) {
         asNavBtn.click(function() {
             $("#clusterAsNavList").empty();
             var dnav = that.appData.getDicedWalkthrough();
-            var makeWalkthroughDnav = function(navList, headingText) {
+            var makeWalkthroughDnav = function(navList, headingText, isForward) {
                 var nextAscore = "";
                 var table = $('<table class="table"></table>');
-                var th = $('<thead><td>Cluster ID</td><td>Num Nodes</td><td>Conv. Ratio</td><td>SwissProt</td></thead>');
+                var th = $('<thead></thead>');
+                th.append('<td>Cluster ID</td><td>Num Nodes</td><td>Conv. Ratio</td>');
+                var dicedSpCol = $('<td>SwissProt</td>');
+                th.append(dicedSpCol);
+                dicedSpCol.show();
+                var dicedAnnoCol = $('<td>Annotation</td>');
+                th.append(dicedAnnoCol);
                 var tbody = $('<tbody></tbody>');
                 table.append(th).append(tbody);
-    
+   
+                var numSp = 0;
+                var numAnno = 0;
+                var groupIdx = isForward ? "f" : "b";
                 for (var i = 0; i < navList.length; i++) {
                     var navItem = navList[i];
                     var navItemName = ucFirst(navItem.cluster_id);
                     nextAscore = navItem.ascore;
                     if (typeof navItem.num_nodes !== "undefined") {
-                        var spDiv = getPopoverSwissProt(navItem.sp);
+                        var spDiv = getPopoverSwissProt(navItem.sp, groupIdx+i);
+                        if (spDiv != "")
+                            numSp++;
+                        var annoDiv = getPopoverAnno(navItem.anno, groupIdx+i);
+                        if (annoDiv != "")
+                            numAnno++;
                         var listItem = $('<tr></tr>');
                         listItem.append('<td><a href="' + getUrlFn(navItem.cluster_id, that.appMeta.Version, navItem.ascore) + '">' + navItemName + '</a></td>');
                         listItem.append('<td>' + navItem.num_nodes + '</td>');
                         var cr = typeof navItem.cr !== "undefined" ? navItem.cr : "";
                         listItem.append('<td>' + cr + '</td>');
-                        var cell = $('<td></td>');
-                        cell.append(spDiv);
-                        listItem.append(cell);
+                        var spCell = $('<td></td>');
+                        spCell.append(spDiv);
+                        listItem.append(spCell);
+                        var annoCell = $('<td></td>');
+                        annoCell.append(annoDiv);
+                        listItem.append(annoCell);
                         tbody.append(listItem);
                     }
                 }
                 if (nextAscore)
                     $("#clusterAsNavList").append('<div></div>').append('<h5>' + headingText + ' (AS' + nextAscore + ')</h5>').append(table);
+                //if (numSp == 0)
+                //    dicedSpCol.hide();
+                //if (numAnno == 0)
+                //    dicedAnnoCol.hide();
             };
             if (dnav.backward !== false)
-                makeWalkthroughDnav(dnav.backward, "Previous Cluster");
+                makeWalkthroughDnav(dnav.backward, "Previous Cluster", false);
             if (dnav.forward !== false)
-                makeWalkthroughDnav(dnav.forward, "Next Clusters");
+                makeWalkthroughDnav(dnav.forward, "Next Clusters", true);
             $("#clusterAsNavModal").modal();
         });
         $("#dicedNav").append(asNavBtn);
