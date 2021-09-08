@@ -30,7 +30,15 @@ $version = functions::validate_version(isset($_POST["v"]) ? $_POST["v"] : "");
 
 if ($type == "seq") {
     $oquery = $query;
-    $seq = preg_replace("/>.*?[\r\n]+/", "", $query);
+    #$seq = preg_replace("/>.*?[\r\n]+/", "", $query);
+    $seqId = "";
+    if (preg_match_all('/^\s*>([^\r\n]+)[\r\n]/m', $query, $matches)) {
+        $seqId = $matches[0][0];
+        $seqId = preg_replace('/^>((tr|sp)\|)?([A-Z0-9]{6,10}).*$/i', '$3', $seqId);
+        $seq = preg_replace('/^\s*>.*?[\r\n]+/', "", $query);
+    } else {
+        $seq = $query;
+    }
 
     $cache_file = "results.json";
     if ($id && preg_match("/^[A-Za-z0-9]+$/", $id)) {
@@ -151,7 +159,7 @@ if ($type == "seq") {
             }
         }
     
-        $json = json_encode(array("status" => true, "matches" => $matches, "diced_matches" => $dmatches, "id" => $job_id, "query" => str_replace("\n", "^", $query)));
+        $json = json_encode(array("status" => true, "matches" => $matches, "diced_matches" => $dmatches, "id" => $job_id, "query" => str_replace("\n", "^", $query), "queryId" => $seqId));
         file_put_contents($cache_file, $json);
     }
     print $json;

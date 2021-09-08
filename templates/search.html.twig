@@ -4,7 +4,7 @@
 {% set extra_css = ['css/typeahead.css?v=3'] %}
 {% set extra_js = [ 'js/typeahead.bundle.js',
                     'js/app/app_data.js?v=12',
-                    'js/app/search.js?v=18',
+                    'js/app/search.js?v=19',
                     'js/app/progress.js?v=1',
                     'js/app/color.js?v=1',
                   ] %}
@@ -84,6 +84,14 @@
                     <textarea class="form-control w-75" id="searchSeq" cols="70" rows="10"></textarea>
                 </div>
                 <div class="mt-1"><button class="btn btn-primary btn-sm" id="searchSeqBtn">Find Clusters</button></div>
+            </div>
+
+            <div>
+                <h3>GND Lookup</h3>
+                The <a href="https://efi.igb.illinois.edu/efi-gnt">EFI-GNT web tools</a> include genome neighborhood diagrams.
+                The 
+                <a href="https://efi.igb.illinois.edu/dev/efi-gnt/gnd_lookup.php">GND viewer utility</a> can lookup and
+                display diagrams by inputting UniProt ID(s).
             </div>
 
             <div>

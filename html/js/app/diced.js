@@ -62,43 +62,7 @@ AppDiced.prototype.addDicedNav = function(isParent = false) {
     var that = this;
 
     if (!isParent) {
-        var nav = this.appData.getDicedNav(isParent);
-        var idParts = this.appMeta.Id.split("-");
-        var parentIdParts = idParts.slice(0, idParts.length-1);
-        var prevId = nav.siblings.prev ? parentIdParts.join("-") + "-" + nav.siblings.prev : "";
-        var nextId = nav.siblings.next ? parentIdParts.join("-") + "-" + nav.siblings.next : "";
-        
-        var prevBtn = $('<button id="prev-sibling-btn" class="btn btn-primary btn-sm mr-0">Previous</button>');
-        if (prevId) {
-            prevBtn.click(function() {
-                goToUrlFn(prevId, that.appMeta.Version, that.appMeta.Ascore);
-            });
-        } else {
-            prevBtn.addClass("disabled");
-        }
-    
-        var nextBtn = $('<button id="next-sibling-btn" class="btn btn-primary btn-sm">Next</button>');
-        if (nextId) {
-            nextBtn.click(function() {
-                goToUrlFn(nextId, that.appMeta.Version, that.appMeta.Ascore);
-            });
-        } else {
-            nextBtn.addClass("disabled");
-        }
-    
-        var idCb = $('<select id="sel-sibling-id" class="form-control w-auth mx-2"></select>');
-        var curId = idParts[idParts.length-1];
-        var ids = nav.siblings.ids;
-        var parentNum = idParts.slice(1, idParts.length-1).join("-");
-        for (var i = 0; i < ids.length; i++) {
-            var isSel = ids[i] == curId ? "selected" : "";
-            idCb.append($('<option value="cluster-' + parentNum + '-' + ids[i] + '" ' + isSel + '>Cluster ' + parentNum + '-' + ids[i] + '</option>'));
-        }
-        idCb.change(function() {
-            goToUrlFn(this.value, that.appMeta.Version, that.appMeta.Ascore);
-        });
-        
-        $("#dicedNav").append(prevBtn).append(idCb).append(nextBtn);
+        this.addClusterSelect(isParent);
     }
 
     var nav = this.appData.getDicedNav(isParent);
@@ -114,66 +78,165 @@ AppDiced.prototype.addDicedNav = function(isParent = false) {
 
 
     if (!isParent) {
-        var asNavBtn = $('<button id="cluster-as-nav-btn" class="btn btn-primary btn-sm pull-right" style="margin-left: 90px"><i class="fas fa-code-branch"></i> AS Walk-Through</button>');
-        asNavBtn.click(function() {
-            $("#clusterAsNavList").empty();
-            var dnav = that.appData.getDicedWalkthrough();
-            var makeWalkthroughDnav = function(navList, headingText, isForward) {
-                var nextAscore = "";
-                var table = $('<table class="table"></table>');
-                var th = $('<thead></thead>');
-                th.append('<td>Cluster ID</td><td>Num Nodes</td><td>Conv. Ratio</td>');
-                var dicedSpCol = $('<td>SwissProt</td>');
-                th.append(dicedSpCol);
-                dicedSpCol.show();
-                var dicedAnnoCol = $('<td>Annotation</td>');
-                th.append(dicedAnnoCol);
-                var tbody = $('<tbody></tbody>');
-                table.append(th).append(tbody);
-   
-                var numSp = 0;
-                var numAnno = 0;
-                var groupIdx = isForward ? "f" : "b";
-                for (var i = 0; i < navList.length; i++) {
-                    var navItem = navList[i];
-                    var navItemName = ucFirst(navItem.cluster_id);
-                    nextAscore = navItem.ascore;
-                    if (typeof navItem.num_nodes !== "undefined") {
-                        var spDiv = getPopoverSwissProt(navItem.sp, groupIdx+i);
-                        if (spDiv != "")
-                            numSp++;
-                        var annoDiv = getPopoverAnno(navItem.anno, groupIdx+i);
-                        if (annoDiv != "")
-                            numAnno++;
-                        var listItem = $('<tr></tr>');
-                        listItem.append('<td><a href="' + getUrlFn(navItem.cluster_id, that.appMeta.Version, navItem.ascore) + '">' + navItemName + '</a></td>');
-                        listItem.append('<td>' + navItem.num_nodes + '</td>');
-                        var cr = typeof navItem.cr !== "undefined" ? navItem.cr : "";
-                        listItem.append('<td>' + cr + '</td>');
-                        var spCell = $('<td></td>');
-                        spCell.append(spDiv);
-                        listItem.append(spCell);
-                        var annoCell = $('<td></td>');
-                        annoCell.append(annoDiv);
-                        listItem.append(annoCell);
-                        tbody.append(listItem);
+        this.addWalkthrough();
+    }
+}
+
+AppDiced.prototype.addWalkthrough = function() {
+    var that = this;
+
+    if (typeof sessionStorage.queryId !== "undefined") {
+        $("#clusterAsNavTitleId").text(" (" + sessionStorage.queryId + ")");
+    }
+    var sessionData = false;
+    var isIdType = false;
+    if (typeof sessionStorage.idData !== "undefined") {
+        sessionData = JSON.parse(sessionStorage.idData);
+        isIdType = true;
+    } else if (typeof sessionStorage.evalueData !== "undefined") {
+        sessionData = JSON.parse(sessionStorage.evalueData);
+        isIdType = false;
+    }
+
+    var asNavBtn = $('<button id="cluster-as-nav-btn" class="btn btn-primary btn-sm pull-right" style="margin-left: 90px"><i class="fas fa-code-branch"></i> AS Walk-Through</button>');
+
+    var createTable = function() {
+        var table = $('<table class="table"></table>');
+        var th = $('<thead></thead>');
+        th.append('<td>Cluster ID</td><td>Num Nodes</td><td>Conv. Ratio</td>');
+        var dicedSpCol = $('<td>SwissProt</td>');
+        th.append(dicedSpCol);
+        dicedSpCol.show();
+        var dicedAnnoCol = $('<td>Annotation</td>');
+        th.append(dicedAnnoCol);
+        table.append(th);
+        return table;
+    };
+
+    var getListItem = function(navItem, groupIdx, hasId) {
+        var navItemName = ucFirst(navItem.cluster_id);
+        var spDiv = getPopoverSwissProt(navItem.sp, groupIdx);
+        var annoDiv = getPopoverAnno(navItem.anno, groupIdx);
+
+        var hasIdText = "";
+        if (hasId) {
+            if (sessionData !== false && !isIdType) {
+                hasIdText = "<br>[e-value = " + hasId + "]";
+            } else {
+                hasIdText = " [" + hasId + "]";
+            }
+        }
+
+        var listItem = $('<tr></tr>');
+        listItem.append('<td><a href="' + getUrlFn(navItem.cluster_id, that.appMeta.Version, navItem.ascore) + '">' + navItemName + hasIdText + '</a></td>');
+        listItem.append('<td>' + navItem.num_nodes + '</td>');
+        var cr = typeof navItem.cr !== "undefined" ? navItem.cr : "";
+        listItem.append('<td>' + cr + '</td>');
+        var spCell = $('<td></td>');
+        spCell.append(spDiv);
+        listItem.append(spCell);
+        var annoCell = $('<td></td>');
+        annoCell.append(annoDiv);
+        listItem.append(annoCell);
+        return listItem;
+    };
+
+    var processClusterItem = function(navItem) {
+        if (sessionData === false)
+            return false;
+        if (isIdType) {
+            for (var i = 0; i < sessionData.length; i++) {
+                if (sessionData[i].ascore == navItem.ascore && sessionData[i].clusters[0].cluster == navItem.cluster_id)
+                    return sessionStorage.queryId;
+            }
+        } else {
+            for (var i = 0; i < sessionData.length; i++) {
+                if (sessionData[i].ascore == navItem.ascore) {
+                    var data = sessionData[i].clusters;
+                    for (var j = 0; j < data.length; j++) {
+                        if (data[j].cluster == navItem.cluster_id)
+                            return data[j].evalue;
                     }
                 }
-                if (nextAscore)
-                    $("#clusterAsNavList").append('<div></div>').append('<h5>' + headingText + ' (AS' + nextAscore + ')</h5>').append(table);
-                //if (numSp == 0)
-                //    dicedSpCol.hide();
-                //if (numAnno == 0)
-                //    dicedAnnoCol.hide();
-            };
-            if (dnav.backward !== false)
-                makeWalkthroughDnav(dnav.backward, "Previous Cluster", false);
-            if (dnav.forward !== false)
-                makeWalkthroughDnav(dnav.forward, "Next Clusters", true);
-            $("#clusterAsNavModal").modal();
+            }
+        }
+        return false;
+    };
+
+
+    asNavBtn.click(function() {
+        $("#clusterAsNavList").empty();
+        var dnav = that.appData.getDicedWalkthrough();
+        var makeWalkthroughDnav = function(navList, headingText, isForward) {
+            var nextAscore = "";
+            var table = createTable();
+            var tbody = $('<tbody></tbody>');
+            table.append(tbody);
+
+            var groupIdx = isForward ? "f" : "b";
+            for (var i = 0; i < navList.length; i++) {
+                var navItem = navList[i];
+                nextAscore = navItem.ascore;
+                if (typeof navItem.num_nodes !== "undefined") {
+                    var idOrFalse = isForward ? processClusterItem(navItem) : false;
+                    //var hasId = isForward ? checkForUniProtId(navItem) : false;
+                    var listItem = getListItem(navItem, groupIdx+1, idOrFalse);
+                    tbody.append(listItem);
+                }
+            }
+            if (nextAscore)
+                $("#clusterAsNavList").append('<div></div>').append('<h5>' + headingText + ' (AS' + nextAscore + ')</h5>').append(table);
+        };
+        if (dnav.backward !== false)
+            makeWalkthroughDnav(dnav.backward, "Previous Cluster", false);
+        if (dnav.forward !== false)
+            makeWalkthroughDnav(dnav.forward, "Next Clusters", true);
+        $("#clusterAsNavModal").modal();
+    });
+    $("#dicedNav").append(asNavBtn);
+}
+
+
+AppDiced.prototype.addClusterSelect = function(isParent) {
+    var that = this;
+
+    var nav = this.appData.getDicedNav(isParent);
+    var idParts = this.appMeta.Id.split("-");
+    var parentIdParts = idParts.slice(0, idParts.length-1);
+    var prevId = nav.siblings.prev ? parentIdParts.join("-") + "-" + nav.siblings.prev : "";
+    var nextId = nav.siblings.next ? parentIdParts.join("-") + "-" + nav.siblings.next : "";
+    
+    var prevBtn = $('<button id="prev-sibling-btn" class="btn btn-primary btn-sm mr-0">Previous</button>');
+    if (prevId) {
+        prevBtn.click(function() {
+            goToUrlFn(prevId, that.appMeta.Version, that.appMeta.Ascore);
         });
-        $("#dicedNav").append(asNavBtn);
+    } else {
+        prevBtn.addClass("disabled");
     }
+    
+    var nextBtn = $('<button id="next-sibling-btn" class="btn btn-primary btn-sm">Next</button>');
+    if (nextId) {
+        nextBtn.click(function() {
+            goToUrlFn(nextId, that.appMeta.Version, that.appMeta.Ascore);
+        });
+    } else {
+        nextBtn.addClass("disabled");
+    }
+    
+    var idCb = $('<select id="sel-sibling-id" class="form-control w-auth mx-2"></select>');
+    var curId = idParts[idParts.length-1];
+    var ids = nav.siblings.ids;
+    var parentNum = idParts.slice(1, idParts.length-1).join("-");
+    for (var i = 0; i < ids.length; i++) {
+        var isSel = ids[i] == curId ? "selected" : "";
+        idCb.append($('<option value="cluster-' + parentNum + '-' + ids[i] + '" ' + isSel + '>Cluster ' + parentNum + '-' + ids[i] + '</option>'));
+    }
+    idCb.change(function() {
+        goToUrlFn(this.value, that.appMeta.Version, that.appMeta.Ascore);
+    });
+    
+    $("#dicedNav").append(prevBtn).append(idCb).append(nextBtn);
 }
 
 

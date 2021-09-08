@@ -7,6 +7,8 @@ const STATE_TAX = 4;
 
 $(document).ready(function() {
 
+    sessionStorage.clear();
+
     var searchApp = "search_do.php";
 
     var getVersion = function() {
@@ -140,6 +142,7 @@ $(document).ready(function() {
                 $("#searchResults").empty();
                 $("#searchResults").append('<div class="my-5 bigger">Query Sequence:<br><code>' + data.query.replaceAll('^', "<br>") + '</code></div>');
 
+
                 if (data.matches.length > 0) {
                     //$("#searchResults").append('<div class="mt-5"><h5>Non-diced Clusters</h5></div>');
                     addClusterTableFn(data.matches, false, true);
@@ -150,6 +153,8 @@ $(document).ready(function() {
                 if (data.diced_matches.length > 0) {
                     $("#searchResults").append('<div class="mt-5"><h4>Diced Clusters</h4></div>');
                     addClusterTableFn(data.diced_matches, true);
+                    sessionStorage.evalueData = JSON.stringify(data.diced_matches);
+                    sessionStorage.queryId = typeof data.queryId === "string" ? data.queryId : "";
                 }
             }
 
@@ -176,6 +181,8 @@ $(document).ready(function() {
                     $("#searchResults").empty();
                     $("#searchResults").append('<div class="my-5 bigger">Query ID:<br><b>' + data.query + '</b></div>');
                     addClusterTableFn(data.cluster_data, true);
+                    sessionStorage.idData = JSON.stringify(data.cluster_data);
+                    sessionStorage.queryId = data.query;
                 } else {
                     window.location.href = getResultsUrl(data.cluster_id);
                 }

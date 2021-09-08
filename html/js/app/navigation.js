@@ -10,6 +10,13 @@ function AppNav(appData, appMeta) {
 //
 AppNav.prototype.addBreadcrumb = function() {
     var nav = $("#exploreBreadcrumb");
+    $("#exploreBreadcrumb").click(function() {
+        sessionStorage.clear();
+    });
+    $("#navbarNavItems").click(function() {
+        sessionStorage.clear();
+    });
+
     var parts = this.appData.Id.split("-");
     if (parts.length > 1) {
         var ol = $('<ol class="breadcrumb"><li class="breadcrumb-item" aria-current="page"><a href="?v=' + this.appMeta.Version + '">Explore</a></li>');
