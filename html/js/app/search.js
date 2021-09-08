@@ -75,7 +75,7 @@ $(document).ready(function() {
             headrow.append('<th>E-Value</th>');
         headrow.append('<th class="text-right"># of UniProt IDs</th>');
         headrow.append('<th class="text-right"># of UniRef90 IDs</th>');
-        var crcell = $('<th class="text-right">UniProt ID </th>');
+        var crcell = $('<th class="text-right">UniProt ID CR </th>');
         headrow.append(crcell);
         var ttText = 'The CR is the ratio of the number of sequence pairs with edge alignment score values (derived from BLAST e-values/bit scores) &ge; the minimum alignment score threshold used to generate the SSN to the total number of sequence pairs.';
         var po = $('<a href="index.php?#explore_conv" target="_blank" data-toggle="tooltip" title="' + ttText + '"><i class="fas fa-question-circle"></i></a>').tooltip();

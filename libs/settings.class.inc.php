@@ -85,5 +85,9 @@ class settings {
     public static function get_to_email() {
         return defined("__TO_EMAIL__") ? __TO_EMAIL__ : "";
     }
+
+    public static function get_default_max_hmm_results() {
+        return defined("__DEFAULT_MAX_RESULTS__") ? __DEFAULT_MAX_RESULTS__ : 3;
+    }
 }
 
