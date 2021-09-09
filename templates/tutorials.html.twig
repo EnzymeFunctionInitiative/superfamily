@@ -1,0 +1,33 @@
+{% extends "base.html.twig" %}
+{% set page_title = 'Tutorials for Using RadicalSAM.org' %}
+{% set page_active = 'tutorials' %}
+
+{% block content %}
+    <div class="container">
+        <p>
+            This page provides information on how to use the resources on this site (which were
+            developed using the <a href="https://efi.igb.illinois.edu">EFI web tools</a>).
+            We have provided tutorials in the form of videos, which are embedded on this page
+            and also available on the
+            <a href="https://www.youtube.com/channel/UCShNWZLlJYevN2TlypX71ng">Enzyme Function YouTube channel</a>.
+        </p>
+        <p>
+            The PUBLICATION HERE perspective also provides an overview of these web resources and how
+            they can be applied.
+        </p>
+        <div class="mt-5">
+            <div class="w-100">
+                <h5>How to Introduce 60s music to the 50s</h5>
+                <iframe width="800" height="450" src="https://www.youtube.com/embed/T_WSXXPQYeY?start=152" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="w-auto">
+                <h5>A Railroad Track Tester</h5>
+                <iframe width="800" height="450" src="https://www.youtube.com/embed/J2QmXV7W_fw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body_javascript %}
+{% endblock %}
+
