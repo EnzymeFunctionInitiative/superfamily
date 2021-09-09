@@ -305,6 +305,12 @@ class search {
         $row = $results->fetchArray();
         if ($row)
             $out_row["name"] = $row["name"];
+
+        $sql = "SELECT cluster_id FROM diced_network WHERE parent_id = '$cluster_id' LIMIT 1";
+        $result = $this->db->query($sql);
+        $row = $result->fetchArray();
+        if ($row)
+            $out_row["is_diced"] = true;
         return $out_row;
     }
     
