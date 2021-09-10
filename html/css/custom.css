@@ -256,3 +256,25 @@ table.feedback td {
 table.feedback tr {
 }
 
+table.walkthrough td {
+    border: 0;
+}
+table.walkthrough tbody {
+    border: 0;
+    width: 100%;
+}
+table.walkthrough tbody.walkthrough-header td {
+    padding-bottom: 0;
+}
+table.walkthrough tbody.walkthrough-header h5 {
+    margin-bottom: 5px;
+}
+table.walkthrough tbody.walkthrough-header {
+    border-bottom: 1px solid gray;
+}
+table.walkthrough thead td {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+

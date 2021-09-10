@@ -101,7 +101,7 @@ AppDiced.prototype.addWalkthrough = function() {
     var asNavBtn = $('<button id="cluster-as-nav-btn" class="btn btn-primary btn-sm pull-right" style="margin-left: 90px"><i class="fas fa-code-branch"></i> AS Walk-Through</button>');
 
     var createTable = function() {
-        var table = $('<table class="table"></table>');
+        var table = $('<table class="table walkthrough"></table>');
         var th = $('<thead></thead>');
         th.append('<td>Cluster ID</td><td>Num Nodes</td><td>Conv. Ratio</td>');
         var dicedSpCol = $('<td>SwissProt</td>');
@@ -167,9 +167,10 @@ AppDiced.prototype.addWalkthrough = function() {
     asNavBtn.click(function() {
         $("#clusterAsNavList").empty();
         var dnav = that.appData.getDicedWalkthrough();
+        var table = createTable();
+        $("#clusterAsNavList").append(table);
         var makeWalkthroughDnav = function(navList, headingText, isForward) {
             var nextAscore = "";
-            var table = createTable();
             var tbody = $('<tbody></tbody>');
             table.append(tbody);
 
@@ -184,8 +185,12 @@ AppDiced.prototype.addWalkthrough = function() {
                     tbody.append(listItem);
                 }
             }
-            if (nextAscore)
-                $("#clusterAsNavList").append('<div></div>').append('<h5>' + headingText + ' (AS' + nextAscore + ')</h5>').append(table);
+            if (nextAscore) {
+                var headerBody = $('<tbody class="walkthrough-header"></tbody>').append('<tr><td><h5>' + headingText + ' (AS' + nextAscore + ')</h5></td></tr>');
+                table.append(headerBody);
+                table.append(tbody);
+                //$("#clusterAsNavList").append('<div></div>').append('<h5>' + headingText + ' (AS' + nextAscore + ')</h5>').append(table);
+            }
         };
         if (dnav.backward !== false)
             makeWalkthroughDnav(dnav.backward, "Previous Cluster", false);
