@@ -8,6 +8,7 @@
                         <ul class="nav nav-tabs nav-intro-tabs" id="cur_rel_subtabs" role="tablist">
                             <li class="nav-item"><a href="#search_id" id="tab-search_id" class="nav-link active" data-toggle="tab" role="tab">UNIPROT ID</a></li>
                             <li class="nav-item"><a href="#search_seq" id="tab-search_seq" class="nav-link" data-toggle="tab" role="tab">SEQUENCE</a></li>
+                            <li class="nav-item"><a href="#search_gnd" id="tab-search_gnd" class="nav-link" data-toggle="tab" role="tab">GND LOOKUP</a></li>
                             <li class="nav-item"><a href="#search_tax" id="tab-search_tax" class="nav-link" data-toggle="tab" role="tab">TAXONOMY</a></li>
                         </ul>
 
@@ -28,9 +29,11 @@
                                 <p>
                                 If the cluster is in Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain), Megacluster-2-1 (SFLD Subgroup 5,
                                 B12-binding domain), Megacluster-2-2 (SFLD Subgroup 2, anaerobic coproporphyrinogen-III oxidase-like), or Cluster-7
-                                ((SFLD Subgroup 16, PLP-dependent), the clusters in the “diced” SSNs for the (mega)cluster (series of increasing
+                                ((SFLD Subgroup 16, PLP-dependent), the clusters in the "diced" SSNs for the (mega)cluster (series of increasing
                                 alignment scores) are listed.  The number of UniProt IDs, number of cluster nodes, and UniProt ID convergence ratio
                                 (CR; described on the Subgroups tab) are provided for each identified cluster.
+                                In the "AS Walk-through" pop-up window, the identity of the cluster containing the UniProt ID is given next to the
+                                cluster name in the next SSN.
                                 </p>
 
                             </div>
@@ -51,13 +54,29 @@
                                 If the cluster with the lowest e-value is in Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain), Megacluster-2-1
                                 (SFLD Subgroup 5, B12-binding domain), Megacluster-2-2 (SFLD Subgroup 2, anaerobic coproporphyrinogen-III
                                 oxidase-like), or Cluster-7 ((SFLD Subgroup 16, PLP-dependent), the three clusters with the smallest e-values in each
-                                of the “diced” SSNs are listed.  The number of UniProt IDs, number of cluster nodes, and UniProt ID convergence ratio
+                                of the "diced" SSNs are listed.  The number of UniProt IDs, number of cluster nodes, and UniProt ID convergence ratio
                                 (CR; described on the Subgroups tab) are provided for each identified cluster.
+                                In the "AS Walk-through" pop-up window, the e-value for the best match to the input sequence is given next to the
+                                cluster name in the next SSN.
                                 </p>
 
                                 <p>
-                                The “Exploring Subgroups” subtab of the Functional Diverse Subgroups tab provides additional information for exploring
+                                The "Exploring Subgroups" subtab of the Functional Diverse Subgroups tab provides additional information for exploring
                                 these functionally diverse (mega)clusters.
+                                </p>
+
+                            </div>
+                            <div class="tab-pane fade" id="search_gnd" role="tabpanel")>
+                                <p><b>GND Lookup</b></p>
+
+                                <p>
+                                Genome neighborhood diagrams (GNDs) are provided for SSN clusters using the EFI-GNT tool.   They also are available
+                                on the Explore pages for clusters.  However, users may find it convenient to access the GNDs for specific members
+                                of the RSS in RadicalSAM.org.   
+                                </p>
+
+                                <p>
+                                This search function allow the user to input a list of UniProt IDs; the GNDs for these are provided.
                                 </p>
 
                             </div>

@@ -15,7 +15,7 @@
                         </p>
 
                         <p>
-                        We used a dataset containing only “Complete” UniRef50
+                        We used a dataset containing only "Complete" UniRef50
                         cluster IDs filtered to include sequences with ≥140
                         residues (50,232 of 52,886 UniRef50 clusters; include
                         616,009 of 620,386 UniProt IDs).   The sequences in the
@@ -24,11 +24,11 @@
 
                         <p>
                         Future releases of RadicalSAM.org may use the
-                        “Complete” plus “Fragment” UniRef50 cluster dataset
+                        "Complete" plus "Fragment" UniRef50 cluster dataset
                         filtered to include sequences with ≥140 residues, with
                         the benefit of providing additional genome context
                         information.  However, in this initial release, we
-                        adopted a “conservative” approach for including
+                        adopted a "conservative" approach for including
                         sequences.  
                         </p>
 
@@ -43,28 +43,28 @@
                                 {% include 'intro/seq_fams.html.twig' %}
                             </div>
                             <div class="tab-pane fade" id="cur_rel_seq_status" role="tabpanel">
-                                <h5>Sequence Status: “Complete” and “Fragment”</h5>
+                                <h5>Sequence Status: "Complete" and "Fragment"</h5>
 
                                 <p>
-                                UniProt designates the “Sequence Status” for
-                                each sequence:  “Complete” if the encoding DNA
+                                UniProt designates the "Sequence Status" for
+                                each sequence:  "Complete" if the encoding DNA
                                 sequence includes both a start and stop codon;
-                                “Fragment” if one or both of these codons
-                                is/are absent.  A “Fragment” may result if the
+                                "Fragment" if one or both of these codons
+                                is/are absent.  A "Fragment" may result if the
                                 coding DNA sequence is at the end of a contig.
-                                A “Complete” sequence need not to be a “full
-                                length” sequence, e.g., it may be truncated as
+                                A "Complete" sequence need not to be a "full
+                                length" sequence, e.g., it may be truncated as
                                 the result of sequencing errors that produce
                                 incorrect start and/or stop codons.  
                                 </p>
 
                                 <p>
-                                Option B identified 664,196 “Complete” and
-                                “Fragment” UniProt sequences in 66,428 UniRef50
+                                Option B identified 664,196 "Complete" and
+                                "Fragment" UniProt sequences in 66,428 UniRef50
                                 clusters; these represent 579,102 unique
                                 sequences (100% sequence identity over 100% of
                                 the length).   Option B identified 620,386
-                                “Complete” sequences in 52,886 UniRef50
+                                "Complete" sequences in 52,886 UniRef50
                                 clusters; these represent 535,892 unique
                                 sequences.  
                                 </p>
@@ -73,13 +73,13 @@
                                 <h5>Minimum Sequence Length</h5>
 
                                 <p>
-                                We remove “short” (truncated) sequences from
+                                We remove "short" (truncated) sequences from
                                 our datasets to 1) improve the quality of the
                                 MSAs used to generate WebLogos and HMMs and 2)
                                 minimize the number of singletons in SSNs
                                 generated with alignment scores that collect
-                                sequences into “isofunctional” clusters.  We
-                                designate sequences as “short” if they cannot
+                                sequences into "isofunctional" clusters.  We
+                                designate sequences as "short" if they cannot
                                 encode a functional RSS enzyme.  By inspecting
                                 the UniProt ID length histograms for the
                                 subgroups in RadicalSAM.org (generated using
@@ -88,7 +88,7 @@
                                 ribonucleotide-triphosphate reductase
                                 activating enzyme family with members that
                                 contain ≥140 residues (Megacluster-3-3-1) as
-                                the “shortest” functional RSS family.  
+                                the "shortest" functional RSS family.  
                                 </p>
 
                                 <p>
@@ -106,8 +106,8 @@
                                 IDs (i.e., nodes) in our datasets and resulting
                                 SSNs.  The length histograms (UniProt IDs,
                                 UniRef90 cluster IDs, and UniRef50 cluster IDs)
-                                for the “Complete” and “Complete” plus
-                                “Fragment” datasets are shown below.  
+                                for the "Complete" and "Complete" plus
+                                "Fragment" datasets are shown below.  
                                 </p>
 
                                 <h5>UniProt IDs</h5>
@@ -116,19 +116,19 @@
 
                                 <ol>
                                     <li>
-                                    The “Complete” dataset contains “short”
+                                    The "Complete" dataset contains "short"
                                     sequences (&lt;140 residues; too short to be
                                     functional) although they are designated
-                                    “Complete” by UniProt.   These result from
+                                    "Complete" by UniProt.   These result from
                                     sequencing errors but, since they the
                                     encoding DNA has start and stop codons,
-                                    they cannot be distinguished from “full
-                                    length” sequences when deposited in
+                                    they cannot be distinguished from "full
+                                    length" sequences when deposited in
                                     UniProt.
                                     </li>
                                     <li>
-                                    The “Complete” plus “Fragment” dataset
-                                    contains a larger fraction of “short”
+                                    The "Complete" plus "Fragment" dataset
+                                    contains a larger fraction of "short"
                                     sequences, the additional sequences
                                     contributed by those encoded by DNA without
                                     start and/or stop codons.
@@ -146,8 +146,8 @@
                                     sequence identity are conflated in the same UniRef90 cluster.  
                                     </li>
                                     <li>
-                                    The fraction of “short” sequences is larger than in the UniProt ID histograms.  These result from “random” unique
-                                    sequences instead of homologous “full length” sequences of similar length.  As result, the “short” clusters are
+                                    The fraction of "short" sequences is larger than in the UniProt ID histograms.  These result from "random" unique
+                                    sequences instead of homologous "full length" sequences of similar length.  As result, the "short" clusters are
                                     less likely to include multiple sequences so they constitute a larger fraction of the cluster IDs.
                                     </li>
                                 </ol>
@@ -162,9 +162,9 @@
                                     the same UniRef50 cluster.  
                                     </li>
                                     <li>
-                                    The fraction of “short” clusters is further increased.  Although the absolute number of sequences in the
-                                    “short” UniRef50 clusters the same as in the UniRef90 clusters and the UniProt IDs, the fraction of “short”
-                                    clusters increases, again because these result from “random” unique sequences instead of homologous “full length”
+                                    The fraction of "short" clusters is further increased.  Although the absolute number of sequences in the
+                                    "short" UniRef50 clusters the same as in the UniRef90 clusters and the UniProt IDs, the fraction of "short"
+                                    clusters increases, again because these result from "random" unique sequences instead of homologous "full length"
                                     sequences of similar length.   
                                     </li>
                                 </ol>

@@ -19,22 +19,7 @@
 </head>
 
 
-<!-- Matomo -->
-<script type="text/javascript">
-  var _paq = window._paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="https://www-app.igb.illinois.edu/analytics/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '6']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<!-- End Matomo Code -->
-
+{% include 'tracker.twig' ignore missing %}
 
 <body>
     {% include('navbar.html.twig') %}
@@ -50,12 +35,34 @@
     {% endblock %}
 
     <footer class="container">
-        <hr class="w-50" />
-        <div class="text-center bigger contact">
-            <a href="contact.php">Click here to contact us for help, reporting issues, or suggestions</a>
-        </div>
-        <div class="text-center">
-            radicalSAM.org <span class="pl-4"></span> Gerlt, Mitchell, and Oberg, 2021 <span class="pl-4"></span> <a href="https://efi.igb.illinois.edu">EFI</a> at <a href="https://igb.illinois.edu">Institute for Genomic Biology, University of Illinois</a>
+        <hr class="w-75" />
+        <div class="row">
+            <div class="col col-lg-9">
+                <div class="bigger contact">
+                    <a href="contact.php">Click here to contact us for help, reporting issues, or suggestions</a>
+                </div>
+                <div class="">
+                </div>
+                <!--
+                <div class="w-100">
+                    Please credit us: RadicalSAM.org; <span class="pl-2"></span> Gerlt, Mitchell, and Oberg, 2021; <span class="pl-2"></span> <a href="https://efi.igb.illinois.edu">EFI</a> at <a href="https://igb.illinois.edu">Institute for Genomic Biology, University of Illinois</a>
+                </div>
+                -->
+                <div class="">
+                    <br>
+                    <!-- &copy; University of Illinois Board of Trustees -->
+                    &copy; John A. Gerlt, Douglas A. Mitchell, and Nils Oberg
+                </div>
+                <div class="">
+                    <!--This website and its content is copyright of University of Illinois Board of Trustees. All rights reserved.<br>-->
+                    Portions of this website provide data which are derived from the <a href="https://www.ebi.ac.uk/interpro/">InterPro</a>
+                    and <a href="https://uniprot.org/">UniProt</a> databases.<br>
+                    <a href="terms_of_use.php">Terms of Use</a>
+                </div>
+            </div>
+            <div class="col col-lg-auto">
+                <img src="img/illinois_logo.png" alt="University of Illinois logo" height="75" />
+            </div>
         </div>
     </footer>
 	
