@@ -16,7 +16,8 @@ $inputAccession = filter_input(INPUT_POST, "inputAccession", FILTER_SANITIZE_STR
 $inputSequence = isset($_POST["inputSequence"]) ? filter_input(INPUT_POST, "inputSequence", FILTER_CALLBACK, array("options" => "checkFasta")) : "";
 $inputDoi = filter_input(INPUT_POST, "inputDoi", FILTER_SANITIZE_STRING);
 $inputDetails = filter_input(INPUT_POST, "inputDetails", FILTER_SANITIZE_STRING);
-$inputTos = filter_input(INPUT_POST, "inputTos", FILTER_VALIDATE_BOOLEAN);
+$inputPrivacy = filter_input(INPUT_POST, "inputPrivacy", FILTER_VALIDATE_BOOLEAN);
+$inputCla = filter_input(INPUT_POST, "inputCla", FILTER_VALIDATE_BOOLEAN);
 
 $valid = true;
 $message = array();
@@ -40,8 +41,12 @@ if (!$inputDetails) {
     array_push($message, "Invalid details input.");
     $valid = false;
 }
-if (!$inputTos) {
-    array_push($message, "Terms of service must be acknowledged.");
+if (!$inputPrivacy) {
+    array_push($message, "Privacy Notice must be acknowledged.");
+    $valid = false;
+}
+if (!$inputCla) {
+    array_push($message, "Contributor License Agreement must be acknowledged.");
     $valid = false;
 }
 

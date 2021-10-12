@@ -57,10 +57,18 @@
                         </div>
                         <div class="form-group required">
                             <div>
-                                <button type="button" id="tosBtn" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#tosDlg">Read Terms of Service and Disclaimer</button>
+                                <button type="button" id="claBtn" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#claDlg">Read Contributor License Agreement (CLA)</button>
                             </div>
-                            <input type="checkbox" id="inputTos" name="inputTos" value="1" required>
-                            <label for="inputTos">I have read and agree to the terms of service.</label>
+                            <input type="checkbox" id="inputCla" name="inputCla" value="1" required>
+                            <label for="inputCla">I have read and agree to the contributor license agreement.</label>
+                            <div class="invalid-feedback">This field is mandatory.</div>
+                        </div>
+                        <div class="form-group required">
+                            <div>
+                                <button type="button" id="privacyBtn" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#privacyDlg">Read Privacy Notice</button>
+                            </div>
+                            <input type="checkbox" id="inputPrivacy" name="inputPrivacy" value="1" required>
+                            <label for="inputPrivacy">I have read and agree to the privacy notice.</label>
                             <div class="invalid-feedback">This field is mandatory.</div>
                         </div>
                         <div class="form-group mt-3">
@@ -78,31 +86,258 @@
     <script src="js/app/forms.js?v=1"></script>
     <script>
         $(document).ready(function () {
-                $("#tosAccept").click(function(e) {
-                    $("#inputTos").prop("checked", true);
-                    $("#tosBtn").removeClass("btn-primary").addClass("btn-secondary");
+                $("#privacyAccept").click(function(e) {
+                    $("#inputPrivacy").prop("checked", true);
+                    $("#privacyBtn").removeClass("btn-primary").addClass("btn-secondary");
+                });
+                $("#claAccept").click(function(e) {
+                    $("#inputCla").prop("checked", true);
+                    $("#claBtn").removeClass("btn-primary").addClass("btn-secondary");
                 });
         });
     </script>
 
-    <div class="modal fade" id="tosDlg" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade" id="privacyDlg" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Terms of Service and Disclaimer</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Contributor License Agreement (CLA)</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    Terms of Service.<br>
-                    Disclaimer.
+                    <p>
+                    This Privacy Notice sets forth how Your information is
+                    collected, used, transferred, and stored through the Site
+                    that was created at the University of Illinois.  It is also
+                    subject to  Illinois’s web privacy notice here
+                    (<a href="https://www.vpaa.uillinois.edu/resources/web_privacy/">https://www.vpaa.uillinois.edu/resources/web_privacy/</a>)
+                    which among others contains sections: Rules for Individuals
+                    under Thirteen Years of Age,  Disclaimer of Warranties and
+                    Accuracy of Data, Legal Notices of Terms and Conditions and
+                    the Supplemental Notice.  The Supplemental Notice applies
+                    generally to the provision of personal information by
+                    individuals in the European Economic Area.  The
+                    Supplemental Notice explains how the University meets its
+                    obligations under the European Union General Data
+                    Protection Regulation ("GDPR"), and Your rights under GDPR.
+                    The Supplemental Notice can be found at <a href="https://www.vpaa.uillinois.edu/resources/web_privacy/supplemental_web_privacy_notice">here</a>. 
+                    </p>
+
+                    <ol>
+                        <li><b>What information may the Site collect from You?</b></li>
+                        <ol>
+                            <li>
+                            Personal Information.  "Personal Information" for
+                            purposes of this Privacy Notice means information
+                            that can be used  to identify, contact, or locate
+                            an individual, such as, Your name   and email
+                            address.  By using the Site, You are consenting to
+                            the collection and use of Your Personal Information
+                            by the University. 
+                            </li>
+                            <li>
+                            Automatically Collected Non-Personal Information.
+                            University may collect certain non-personal
+                            information in accordance with Illinois’s web
+                            privacy notice. 
+                            </li>
+                        </ol>
+                        <li><b>How is Your information used?</b>
+                            <p>
+                            Your Personal Information will be publicly displayed in
+                            connection with your contribution. Personal Information may
+                            also be used to contact You to seek feedback, input, and
+                            any clarifications regarding your contributions to the
+                            Site.  
+                            </p>
+                        </li>
+                        <li><b>Is Your personal information shared?</b>
+                            <p>
+                            The University may share Your Personal Information that
+                            You have provided to it as authorized by law, order of
+                            governmental authority, or court order, and when the
+                            University believes in good faith that disclosure is
+                            necessary to protect its rights, or to protect Your
+                            safety or the safety of others.  The University may
+                            also share Your Personal Information if permitted under
+                            University policy, or authorized by an approved
+                            University contract.
+                            </p>
+                        </li>
+                        <li><b>How is Your personal information protected?</b>
+                            <p>
+                            The University follows generally accepted industry
+                            standards to protect the Personal Information You
+                            submit to it.  No method of transmission, or method of
+                            electronic storage, is 100% secure.  Therefore, the
+                            University cannot guarantee its absolute security.
+                            This information should not be construed in any way as
+                            giving business, legal, or other advice, or warranting
+                            as fail-proof, the security of information provided by
+                            You via University supported web sites.
+                            </p>
+                        </li>
+                        <li><b>How long is Your personal information stored?</b>
+                            <p>
+                            We will retain Your Personal Information provided to
+                            the University in a University database for an
+                            indefinite period of time.  
+                            </p>
+                        </li>
+                        <li><b>Opt-out process.</b>
+                            <p>
+                            If You would like us to delete the Personal Information
+                            that You have provided via Site, please send an email
+                            to otm@illinois.edu  and/or the email address as
+                            provided on the Site and we will respond in a
+                            reasonable time.  For GDPR concerns or opt-out
+                            requests, please view the <a href="https://www.vpaa.uillinois.edu/resources/web_privacy/supplemental_web_privacy_notice">Supplemental Notice</a>.  Please
+                            note that some or all of Your Personal Information may
+                            be required to be retained with your contributions.
+                            </p>
+                        </li>
+                    </ol>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="tosAccept" data-dismiss="modal">Accept</button>
+                    <button type="button" class="btn btn-secondary" id="privacyAccept" data-dismiss="modal">Accept</button>
                 </div>
             </div>
         </div>
     </div>
+    
+    <div class="modal fade" id="claDlg" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">RadicalSAM Project Contributor License Agreement</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="align-right">Version 1.1   Oct 11, 2021</p>
+                    
+                    <p>
+                    Thank you for your interest in contributing to the
+                    RadicalSAM Project of the University of Illinois. In order
+                    to contribute, you will need to provide your name and
+                    contact information. This Contributor License Agreement
+                    which sets the terms and conditions of the intellectual
+                    property license granted with your contributions. 
+                    </p>
+                    
+                    <p>
+                    This RadicalSAM Project Contributor License Agreement
+                    ("<b>Agreement</b>") is by and between you, any person or entity
+                    ("<b>You</b>" or "<b>Your</b>") and the Board of Trustees of the
+                    University of Illinois, a body corporate and politic of the
+                    State of Illinois ("<b>Illinois</b>").  Please read this document
+                    carefully before accepting the terms. By accepting the
+                    terms of this Agreement You agree to the following: 
+                    </p>
+                    
+                    <ol>
+                        <li>"<b>RadicalSAM Project</b>" is a project of Illinois that aims to enable open
+                        access and sharing of computation- and data-intensive analyses of
+                        sequence-function space in the radical SAM superfamily (RSS) using genome
+                        context for bacterial, archaeal, and fungal members of the RSS.</li>
+                        
+                        <li>"<b>Contribution</b>" means all of Your contributions of annotations and any
+                        modifications thereof, to RadicalSAM Project at Illinois. </li>
+                        
+                        <li><b>Representation</b>. You represent the following to the best of your
+                        knowledge:
+                            <ol style="list-style-type: lower-alpha">
+                                <li>You are at least 18 years of age and have full power and authority to enter
+                                into this Agreement and to grant the rights in and to the Contribution as set
+                                forth herein (individuals who are under 18 years of age and who wish to
+                                contribute to the Illinois may not enter into this Agreement, but may contact
+                                Illinois at xxxx@illinois.edu to explore alternatives);</li>
+                                
+                                <li>If your employer has rights to intellectual property that You create as
+                                part of the Contribution, You represent that You have obtained permission from
+                                Your employer to make the Contribution on behalf of that employer, or Your
+                                employer waived any rights in and to Your Contribution, or Your employer
+                                authorizes the Contribution and agrees to be bound by the terms herein by
+                                signing as an entity below;  </li>
+                                
+                                <li>That either:
+                                    <ol style="list-style-type: lower-roman">
+                                        <li>the Contribution is Your original work and includes complete details of any
+                                        third-party input and any restriction of which You  are personally aware and
+                                        which are associated with any part of Your Contributions; or </li>
+                                    
+                                        <li>any part of the Contribution that is not Your original creation is
+                                        submitted to Illinois separately from any original Contribution, includes the
+                                        complete details of its source and any corresponding license and any other
+                                        restriction (including, but not limited to related patents, trademarks, and
+                                        license agreements) of which You are personally aware, and is conspicuously
+                                        marked as "Submitted on behalf of a third party: [named here]".</li>
+                                    </ol>
+                                </li>
+                                
+                                <li>That Your Contribution does not include any viruses, worms, Trojan horses,
+                                malicious code or other harmful or destructive content; and </li>
+                                
+                                <li>Your Contribution does not include any encryption technology and no
+                                government license or permission is required for the export, import, transfer
+                                or use of the Contribution.</li>
+                            </ol>
+                        </li>
+                        
+                        <li><b>Notification</b>. Your representations are accurate, and You agree to notify
+                        Illinois of any facts or circumstances of which You become aware that would
+                        make any of Your representations inaccurate in any respect.</li>
+                        
+                        <li><b>License grant to Contributions</b>. You grant to Illinois and to recipients of
+                        the Illinois software and data (collectively, "<b>Recipients</b>"), a perpetual,
+                        irrevocable, non-exclusive, worldwide, royalty-free unrestricted license to
+                        use, for any purpose, reproduce, prepare derivative works of, publicly display,
+                        publicly perform, distribute, and sublicense the Contribution, and such
+                        derivative works.  You are retain the ownership of your Contributions, subject
+                        to his Agreement. </li>
+                        
+                        <li><b>No support</b>. Except for the rights granted to Recipients above, You reserve
+                        all right, title, and interest in and to Your Contribution. You are not
+                        expected to provide support for your Contributions. </li>
+                        
+                        <li><b>No Warranties</b>. Subject to Your representations above, Your Contributions
+                        are provided on an "AS-IS" basis WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND
+                        (express or implied), including, without limitation, any implied warranty of
+                        merchantability and fitness for a particular purpose, and any warranty of
+                        non-infringement. </li>
+                        
+                        <li><b>No Liability</b>.  Illinois, its trustees, directors, officers, employees,
+                        students, and agents have no liability for any infringement of any copyright,
+                        patent, or other right of third parties in connection with any Contributions,
+                        the RadicalSAM Project, or RadicalSAM software, and are not liable for any
+                        direct, indirect, punitive, special, incidental, consequential, or exemplary
+                        damages arising in connection with any Contribution, the RadicalSAM Project, or
+                        RadicalSAM software.  </li>
+                        
+                        <li><b>Indemnity</b>. You agree to indemnify, defend, and hold Illinois and its
+                        subsidiaries, affiliates, officers, agents, employees, partners, licensees, and
+                        licensors harmless from any claim or demand, including but not limited to
+                        reasonable attorneys’ fees, made by any third party due to or arising out of
+                        Contributions You submit, post, transmit or otherwise make available to
+                        Illinois, as well as Your use of the RadicalSAM software; connection to the
+                        RadicalSAM Project; or violation of any rights of another. </li>
+                        
+                        <li>You agree that Illinois may assign this Agreement and RadicalSAM Project to
+                        any third party without notice or consent.  </li>
+                        
+                        <li>Illinois is under no obligation to accept or include Your Contribution in
+                        the RadicalSAM Project. </li>
+                        
+                        <li>This Agreement is governed by the laws of the State of Illinois, excluding
+                        its conflict of laws provisions. </li>
+                    </ol>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="claAccept" data-dismiss="modal">Accept</button>
+                </div>
 {% endblock %}
 
