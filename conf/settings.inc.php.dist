@@ -1,10 +1,29 @@
 <?php
 
-define("SF_TITLE","");
-define("SF_HMMSCAN","");
-define("SF_HMMDB","");
-define("SF_CLUSTERDB","");
-define("SF_TMPDIR","");
-define("SF_SUBMIT_EMAIL","");
-define("SF_","");
+define("__TITLE__","Superfamily");
+
+define("__HMMSCAN_LEGACY__","LD_LIBRARY_PATH=\$LD_LIBRARY_PATH");
+define("__HMMSCAN__","superfamily-pipeline/bin/hmmscan_multi_wrap.sh");
+
+define("__TEMP_DIR__","");
+define("__SUBMIT_EMAIL__","");
+
+define("__DATA_VERSION_PREFIX__","rsam");
+define("__DATA_BASE_DIR__","");
+define("__DATA_VERSION_FILE__","versions.txt");
+define("__DATA_DB_FILE_NAME__","data.sqlite");
+define("__GND_KEY_FILE_NAME__","gnds/gnd.key");
+
+define("__DEFAULT_VERSION__","3.0");
+
+define("__HMM_DB_DIR_NAME__","hmm");
+define("__DEFAULT_HMM_DB__","all.hmm");
+define("__DEFAULT_MAX_RESULTS__",3);
+
+define("__SMTP_HOST__","");
+define("__SMTP_PORT__","25");
+define("__SMTP_USER__","");
+define("__SMTP_PASSWORD__","");
+define("__FROM_EMAIL__","");
+define("__TO_EMAIL__","");
 

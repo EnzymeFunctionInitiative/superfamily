@@ -13,6 +13,7 @@ git clone https://github.com/EnzymeFunctionInitiative/superfamily.git superfamil
 * Run composer install to install dependencies from the root folder
 ```
 composer install
+composer update
 ```
 * Copy conf/settings.inc.php.dist to conf/setttings.inc.php
 ```
