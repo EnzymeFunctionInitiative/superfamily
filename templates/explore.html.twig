@@ -6,17 +6,22 @@
                           'js/app/util.js?v=1',
                      'js/app/swissprot.js?v=3',
                         'js/app/uniref.js?v=1',
-                      'js/app/sunburst.js?v=2',
                     'js/app/navigation.js?v=3',
-                 'js/app/data_features.js?v=5',
+                 'js/app/data_features.js?v=6',
                       'js/app/app_meta.js?v=2',
-                         'js/app/image.js?v=1',
+                         'js/app/image.js?v=2',
                            'js/app/url.js?v=1',
-                         'js/app/diced.js?v=5',
-                      'js/app/app_data.js?v=14',
-                           'js/app/app.js?v=45',
-                    'js/sunburst/sunburst-chart.min.js', 'js/sunburst/circlepack-chart.min.js', 'js/sunburst/sunburst_helpers.js',
-                    'js/imageMapResizer.min.js', 'js/jquery.maphilight.min.js', 'js/jquery.lazy.min.js'
+                         'js/app/diced.js?v=4',
+                      'js/app/app_data.js?v=15',
+                           'js/app/app.js?v=47',
+                    
+                    'vendor/efiillinois/sunburst/web/js/sunburst-chart.min.js?v=1',
+                    'vendor/efiillinois/sunburst/web/js/sunburst-helpers.js',
+                    'vendor/efiillinois/sunburst/web/js/sunburst-taxonomy2.js?v=9',
+                    'vendor/efiillinois/sunburst/web/js/progress.js',
+                    'js/imageMapResizer.min.js',
+                    'js/jquery.maphilight.min.js',
+                    'js/jquery.lazy.min.js'
                   ] %}
 
 
@@ -437,60 +442,7 @@
                     <h5 class="modal-title">Species in Cluster</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <div class="modal-body text-center modal-sunburst" id="sunburstChartContainer">
-                    <div id="sunburstChart">
-                    </div>
-                    <div id="sunburstIdNums" class="cluster-size cluster-size-sm float-right">
-                    </div>
-                    <div style="clear: both">
-                        Click on a region to zoom into that part of the taxonomic hierarchy.  Clicking on the
-                        center circle will zoom out to the next highest level.
-                    </div>
-<!--
-                    <div>
-                        <canvas id="sunburstPngCanvas" width="600" height="600"></canvas>
-                    </div>
--->
-                </div>
-                <div class="modal-footer">
-                    <div class="mr-auto">
-                        <div class="p-2" data-toggle="tooltip" title="By default the full set of UniProt IDs is downloaded. By selecting this option, only the UniRef50 IDs will be downloaded.">
-                            ID type: 
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniProt" value="uniprot" checked>
-                                <label class="form-check-label" for="sunburstIdTypeUniProt">UniProt</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniRef90" value="uniref90">
-                                <label class="form-check-label" for="sunburstIdTypeUniRef90">UniRef90</label>
-                            </div>
-                            <div class="form-check form-check-inline" id="sunburstIdTypeUniRef50Container">
-                                <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniRef50" value="uniref50">
-                                <label class="form-check-label" for="sunburstIdTypeUniRef50">UniRef50</label>
-                            </div>
-<!--
-                            <select class="form-control w-50" data-toggle="tooltip" title="By default the full set of UniProt IDs is downloaded. By selecting this option, only the UniRef50 IDs will be downloaded.">
-                                <option value="uniprot" selected>UniProt (default)</option>
-                                <option value="uniref50">UniRef50</option>
-                                <option value="uniref90">UniRef90</option>
-                            </select>
--->
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-default btn-secondary" data-toggle="tooltip" title="Download the UniProt IDs that are visible in the sunburst diagram" id="sunburstDlIds">Prepare ID Download</button>
-                            <button type="button" class="btn btn-default btn-secondary mr-auto" data-toggle="tooltip" title="Download the FASTA sequences that are visible in the sunburst diagram" id="sunburstDlFasta">Prepare FASTA Download</button>
-                            <!--<button type="button" class="btn btn-default mr-auto" data-toggle="tooltip" title="Download a SVG file of the sunburst diagram" id="sunburstSvg">Download SVG</button>-->
-                        </div>
-                    </div>
-                    <div class="mt-auto">
-                        <button type="button" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-            <div id="sunburstProgressLoader" class="progress-loader-tax" style="display: none">
-                <div>Please wait, this may take a while...
-                <div><i class="fas fa-spinner fa-spin"></i></div>
-                </div>
+                <div id="sunburst-container"></div>
             </div>
         </div>
     </div>

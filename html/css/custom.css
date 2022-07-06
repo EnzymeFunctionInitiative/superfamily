@@ -277,4 +277,10 @@ table.walkthrough thead td {
     font-size: 1.2em;
 }
 
+.update-message {
+    border: 3px solid black;
+    background-color: #FFCC00;
+    font-size: 1.15em;
+}
+
 

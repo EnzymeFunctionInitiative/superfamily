@@ -19,7 +19,8 @@ AppDiced.prototype.initDicedSsnOverview = function(ascores) {
     for (var i = 0; i < ascores.length; i++) {
         var as = ascores[i];
         var fileName = this.appData.getImage();
-        var filePath = this.appMeta.DataDir + '/dicing-' + as + '/' + fileName + '_sm.png';
+        var filePath = this.appMeta.DataDir + '/dicing-' + as + '/' + fileName + '_lg.png';
+        //TODO: var filePath = this.appMeta.DataDir + '/dicing-' + as + '/' + fileName + '_sm.png';
         var style = i == 0 ? "active" : "";
         var style2 = i == 0 ? "show" : "";
 

@@ -223,5 +223,50 @@ class functions {
 //        }
 //        return $db_list;
     }
+
+    public static function get_generic_join_sql($qversion, $table, $parm, $extra_where = "", $ascore = "", $check_only = false, $extra_join = "") {
+        $use_uniprot_id_join = $qversion ? false : true;
+        return self::get_generic_join_sql_shared($use_uniprot_id_join, $qversion, $table, $parm, $extra_where, $ascore, $check_only, $extra_join);
+    }
+    public static function get_generic_join_sql_shared($use_uniprot_id_join, $qversion, $table, $parm, $extra_where = "", $ascore = "", $check_only = false, $extra_join = "") {
+        if (!$qversion || $use_uniprot_id_join) {
+            $join_table = $ascore ? "diced_id_mapping" : "id_mapping";
+            $sql = "SELECT $parm FROM $table INNER JOIN $join_table ON $table.uniprot_id = $join_table.uniprot_id $extra_join WHERE $join_table.cluster_id = :id";
+            if ($ascore)
+                $sql .= " AND $join_table.ascore = '$ascore'";
+            if ($extra_where)
+                $sql .= " $extra_where";
+            if ($check_only)
+                $sql .= " LIMIT 1";
+            return $sql;
+        } else {
+            if ($qversion && $ascore)
+                $extra_where .= " AND ascore = '$ascore'";
+            return functions::get_generic_sql($table, $parm, $extra_where, $check_only);
+        }
+    }
+    
+    public static function table_exists($db, $table_name, $column_name = "") {
+        $sql = "PRAGMA table_info(:table_name)";
+        $sth = $db->prepare($sql);
+        if (!$sth)
+            return array();
+        $sth->bindValue("table_name", $table_name);
+        $sth->execute();
+        $table_exists = 0;
+        $column_exists = 0;
+        while ($row = $sth->fetch()) {
+            $table_exists = 1;
+            if (!$column_name || (isset($row[1]) && $row[1] == $column_name)) {
+                $column_exists = 1;
+                break;
+            }
+        }
+        if ($column_name) {
+            return $column_exists;
+        } else {
+            return $table_exists;
+        }
+    }
 }
 

@@ -88,7 +88,22 @@ App.prototype.init = function(appData, gndKey, showDicedListPage) {
 
     this.dataFeat = new AppDataFeatures(this.appData, this.appMeta, this.url);
     this.diced = new AppDiced(this.appData, this.appMeta, this.dataFeat);
-    this.sunburst = new AppSunburst(this.appData, this.appMeta, this.uniref);
+    var hasUniRef = true;
+
+    var apiExtra = [["v", this.appMeta.Version]];
+    if (this.appMeta.Ascore)
+        apiExtra.push(["as", this.appMeta.Ascore]);
+    var sbScriptDir = "vendor/efiillinois/sunburst/php";
+    var sbParams = {
+            apiId: this.appData.Id,
+            apiKey: gndKey,
+            apiExtra: apiExtra,
+            appUniRefVersion: this.uniref.getUniRefVersion(),
+            scriptApp: sbScriptDir + "/get_rs_tax_data.php",
+            fastaApp: sbScriptDir + "/get_rs_sunburst_fasta.php",
+            hasUniRef: hasUniRef
+    };
+    this.sunburst = new AppSunburst(sbParams);
 
     var hasRegions = this.appData.getRegions().length > 0;
     var hasChildren = this.appData.getChildren().length > 0;
@@ -213,7 +228,10 @@ App.prototype.initLeafPage = function(hideInfoForDiced = false) {
         this.dataFeat.addAnno();
         if (!hideInfoForDiced)
             this.dataFeat.addGndFeature();
-        this.sunburst.addSunburstFeature();
+        var feat = this.appData.getDisplayFeatures();
+        if (feat.hasOwnProperty("tax")) {
+            this.sunburst.addSunburstFeatureAsync(() => {});
+        }
         $("#displayFeatures").show();
         $("#dataAvailable").show();
     }

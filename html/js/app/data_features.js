@@ -61,7 +61,7 @@ AppDataFeatures.prototype.addSwissProtFunctions = function () {
                 codeDesc = '<span data-toggle="tooltip" title="' + codeDesc + '">' + linkCode + '</span>';
             else
                 codeDesc = linkCode;
-            desc += " (" + codeDesc + ")";
+            //desc += " (" + codeDesc + ")";
         }
     };
     var clipFn = function (desc, spItemIds) {
@@ -236,7 +236,7 @@ AppDataFeatures.prototype.addDownloadFeatures = function (containerId, hideTabSt
     if (feat.length == 0)
         return false;
 
-    var isDiced = this.appData.getDicedParent().length > 0;
+    var isDiced = this.appData.getIsDiced();
 
     var table = $('<table class="table table-sm text-center w-auto"></table>');
     table.append('<thead><tr><th>Download</th><th>File Type</th></thead>');//<th>Size</th></thead>');

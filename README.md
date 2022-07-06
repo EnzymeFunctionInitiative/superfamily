@@ -6,6 +6,10 @@ superfamily
 
 ## Installation
 
+    bin/setup-composer.sh
+    php composer.phar install
+
+
 * git clone https://github.com/EnzymeFunctionInitiative/superfamily.git or download tagged tar.gz
 ```
 git clone https://github.com/EnzymeFunctionInitiative/superfamily.git superfamily

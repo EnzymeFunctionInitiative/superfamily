@@ -16,10 +16,11 @@ function AppData(networkId, networkData) {
     if (typeof this.data === "undefined")
         this.data = {};
     this.network_map = networkData.network_map;
-    this.sfld_map = networkData.sfld_map;
+    this.sfld_map = typeof networkData.sfld_map !== "undefined" ? networkData.sfld_map : [];;
     this.sfld_desc = networkData.sfld_desc;
     this.enzymecodes = networkData.enzymecodes;
     this.dataDir = this.data.dir;
+    this.is_diced = typeof this.data.dicing.parent !== "undefined" && this.data.dicing.parent.length > 0;
     if (typeof this.data.public === "undefined")
         this.data.public = {};
     if (typeof this.data.families === "undefined")
@@ -51,8 +52,25 @@ AppData.prototype.getChildren = function() {
 AppData.prototype.getTigr = function() {
     return Array.isArray(this.data.families.tigr) ? this.data.families.tigr : [];
 }
+AppData.prototype.getIsDiced = function() {
+    return this.is_diced;
+}
 AppData.prototype.getDicedParent = function() {
-    return (typeof this.data.dicing !== "undefined" && typeof this.data.dicing.parent !== "undefined") ? this.data.dicing.parent : "";
+    var parentId = "";
+    var defaultId = "";
+    var parentImage = "";
+    if (typeof this.data.dicing !== "undefined") {
+        if (typeof this.data.dicing.parent !== "undefined")
+            parentId = this.data.dicing.parent;
+        if (typeof this.data.dicing.default_subcluster !== "undefined")
+            defaultId = this.data.dicing.default_subcluster;
+        if (typeof this.data.dicing.parent_image !== "undefined")
+            parentImage = this.data.dicing.parent_image;
+    }
+    if (parentId && defaultId)
+        return {parent: parentId, default: defaultId, parent_image: parentImage};
+    else
+        return parentId;
 }
 AppData.prototype.getDicedChildren = function() {
     return (typeof this.data.dicing !== "undefined" && Array.isArray(this.data.dicing.children)) ? this.data.dicing.children : [];
@@ -187,9 +205,6 @@ AppData.prototype.getNetworkSfldTitle = function (networkId) {
 }
 AppData.prototype.getSfldDesc = function () {
     return this.data.sfld_desc;
-}
-AppData.prototype.getSfldId = function () {
-    return this.data.sfld_id;
 }
 // Needed for display of clusters that have children
 AppData.prototype.getSfldDescForClusterId = function (id) {

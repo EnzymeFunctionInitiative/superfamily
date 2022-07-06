@@ -1,4 +1,13 @@
 
+
+function RsSunburst(network, appMeta, key, unirefAppVersion, scriptAppDir) {
+    this.sb = new AppSunburst(network.Id, key, appMeta.Ascore, uniref, "");
+    $("#dataAvailableSunburst").click(function() {
+        this.sb.addSunburstFeatureAsync();
+    });
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SUNBURST
 //
@@ -8,6 +17,7 @@ function AppSunburst(network, appMeta, uniref) {
     this.uniref = uniref;
     this.alignmentScore = appMeta.Ascore;
 }
+
 
 AppSunburst.prototype.addSunburstFeature = function() {
     var feat = this.network.getDisplayFeatures();
