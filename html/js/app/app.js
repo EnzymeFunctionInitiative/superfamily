@@ -1,5 +1,5 @@
 
-const DEFAULT_VERSION = "3.0";
+const DEFAULT_VERSION = "1.0";
 
 // Extend the jQuery API for data available buttons
 $(document).ready(function () {

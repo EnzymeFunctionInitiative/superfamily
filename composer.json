@@ -2,7 +2,7 @@
     "repositories" : [
         {
             "type": "vcs",
-            "url": "https://www.github.com/nilsoberg2/IGBIllinois-php"
+            "url": "https://www.github.com/igbillinois/igbillinois-php"
         },
         {
             "type": "path",
@@ -15,15 +15,9 @@
 		"twbs/bootstrap": "4.4.1",
 		"fortawesome/font-awesome": "5.12.1",
 		"twig/twig": "^3.0",
-        "igbillinois/igbillinois-php": "main-dev",
+        "igbillinois/igbillinois-php": "dev-main",
         "efiillinois/sunburst": "main-dev"
     },
-    "repositories" : [
-        {
-            "type": "path",
-            "url": "/home/n-z/noberg/dev/sunburst"
-        }
-    ],
     "scripts": {
         "post-update-cmd": [
             "mkdir -p html/vendor/twbs",

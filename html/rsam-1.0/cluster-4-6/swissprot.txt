@@ -1,2 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	N0DKX5	Bacteriochlorophyllide c C-7(1)-hydroxylase||1.17.98.2

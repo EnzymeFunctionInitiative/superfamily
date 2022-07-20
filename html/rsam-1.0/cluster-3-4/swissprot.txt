@@ -1,3 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	Q58218	Uncharacterized protein MJ0808
-1	Q59026	Putative glycyl-radical enzyme activating enzyme MJ1632 ||1.97.1.-

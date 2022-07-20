@@ -1,2 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	Q58087	Uncharacterized protein MJ0674

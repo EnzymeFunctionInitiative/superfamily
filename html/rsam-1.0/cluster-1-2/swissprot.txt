@@ -1,3 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	Q2HJF9	Radical S-adenosyl methionine domain-containing protein 2;Radical S-adenosyl methionine domain-containing protein 2;Radical S-adenosyl methionine domain-containing protein 2;Radical S-adenosyl methionine domain-containing protein 2
-1	Q8WXG1	Radical S-adenosyl methionine domain-containing protein 2;Radical S-adenosyl methionine domain-containing protein 2;Radical S-adenosyl methionine domain-containing protein 2;Radical S-adenosyl methionine domain-containing protein 2;Radical S-adenosyl methionine domain-containing protein 2
