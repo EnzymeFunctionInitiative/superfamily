@@ -89,5 +89,12 @@ class settings {
     public static function get_default_max_hmm_results() {
         return defined("__DEFAULT_MAX_RESULTS__") ? __DEFAULT_MAX_RESULTS__ : 3;
     }
+
+    public static function get_version_name() {
+        return defined("__DATA_VERSION_PREFIX__") ? __DATA_VERSION_PREFIX__ : "";
+    }
+    public static function get_superfamily_name() {
+        return defined("__SUPERFAMILY_NAME__") ? __SUPERFAMILY_NAME__ : "";
+    }
 }
 

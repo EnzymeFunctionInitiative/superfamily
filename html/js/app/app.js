@@ -16,7 +16,7 @@ $(document).ready(function () {
     });
 });
 
-function initApp(version, gndKey) {
+function initApp(version, versionName, gndKey) {
     var requestData = getPageClusterId();
     var requestId = "", alignmentScore = "";
     //HACK
@@ -27,7 +27,7 @@ function initApp(version, gndKey) {
     if (requestData.alignment_score)
         alignmentScore = requestData.alignment_score;
     version = requestData.version;
-    var app = new App(version);
+    var app = new App(version, versionName);
     var args = {a: "cluster", cid: requestId, v: version};
     if (alignmentScore)
         args["as"] = alignmentScore;
@@ -55,9 +55,10 @@ function initApp(version, gndKey) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // APP CLASS FOR POPULATING THE UI
 // 
-function App(version) {
+function App(version, versionName) {
     this.appMeta = new AppMeta();
     this.appMeta.Version = version;
+    this.appMeta.VersionName = versionName;
 }
 
 

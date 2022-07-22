@@ -1,19 +1,18 @@
 {% extends "base.html.twig" %}
-{% set page_title = 'Exploring the Radical SAM Superfamily' %}
 {% set page_active = 'explore' %}
 {% set extra_js = [
                       'js/app/progress.js?v=1',
                           'js/app/util.js?v=1',
                      'js/app/swissprot.js?v=3',
-                        'js/app/uniref.js?v=1',
+                        'js/app/uniref.js?v=2',
                     'js/app/navigation.js?v=3',
-                 'js/app/data_features.js?v=6',
-                      'js/app/app_meta.js?v=2',
-                         'js/app/image.js?v=2',
+                 'js/app/data_features.js?v=7',
+                      'js/app/app_meta.js?v=3',
+                         'js/app/image.js?v=3',
                            'js/app/url.js?v=1',
-                         'js/app/diced.js?v=4',
-                      'js/app/app_data.js?v=15',
-                           'js/app/app.js?v=47',
+                         'js/app/diced.js?v=5',
+                      'js/app/app_data.js?v=16',
+                           'js/app/app.js?v=48',
                     
                     'vendor/efiillinois/sunburst/web/js/sunburst-chart.min.js?v=1',
                     'vendor/efiillinois/sunburst/web/js/sunburst-helpers.js',
@@ -468,7 +467,7 @@
             var progress = new Progress($("#progressLoader"));
             progress.start();
 
-            initApp("1.0", "{{gnd_key}}");
+            initApp("{{version}}", "{{version_name}}", "{{gnd_key}}");
             $('.lazy').Lazy();
     
             $('[data-toggle="tooltip"]').tooltip();

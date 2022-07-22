@@ -229,10 +229,11 @@ AppDiced.prototype.addClusterSelect = function(isParent) {
     } else {
         nextBtn.addClass("disabled");
     }
-    
+
     var idCb = $('<select id="sel-sibling-id" class="form-control w-auth mx-2"></select>');
     var curId = idParts[idParts.length-1];
     var ids = nav.siblings.ids;
+    ids.sort(sortClusterIds);
     var parentNum = idParts.slice(1, idParts.length-1).join("-");
     for (var i = 0; i < ids.length; i++) {
         var isSel = ids[i] == curId ? "selected" : "";
@@ -244,5 +245,23 @@ AppDiced.prototype.addClusterSelect = function(isParent) {
     
     $("#dicedNav").append(prevBtn).append(idCb).append(nextBtn);
 }
+
+
+function sortClusterIds(a, b) {
+    var aa = a.split("-");
+    var bb = b.split("-");
+    var maxIdx = aa.length > bb.length ? bb.length : aa.length;
+    for (var i = 0; i < maxIdx; i++) {
+        var aaa = +aa[i];
+        var bbb = +bb[i];
+        if (aaa < bbb)
+            return -1;
+        else if (aaa > bbb)
+            return 1;
+    }
+    return 0;
+}
+
+
 
 

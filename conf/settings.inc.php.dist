@@ -15,6 +15,7 @@ define("__DATA_DB_FILE_NAME__","data.sqlite");
 define("__GND_KEY_FILE_NAME__","gnds/gnd.key");
 
 define("__DEFAULT_VERSION__","3.0");
+define("__SUPERFAMILY_NAME__","Superfamily");
 
 define("__HMM_DB_DIR_NAME__","hmm");
 define("__DEFAULT_HMM_DB__","all.hmm");

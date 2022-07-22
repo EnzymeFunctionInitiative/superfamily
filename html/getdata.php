@@ -264,6 +264,9 @@ $timings["get_alt_ssns"] = microtime(true) - $start;
     if (!$is_child && $parent_ascore && $parent_ascore_cluster_id && !$ascore)
         $ascore = $parent_ascore;
 
+    $rel_dir = functions::get_rel_data_dir_path($parent_cluster_id, $version, $orig_ascore, $child_cluster_id);
+    $data["dir"] = $rel_dir;
+
     $child_dir_id = $is_child ? $child_cluster_id : "";
     $full_dir = functions::get_data_dir_path($parent_cluster_id, $version, $ascore, $child_dir_id);
     if (file_exists("$full_dir/${cluster_id}_merge_lg.png"))
@@ -279,13 +282,14 @@ $timings["get_alt_ssns"] = microtime(true) - $start;
             $image = "$child_dir_id";
         else
             $image = "ssn";
+        $data["image"] = $image;
         $data["dicing"]["parent_image"] = $image;
-        if (!$is_child) {
-            $data["image"] = "$parent_ascore_cluster_id/ssn";
-            //$data["image"] = "dicing-$parent_ascore/$parent_ascore_cluster_id/ssn";
-        } else {
-            $data["image"] = "dicing-$parent_ascore/$parent_ascore_cluster_id/ssn";
-        }
+        #if (!$is_child) {
+        #    $data["image"] = "$parent_ascore_cluster_id/ssn";
+        #    //$data["image"] = "dicing-$parent_ascore/$parent_ascore_cluster_id/ssn";
+        #} else {
+        #    $data["image"] = "dicing-$parent_ascore/$parent_ascore_cluster_id/ssn";
+        #}
     }
 
 $start = microtime(true);
@@ -305,7 +309,7 @@ $start = microtime(true);
 $timings["get_pdb"] = microtime(true) - $start;
 
 $start = microtime(true);
-    $data["families"]["tigr"] = get_tigr($db, $cluster_id);
+    $data["families"]["tigr"] = get_tigr($db, $cluster_id, $ascore, $qversion);
 $timings["get_tigr"] = microtime(true) - $start;
 
     $data["public"]["anno"] = get_annotations($db, $cluster_id, $ascore, $qversion);
@@ -321,8 +325,6 @@ $timings["get_tigr"] = microtime(true) - $start;
     $data["cons_res_files"] = get_consensus_residues_files($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
 
     $data["cons_res"] = get_consensus_residues($db, $cluster_id, $ascore, $is_child);
-
-    $data["dir"] = functions::get_rel_data_dir_path($parent_cluster_id, $version, $orig_ascore, $child_cluster_id);
 
     if ($orig_ascore)
         $data["alignment_score"] = $orig_ascore;
@@ -589,9 +591,9 @@ function get_pdb($db, $cluster_id, $ascore = "", $check_only = false, $qversion 
     return get_generic_fetch($db, $cluster_id, $sql, $row_fn);
 }
 
-function get_tigr($db, $cluster_id, $check_only = false) {
-    $sql = "SELECT families.family, family_info.description FROM families LEFT JOIN family_info ON families.family = family_info.family WHERE cluster_id = :id AND family_type = 'TIGR'";
-    $row_fn = function($row) { return array($row["family"], $row["description"]); };
+function get_tigr($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
+    $sql = get_generic_join_sql($qversion, "tigr", "tigr, GROUP_CONCAT(tigr.uniprot_id) AS ids", "AND tigr IS NOT NULL AND tigr != \"\" GROUP BY tigr ORDER BY tigr", $ascore, $check_only);
+    $row_fn = function($row) { return array($row["tigr"], ""); };
     return get_generic_fetch($db, $cluster_id, $sql, $row_fn);
 }
 

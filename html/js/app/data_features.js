@@ -125,7 +125,7 @@ AppDataFeatures.prototype.addGndFeature = function() {
         if (that.Ascore)
             gndParms += ":" + that.Ascore;
         if (that.Version)
-            gndParms += '&rs-ver=' + that.Version;
+            gndParms += '&rs-ver=' + that.VersionName + "-" + that.Version;
         if (that.GndKey)
             gndParms += '&key=' + that.GndKey;
         //TODO: get the URL from a config var or something
