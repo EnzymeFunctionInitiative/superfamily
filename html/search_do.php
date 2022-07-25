@@ -20,7 +20,7 @@ if ($type == "tax-auto" || $type == "tax-prefetch") {
         exit(0);
     }
     $query = filter_input(INPUT_POST, "query", FILTER_SANITIZE_STRING);
-    $num_hmm_results = filter_input(INPUT_POST, "num_hmm_res", FILTER_SANITIZE_NUMBER);
+    $num_hmm_results = filter_input(INPUT_POST, "num_hmm_res", FILTER_SANITIZE_NUMBER_INT);
 }
 if (!$query && !$id && $type != "tax-prefetch") {
     print json_encode(array("status" => false, "message" => "Invalid input"));
