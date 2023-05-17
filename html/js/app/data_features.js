@@ -125,11 +125,11 @@ AppDataFeatures.prototype.addGndFeature = function() {
         if (that.Ascore)
             gndParms += ":" + that.Ascore;
         if (that.Version)
-            gndParms += '&rs-ver=' + that.Version;
+            gndParms += '&rs-ver=rsam-' + that.Version;
         if (that.GndKey)
             gndParms += '&key=' + that.GndKey;
         //TODO: get the URL from a config var or something
-        window.open('https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms);
+        window.open('https://efi.igb.illinois.edu/efi-gnt/view_diagrams.php?' + gndParms);
     }).enableDataAvailableButton();
 }
 
@@ -260,7 +260,7 @@ AppDataFeatures.prototype.addDownloadFeatures = function (containerId, hideTabSt
             if (this.appMeta.Ascore)
                 logoParms += '&as=' + this.appMeta.Ascore;
             if (this.appMeta.Version)
-                logoParms += '&v=' + this.appMeta.Version;
+                logoParms += '&v=rsam-' + this.appMeta.Version;
             var logoBtn = '<button class="btn btn-primary btn-sm hmm-logo" data-logo="' + logoParms + '">View HMM</button>';
             body.append('<tr><td>' + logoBtn + '</td><td>View HMM in SkyLign</td><td></td></tr>');
         }
@@ -274,7 +274,7 @@ AppDataFeatures.prototype.addDownloadFeatures = function (containerId, hideTabSt
         if (this.appMeta.Version)
             gndParms += '&rs-ver=' + this.appMeta.Version;
         gndParms += "&key=" + this.appMeta.GndKey;
-        var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams_v3.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
+        var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
         body.append('<tr><td>' + viewBtn + '</td><td>View Genome Neighborhood Diagrams</td><td></td></tr>');
     }
     if (feat.hasOwnProperty("id_fasta")) {

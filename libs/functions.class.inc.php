@@ -187,6 +187,7 @@ class functions {
         if (!file_exists($key_path))
             return "";
         $key = file_get_contents($key_path);
+        $key = trim($key); // somehow a new line is getting put in here somewhere
         return $key;
     }
     

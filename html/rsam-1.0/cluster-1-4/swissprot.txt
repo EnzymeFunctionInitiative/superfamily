@@ -1,2 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations
-1	Q9ZGH1	dTDP-4-amino-4,6-dideoxy-D-glucose ammonia-lyase ||1.1.99.-

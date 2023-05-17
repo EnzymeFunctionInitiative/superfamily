@@ -1,1 +1,0 @@
-Cluster Number	Metanode UniProt ID	SwissProt Annotations

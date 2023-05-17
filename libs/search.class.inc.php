@@ -15,7 +15,7 @@ class search {
         $file = settings::get_cluster_db_path($version);
         $this->db = new SQLite3($file);
         $this->hmm_util = new hmm_util($num_hmm_results);
-        $this->query = $query;
+        $this->query = strtoupper($query);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,6 +51,7 @@ class search {
 
         // Check if matches are the parent diced cluster.  If so, then we search the diced clusters.
         if (count($matches_raw) > 0) {
+            //die("Here ". $matches_raw[0][0] . "    $diced_db");
             $dicings = $this->get_parent($diced_db, $matches_raw[0][0]);
             if ($dicings !== false) {
                 $dm = $this->search_diced($out_dir, $dicings, $seq_file);
@@ -79,7 +80,6 @@ class search {
         $diced_parent = "";
         $dicing = false;
         foreach ($diced_db as $parent_cluster => $dicings_iter) {
-            $cluster = $matches[0][0];
             if ($first_match == $parent_cluster) {
                 $dicing_parent = $parent_cluster;
                 $dicing = $dicings_iter;
@@ -106,9 +106,9 @@ class search {
         if ($use_diced) {
             $name_table = "network";
             $join_sql =
-                " LEFT JOIN network ON network.cluster_id = NET.parent_id"
+                " LEFT JOIN ${table_prefix}network AS NET ON (SZ.cluster_id = NET.cluster_id AND SZ.ascore = NET.ascore)"
               . " LEFT JOIN ${table_prefix}conv_ratio AS CR ON (SZ.cluster_id = CR.cluster_id AND SZ.ascore = CR.ascore)"
-              . " LEFT JOIN ${table_prefix}network AS NET ON (SZ.cluster_id = NET.cluster_id AND SZ.ascore = NET.ascore)"
+              . " LEFT JOIN network ON network.cluster_id = NET.parent_id"
               ;
             $ascore_sql = " AND SZ.ascore = '$ascore'";
         } else {
@@ -135,14 +135,18 @@ class search {
         foreach ($matches_raw as $match) {
             $sql = $this->create_blast_search_sql($match[0], $use_diced, $ascore);
             $results = $this->db->query($sql);
-            $row = $results->fetchArray();
-            $the_name = $row["name"];
-            if ($use_diced) {
-                $parts = explode("-", $match[0]);
-                $the_name = $the_name . "-" . $parts[count($parts)-1];
+            if ($results) {
+                $row = $results->fetchArray();
+                $the_name = $row["name"];
+                if ($use_diced) {
+                    $parts = explode("-", $match[0]);
+                    $the_name = $the_name . "-" . $parts[count($parts)-1];
+                }
+                $out_row = array("cluster" => $match[0], "evalue" => $match[1], "num_up" => $row["uniprot"], "num_ur" => $row["uniref90"], "cr" => $row["conv_ratio"], "name" => $the_name);
+                array_push($data, $out_row);
+            //} else {
+            //    print "Invalid $sql\n";
             }
-            $out_row = array("cluster" => $match[0], "evalue" => $match[1], "num_up" => $row["uniprot"], "num_ur" => $row["uniref90"], "cr" => $row["conv_ratio"], "name" => $the_name);
-            array_push($data, $out_row);
         }
         return $data;
     }

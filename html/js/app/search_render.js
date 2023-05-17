@@ -24,7 +24,7 @@ SearchRender.prototype.addResultsHeader = function(table, showClusterHeader, has
 
 
 SearchRender.prototype.addClusterTableFn = function(data, multiBody = false, showClusterHeader = false, extraId = "") {
-    var hasEvalue = (data.length > 0 && typeof data[0].clusters[0].evalue !== "undefined");
+    var hasEvalue = (data.length > 0 && data[0].clusters.length > 0 && typeof data[0].clusters[0].evalue !== "undefined");
     var extraId = extraId ? 'id="'+extraId+'"' : "";
 
     var table = $('<table '+extraId+' class="table table-sm w-75"></table>');

@@ -49,17 +49,18 @@ class hmm_util {
         mkdir($temp_dir);
     
         $out_file = "$out_dir/$out_file_name";
-    
-        $cmd = "source /etc/profile\n";
-        $cmd .= "$hmmscan --seq-file $seq_file --db-list-file $hmmdb --temp-dir $temp_dir --output-file $out_file --num-tasks 10";
+
+        $hmmscan_bin = settings::get_hmmscan_path();
+        $cmd = "source /home/n-z/noberg/.perl_local\n";
+        $cmd .= "$hmmscan --seq-file $seq_file --db-list-file $hmmdb --temp-dir $temp_dir --output-file $out_file --num-tasks 10 --hmmscan $hmmscan_bin";
         $cmd_output = "";
         $cmd_results = 0;
-        file_put_contents("$temp_dir/test.txt", "Hi");
         exec($cmd, $cmd_output, $cmd_result);
     
         if ($cmd_result !== 0) {
-            print json_encode(array("status" => false, "message" => "An error in dicing occurred"));
-            exit(0);
+            return false;
+            //print json_encode(array("status" => false, "message" => "An error in dicing occurred"));
+            //exit(0);
         }
     
         $lines = file($out_file);
