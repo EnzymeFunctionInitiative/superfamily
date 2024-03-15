@@ -11,7 +11,9 @@ AppUrl.prototype.getDownloadUrl = function(type, networkId = "") {
     if (extPos >= 0)
         type = type.substr(0, extPos);
     //this.dataDir + "/weblogo.png"
-    var url = "download.php?c=" + networkId + "&v=" + this.appMeta.Version + "&t=" + type;
+    var url = "download.php?c=" + networkId + "&t=" + type;
+    if (this.appMeta.Version)
+        url += "&v=" + this.appMeta.Version;
     if (this.appMeta.Ascore)
         url += "&as=" + this.appMeta.Ascore;
     return url;

@@ -1,5 +1,4 @@
 
-const DEFAULT_VERSION = "1.0";
 
 // Extend the jQuery API for data available buttons
 $(document).ready(function () {
@@ -16,8 +15,8 @@ $(document).ready(function () {
     });
 });
 
-function initApp(version, gndKey) {
-    var requestData = getPageClusterId();
+function initApp(appInfo) {
+    var requestData = getPageClusterId(appInfo.version);
     var requestId = "", alignmentScore = "";
     //HACK
     if (!requestData.network_id)
@@ -26,9 +25,10 @@ function initApp(version, gndKey) {
         requestId = requestData.network_id;
     if (requestData.alignment_score)
         alignmentScore = requestData.alignment_score;
-    version = requestData.version;
-    var app = new App(version);
-    var args = {a: "cluster", cid: requestId, v: version};
+    if (requestData.version)
+        appInfo.version = requestData.version;
+    var app = new App(appInfo);
+    var args = {a: "cluster", cid: requestId, v: appInfo.version};
     if (alignmentScore)
         args["as"] = alignmentScore;
 
@@ -40,7 +40,7 @@ function initApp(version, gndKey) {
                     goToUrlFn(data.cluster.REDIRECT.cluster_id, version, data.cluster.REDIRECT.as);
                 } else {
                     var appData = new AppData(requestId, data);
-                    app.init(appData, gndKey, requestData.show_diced_list_page);
+                    app.init(appData, requestData.show_diced_list_page);
                 }
             } else {
                 app.responseError(data.message);
@@ -55,9 +55,11 @@ function initApp(version, gndKey) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // APP CLASS FOR POPULATING THE UI
 // 
-function App(version) {
+function App(appInfo) {
     this.appMeta = new AppMeta();
-    this.appMeta.Version = version;
+    this.appMeta.Version = appInfo.version;
+    this.appMeta.SubgroupTitle = appInfo.subgroupTitle;
+    this.appMeta.GndKey = appInfo.gndKey;
 }
 
 
@@ -75,18 +77,20 @@ App.prototype.invalidNetworkJsonError = function() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // INITIALIZE/STARTUP
 //
-App.prototype.init = function(appData, gndKey, showDicedListPage) {
+App.prototype.init = function(appData, showDicedListPage) {
     this.appMeta.Id = appData.Id;
-    this.appMeta.GndKey = gndKey;
     this.appMeta.Ascore = appData.getAlignmentScore();
     this.appMeta.DataDir = appData.getDataDir();
 
     this.appData = appData;
 
+    this.progress = new Progress($("#progressLoader"));
+    this.progress.start();
+
     this.url = new AppUrl(this.appMeta);
     this.uniref = new AppUniRef(this.appData);
 
-    this.dataFeat = new AppDataFeatures(this.appData, this.appMeta, this.url);
+    this.dataFeat = new AppDataFeatures(this.appData, this.appMeta, this.url, this.progress);
     this.diced = new AppDiced(this.appData, this.appMeta, this.dataFeat);
     var hasUniRef = true;
 
@@ -96,21 +100,21 @@ App.prototype.init = function(appData, gndKey, showDicedListPage) {
     var sbScriptDir = "vendor/efiillinois/sunburst/php";
     var sbParams = {
             apiId: this.appData.Id,
-            apiKey: gndKey,
+            apiKey: this.appMeta.GndKey,
             apiExtra: apiExtra,
             appUniRefVersion: this.uniref.getUniRefVersion(),
             scriptApp: sbScriptDir + "/get_rs_tax_data.php",
             fastaApp: sbScriptDir + "/get_rs_sunburst_fasta.php",
-            hasUniRef: hasUniRef
+            hasUniRef: hasUniRef,
+            appPrimaryIdTypeText: function(){},
+            appPostSunburstTextFn: function(){},
+            hideFastaDownload: true,
     };
     this.sunburst = new AppSunburst(sbParams);
 
     var hasRegions = this.appData.getRegions().length > 0;
     var hasChildren = this.appData.getChildren().length > 0;
     var isLeaf = !hasRegions && !hasChildren;
-
-    this.progress = new Progress($("#progressLoader"));
-    this.progress.start();
 
     this.setPageHeaders();
     var nav = new AppNav(this.appData, this.appMeta);
@@ -137,6 +141,7 @@ App.prototype.init = function(appData, gndKey, showDicedListPage) {
 }
 
 
+// This is where we show all of the images of the various diced versions of this cluster.
 App.prototype.initMasterDicedPage = function(ascores) {
     var nextAs = this.appData.getNextAscore();
     this.diced.addAscoreTabs();
@@ -157,6 +162,7 @@ App.prototype.initMasterDicedPage = function(ascores) {
 }
 
 
+// This is where we show the parent cluster before dicing.
 App.prototype.initDicedListPage = function(ascores) {
     this.dataFeat.addClusterSize("dicedAscoreListClusterSize");
 
@@ -165,11 +171,13 @@ App.prototype.initDicedListPage = function(ascores) {
     this.diced.initDicedSsnOverview(ascores);
     
     var theUrl = getUrlFn(this.appMeta.Id + "-1", this.appMeta.Version, nextAs);
-    console.log(theUrl);
     $("#dicedDescNextAsLink").attr("href", theUrl);
 
-
     $("#dicedAscoreListContainer").show();
+    //$("#dicedClusterDesc").show();
+    //$("#dicedAscoreListOverview").show();
+    //$("#dicedDiceIncrements").text(ascores.join(", "));
+    //$("#dicedNumDicings").text(ascores.length);
 
     this.progress.stop();
 }
@@ -189,20 +197,19 @@ App.prototype.initClusterPage = function(isLeaf, hideInfoForDiced) {
     if (this.appMeta.Id != "fullnetwork") {
         this.dataFeat.addTigrFamilies();
         this.dataFeat.checkForKegg();
+        this.dataFeat.checkForAlphafoldIds();
         this.initLeafPage(hideInfoForDiced);
-    } else {
-        this.dataFeat.addClusterSize("clusterSize");
+    //} else {
+    //    this.dataFeat.addClusterSize("clusterSize");
     }
-
-    if (this.appMeta.Id == "fullnetwork")
-        $(".fullnetwork-text").show();
 
     // Still more stuff to zoom in to
     if (!isLeaf)
         this.initSubGroupPage();
     if (this.appMeta.Id != "fullnetwork") {
-        this.dataFeat.addDownloadFeatures("downloads")
-        $("#downloadContainer").show();
+        var hasFeat = this.dataFeat.addDownloadFeatures("downloads")
+        if (hasFeat)
+            $("#downloadContainer").show();
     }
     // If this is a child of a diced network...
     var dicedParent = this.appData.getDicedParent();
@@ -211,30 +218,46 @@ App.prototype.initClusterPage = function(isLeaf, hideInfoForDiced) {
         this.diced.addDicedNav();
         this.image.setDicedClusterImage(dicedParent, function() {});
     }
+
+    var subgroups = this.appData.getSubgroups();
+    var subgroupList = $("#subgroupMapping");
+    $.each(subgroups, function (i, info) {
+        var row = $("<tr><td>" + info["subgroup_id"] + "</td><td>" + info["desc"] + "</td><td>" + info["color_name"] + "</td><td>" + info["name"] + "</td></tr>");
+        subgroupList.append(row);
+    });
+    if (Object.keys(subgroups).length > 0)
+        $(".fullnetwork-text").show();
 }
 
 
 // Add information to the placeholders.
 App.prototype.initLeafPage = function(hideInfoForDiced = false) {
     var hasData = this.dataFeat.addDisplayFeatures();
+    if (!hasData)
+        return;
     this.dataFeat.addClusterSize("clusterSize");
     if (!hideInfoForDiced) {
         this.dataFeat.addConsRes();
         this.dataFeat.addConvRatio();
     }
-    if (hasData) {
-        this.dataFeat.addSwissProtFunctions();
-        this.dataFeat.addPdb();
-        this.dataFeat.addAnno();
-        if (!hideInfoForDiced)
-            this.dataFeat.addGndFeature();
-        var feat = this.appData.getDisplayFeatures();
-        if (feat.hasOwnProperty("tax")) {
-            this.sunburst.addSunburstFeatureAsync(() => {});
-        }
-        $("#displayFeatures").show();
-        $("#dataAvailable").show();
+
+    this.dataFeat.addSwissProtFunctions();
+    this.dataFeat.addPdb();
+    this.dataFeat.addAnno();
+    if (!hideInfoForDiced)
+        this.dataFeat.addGndFeature();
+    var feat = this.appData.getDisplayFeatures();
+    if (feat.hasOwnProperty("tax")) {
+        var that = this;
+        $("#dataAvailableSunburst").click(function() {
+            $("#sunburst-container").empty();
+            that.sunburst.attachToContainer("sunburst-container");
+            that.sunburst.addSunburstFeatureAsync(() => { $("#sunburstModal").modal(); });
+        }).enableDataAvailableButton();
     }
+    $("#displayFeatures").show();
+    $("#dataAvailable").show();
+
     $("#submitAnnoLink").attr("href", $("#submitAnnoLink").attr("href") + "?id=" + this.appMeta.Id);
 }
 
@@ -264,7 +287,7 @@ App.prototype.addSubgroupTable = function (div) {
 
     var headHtml = '<thead><tr class="text-center"><th>Cluster</th>';
     if (this.appMeta.Id != "fullnetwork") //TODO: HACK
-        headHtml += '<th>SFLD Subgroup</th>';
+        headHtml += '<th>' + this.appMeta.SubgroupTitle + ' Subgroup</th>';
     headHtml += '<th>UniProt</th><th>UniRef90</th>' + (hasUniRef50 ? '<th>UniRef50</th>' : '') + '</tr></thead>';
     var head = table.append(headHtml);
     var body = table.append('<tbody class="row-clickable text-center"></tbody>');
@@ -272,30 +295,30 @@ App.prototype.addSubgroupTable = function (div) {
     $.each(kids, function (i, data) {
         var row = $('<tr data-node-id="' + data.id + '"></tr>');
         var size = that.appData.getSizes(data.id);
-        var sfldIds = that.appData.getSfldIds(data.id);
-        var sfldDesc = that.appData.getNetworkSfldTitle(data.id);
-        var sfldDisplayFn = function (sfldId, desc) {
-            return "<span style=\"color: " + that.appData.getSfldColor(sfldId) + ";\">" + desc + "</span>";
+        var subgroupIds = that.appData.getSubgroupIds(data.id);
+        var subgroupDesc = that.appData.getNetworkSubgroupTitle(data.id);
+        var subgroupDisplayFn = function (subgroupId, desc) {
+            return "<span style=\"color: " + that.appData.getSubgroupColor(subgroupId) + ";\">" + desc + "</span>";
         };
-        if (!sfldDesc) {
-            for (var i = 0; i < sfldIds.length; i++) {
-                var sfldId = sfldIds[i];
-                var sfldIdStr = sfldId ? " [" + sfldId + "]" : "";
-                if (sfldDesc.length)
-                    sfldDesc += '; ';
-                sfldDesc += sfldDisplayFn(sfldId, that.appData.getSfldDescForClusterId(sfldId));
-                //sfldDesc += sfldDisplayFn(sfldId, that.appData.getSfldDescForClusterId(sfldId) + sfldIdStr);
+        if (!subgroupDesc) {
+            for (var i = 0; i < subgroupIds.length; i++) {
+                var subgroupId = subgroupIds[i];
+                var subgroupIdStr = subgroupId ? " [" + subgroupId + "]" : "";
+                if (subgroupDesc.length)
+                    subgroupDesc += '; ';
+                subgroupDesc += subgroupDisplayFn(subgroupId, that.appData.getSubgroupDescForClusterId(subgroupId));
+                //subgroupDesc += subgroupDisplayFn(subgroupId, that.appData.getSubgroupDescForClusterId(subgroupId) + subgroupIdStr);
             }
         } else {
-            var sfldIdStr = sfldIds.join("; ");
-            if (sfldIdStr)
-                sfldIdStr = " [" + sfldIdStr + "]";
-            sfldDesc = sfldDisplayFn(sfldIds[0], sfldDesc);
-            //sfldDesc = sfldDisplayFn(sfldIds[0], sfldDesc + sfldIdStr);
+            var subgroupIdStr = subgroupIds.join("; ");
+            if (subgroupIdStr)
+                subgroupIdStr = " [" + subgroupIdStr + "]";
+            subgroupDesc = subgroupDisplayFn(subgroupIds[0], subgroupDesc);
+            //subgroupDesc = subgroupDisplayFn(subgroupIds[0], subgroupDesc + subgroupIdStr);
         }
         var rowHtml = "<td>" + data.name + "</td>";
         if (that.appMeta.Id != "fullnetwork") //TODO: HACK
-            rowHtml += "<td>" + sfldDesc + "</td>";
+            rowHtml += "<td>" + subgroupDesc + "</td>";
         rowHtml += "<td>" + commify(size.uniprot) + "</td><td>" + commify(size.uniref90) + "</td>";
         if (hasUniRef50) {
             rowHtml += "<td>";
@@ -320,8 +343,10 @@ App.prototype.getDownloadSize = function (fileType) {
 }
 App.prototype.setPageHeaders = function () {
     document.title = this.appData.getPageTitle();
+    var desc = this.appData.getDescription();
+    if (desc)
+        document.title += ": " + desc;
     $("#familyTitle").text(document.title);
-    $("#clusterDesc").text(this.appData.getDescription());
     var as = this.appMeta.Ascore;
     if (as.length > 0) {
         var hWarn = $('<span class="as-warning"> (Alignment Score ' + as + ')</span>');

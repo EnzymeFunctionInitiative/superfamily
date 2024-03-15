@@ -2,18 +2,18 @@
 {% set page_title = 'Exploring the Radical SAM Superfamily' %}
 {% set page_active = 'explore' %}
 {% set extra_js = [
-                      'js/app/progress.js?v=1',
-                          'js/app/util.js?v=1',
-                     'js/app/swissprot.js?v=3',
-                        'js/app/uniref.js?v=1',
-                    'js/app/navigation.js?v=3',
-                 'js/app/data_features.js?v=6',
-                      'js/app/app_meta.js?v=2',
-                         'js/app/image.js?v=2',
-                           'js/app/url.js?v=1',
-                         'js/app/diced.js?v=4',
-                      'js/app/app_data.js?v=15',
-                           'js/app/app.js?v=47',
+                      'js/app/progress.js?v='~js_ver,
+                          'js/app/util.js?v='~js_ver,
+                     'js/app/swissprot.js?v='~js_ver,
+                        'js/app/uniref.js?v='~js_ver,
+                    'js/app/navigation.js?v='~js_ver,
+                 'js/app/data_features.js?v='~js_ver,
+                      'js/app/app_meta.js?v='~js_ver,
+                         'js/app/image.js?v='~js_ver,
+                           'js/app/url.js?v='~js_ver,
+                         'js/app/diced.js?v='~js_ver,
+                      'js/app/app_data.js?v='~js_ver,
+                           'js/app/app.js?v='~js_ver,
                     
                     'vendor/efiillinois/sunburst/web/js/sunburst-chart.min.js?v=1',
                     'vendor/efiillinois/sunburst/web/js/sunburst-helpers.js',
@@ -34,10 +34,6 @@
                 <h1 class="text-center" id="familyTitle"></h1>
                 <div class="fullnetwork-text" style="display: none">
                     <p>
-                    The SSN for the RSS was generated and segregated into five megaclusters (containing &gt;1 SFLD subgroup) and five clusters (1 SFLD
-                    subgroup).  These are shown in the image.   The megaclusters then were separately segregated to obtain their component SFLD
-                    subgroups as well as uncharacterized subgroups.  The details for this segregation are provided in the Subgroups tab on the
-                    RadicalSAM.org home page.
                     </p>
                 </div>
             </div>
@@ -72,8 +68,9 @@
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableTigr">TIGR</button>
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailablePubs">Pubs</button>
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableAnno">Anno</button>
+                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableAlphafold">Alphafold</button>
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableSunburst">Taxonomy</button>
-                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableGnd" data-toggle="tooltip" title="Genome Neighborhood Diagram">Genome Neighborhood Diagram</button>
+                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableGnd" title="Genome Neighborhood Diagram">Genome Neighborhood Diagram</button>
                         </div>
                         <div style="clear:both"></div>
                         <div id="clusterSizeContainer" style="display: none">
@@ -95,8 +92,6 @@
 
         <div class="container">
             <div class="alert alert-danger" role="alert" id="loadError" style="display: none"></div>
-            <p class="text-center" id="clusterDesc">
-            </p>
             <div id="dicedClusterDesc" style="display: none">
                 <p><span class="diced-desc-cluster-id">Cluster</span> is large and functionally diverse.
                 A single alignment score threshold cannot  be used to segregate
@@ -287,10 +282,12 @@
                 <thead>
                     <th>SFLD Subgroup</th><th>Subgroup</th><th>Color</th><th>(Mega)cluster</th>
                 </thead>
-                <tbody>
+                <tbody id="subgroupMapping">
+
+                    <!--
                     <tr><td>1</td><td>7-carboxy-7-deazaguanine synthase-like </td><td>Teal</td><td>Mega-3</td></tr>
                     <tr><td>2</td><td>Coproporphyrinogen III oxidase-like </td><td>Red</td><td>Mega-2</td></tr>
-                    <tr><td>3</td><td>Antiviral proteins (viperin) </td><td>--</td><td>Mega-1</td></tr>
+                    <tr><td>3</td><td>Antiviral proteins (viperin) </td><td>-- </<td>Mega-1</td></tr>
                     <tr><td>4</td><td>Avilamycin synthase </td><td>Pink</td><td>--</td></tr>
                     <tr><td>5</td><td>B12-binding domain containing </td><td>Blue</td><td>Mega-2</td></tr>
                     <tr><td>6</td><td>BATS domain containing </td><td>Orange</td><td>Mega-4</td></tr>
@@ -312,6 +309,7 @@
                     <tr><td></td><td>Uncharacterized protein family UPF0313 </td><td>Olive</td><td>Cluster-10</td></tr>
                     <tr><td></td><td>DUF5131 </td><td>Light purple</td><td>Mega-5</td></tr>
                     <tr><td></td><td>3',8-Cyclase/Mo cofactor synthesis </td><td>Dodger blue</td><td>Mega-1</td></tr>
+                    -->
                 </tbody>
             </table>
         </div>
@@ -435,6 +433,25 @@
             </div>
         </div>
     </div>
+    <div id="alphafoldModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alphafold IDs</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div id="alphafoldIdList" class="modal-colwrap-3">
+                    </div>
+                    <textarea id="alphafoldIdListClip" style="display: none"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default mr-auto copy-btn" data-id="alphafoldIdListClip">Copy <i class="far fa-copy"></i></button>
+                    <button type="button" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="sunburstModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -442,7 +459,7 @@
                     <h5 class="modal-title">Species in Cluster</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <div id="sunburst-container"></div>
+                <div id="sunburst-container" style="padding: 20px"></div>
             </div>
         </div>
     </div>
@@ -468,7 +485,8 @@
             var progress = new Progress($("#progressLoader"));
             progress.start();
 
-            initApp("1.0", "{{gnd_key}}");
+            var appInfo = {version: "{{data_version}}", gndKey: "{{gnd_key}}", subgroupTitle: "{{subgroup_title}}"};
+            initApp(appInfo);
             $('.lazy').Lazy();
     
             $('[data-toggle="tooltip"]').tooltip();

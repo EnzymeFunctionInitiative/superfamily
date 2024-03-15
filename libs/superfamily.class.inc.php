@@ -70,8 +70,8 @@ class superfamily {
 		return $data;
 	}
 
-	public static function get_sfld_map($db) {
-		$sql = "SELECT * FROM sfld_map";
+	public static function get_subgroup_map($db) {
+		$sql = "SELECT * FROM subgroup_map";
 		$sth = $db->prepare($sql);
 		$sth->execute();
 		$data = array();
@@ -79,18 +79,18 @@ class superfamily {
 			$cid = $row["cluster_id"];
 			if (!is_array($data[$cid]))
 				$data[$cid] = array();
-				array_push($data[$cid], $row["sfld_id"]);
+				array_push($data[$cid], $row["subgroup_id"]);
 		}
 		return $data;
 	}
 
-	public static function get_sfld_desc($db) {
-		$sql = "SELECT * FROM sfld_desc";
+	public static function get_subgroup_desc($db) {
+		$sql = "SELECT * FROM subgroup_desc";
 		$sth = $db->prepare($sql);
 		$sth->execute();
 		$data = array();
 		while ($row = $sth->fetch()) {
-			$data[$row["sfld_id"]] = array("desc" => $row["sfld_desc"], "color" => $row["sfld_color"]);
+			$data[$row["subgroup_id"]] = array("desc" => $row["subgroup_desc"], "color" => $row["subgroup_color"]);
 		}
 		return $data;
 	}
@@ -203,4 +203,3 @@ class superfamily {
 
 }
 
-?>

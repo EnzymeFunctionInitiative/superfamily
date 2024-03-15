@@ -1,7 +1,8 @@
 <?php
 require_once(__DIR__ . "/../init.php");
-require_once(__DIR__ . "/../libs/settings.class.inc.php");
-require_once(__DIR__ . "/../libs/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/settings.class.inc.php");
+require_once(__LIB_DIR__ . "/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/database.class.inc.php");
 
 $type = filter_input(INPUT_GET, "t", FILTER_SANITIZE_STRING);
 $cluster_id = filter_input(INPUT_GET, "c", FILTER_SANITIZE_STRING);
@@ -10,16 +11,16 @@ $ascore = filter_input(INPUT_GET, "as", FILTER_SANITIZE_NUMBER_INT);
 
 $type = filter_type($type);
 if (!is_array($type)) {
-    die("Not array $type|");
+    die("Error; input is not valid [1]");
 }
 if (!preg_match("/^[cluster0-9\-]+$/", $cluster_id)) {
     //TODO: error
-    die("not match $cluster_id");
+    die("Error; input is not valid [2]");
 }
-$db = functions::get_database($version);
+$db = new database($version);
 if (!functions::validate_cluster_id($db, $cluster_id)) {
     //TODO: error
-    die("not validate $version");
+    die("Error; input is not valid [3]");
 }
 $version = functions::validate_version($version);
 
@@ -29,44 +30,35 @@ $fname = "";
 $ascore_prefix = $ascore ? "AS${ascore}_" : "";
 
 
-//if ($type[0] == "ssn") {
-//    $data = functions::get_ssn_path($db, $cluster_id);
-//    if ($data) {
-//        $fpath = $data["ssn"];
-//        $fname = "${cluster_id}_ssn.zip";
-//    }
-//} else {
-    $options = array("${cluster_id}_", "");
-    foreach ($options as $prefix) {
-        foreach ($type as $suffix) {
-            $fname = "${prefix}${suffix}";
-            $file = "$basepath/$fname";
-            if (file_exists($file)) {
-                $fpath = $file;
-                $fname = "${cluster_id}_${ascore_prefix}$suffix";
-                break;
-            } else if ($ascore) {
-                $parent_cluster_id = functions::get_dicing_parent($db, $cluster_id, $ascore);
-                if ($parent_cluster_id) {
-                    $parent_path = functions::get_data_dir_path2($db, $version, $ascore, $parent_cluster_id);
-                    $file = "$parent_path/$fname";
-                    if (file_exists($file)) {
-                        $fpath = $file;
-                        $fname = "${parent_cluster_id}_${ascore_prefix}$suffix";
-                        break;
-                    }
+$options = array("");
+foreach ($options as $prefix) {
+    foreach ($type as $suffix) {
+        $fname = "${prefix}${suffix}";
+        $file = "$basepath/$fname";
+        if (file_exists($file)) {
+            $fpath = $file;
+            $fname = "${cluster_id}_${ascore_prefix}$suffix";
+            break;
+        } else if ($ascore) {
+            $parent_cluster_id = functions::get_dicing_parent($db, $cluster_id, $ascore);
+            if ($parent_cluster_id) {
+                $parent_path = functions::get_data_dir_path2($db, $version, $ascore, $parent_cluster_id);
+                $file = "$parent_path/$fname";
+                if (file_exists($file)) {
+                    $fpath = $file;
+                    $fname = "${parent_cluster_id}_${ascore_prefix}$suffix";
+                    break;
                 }
             }
         }
-        if ($fpath)
-            break;
     }
-//}
+    if ($fpath)
+        break;
+}
 
 
 if (!$fpath) {
-    //TODO: error
-    die();
+    die("Invalid input [4]");
 }
 
 $filesize = filesize($fpath);
@@ -89,7 +81,7 @@ function filter_type($type) {
         $type = substr($type, 0, 4);
     }
     $types = array(
-        "net" => array("lg.png"),
+        "net" => array("ssn_lg.png"),
         "hmm" => array("hmm.hmm", "hmm.zip"),
         "hmmpng" => array("hmm.png", "hmm.zip"),
         "hist" => array("length_histogram_lg.png", "length_histogram_uniprot.zip", "length_histogram_uniprot_lg.png"),

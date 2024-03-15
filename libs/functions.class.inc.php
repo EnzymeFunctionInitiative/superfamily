@@ -2,20 +2,28 @@
 
 require_once(__DIR__ . "/settings.class.inc.php");
 
+
 class functions {
     public static function get_id() {
         $key = uniqid (rand (),true);
         $hash = sha1($key);
         return $hash;
     }
-    public static function get_database($version = "") {
-        $file = settings::get_cluster_db_path($version);
-        try {
-            $db = new PDO("sqlite:$file");
-        } catch (PDOException $e) {
-            return null;
-        }
-        return $db;
+    //public static function get_database($version = "") {
+    //    $file = settings::get_cluster_db_path($version);
+    //    try {
+    //        $db = new PDO("sqlite:$file");
+    //    } catch (PDOException $e) {
+    //        return null;
+    //    }
+    //    return $db;
+    //}
+    public static function get_cache_file($out_dir) {
+        return "$out_dir/results.json";
+    }
+    public static function get_output_dir($job_id) {
+        $dir = settings::get_tmpdir_path() . "/" . $job_id;
+        return $dir;
     }
     public static function get_data_dir_path($cluster = "", $version = "", $ascore = "", $child_id = "") {
         $rel_dir = functions::get_rel_data_dir_path($cluster, $version, $ascore, $child_id);
@@ -70,13 +78,15 @@ class functions {
     public static function validate_cluster_id($db, $id) {
         $check_fn = function($db, $id, $table_name, $col_name) {
             $sql = "SELECT $col_name FROM $table_name WHERE cluster_id = :id";
-            $sth = $db->prepare($sql);
-            if (!$sth)
-                return false;
-            $sth->bindValue("id", $id);
-            if (!$sth->execute())
-                return false;
-            if ($sth->fetch())
+            $results = $db->query($sql, array(":id" => $id));
+            //$sth = $db->prepare($sql);
+            //if (!$sth)
+            //    return false;
+            //$sth->bindValue("id", $id);
+            //if (!$sth->execute())
+            //    return false;
+            //$results = $sth->fetch();
+            if ($results)
                 return true;
             else
                 return false;
@@ -92,14 +102,15 @@ class functions {
 
     public static function get_ssn_path($db, $cluster) {
         $sql = "SELECT ssn FROM ssn WHERE cluster_id = :id";
-        $sth = $db->prepare($sql);
-        if (!$sth)
+        $results = $db->query($sql, array(":id" => $cluster));
+        if (!$results)
             return false;
-        $sth->bindValue("id", $cluster);
-        $data = false;
-        if ($sth->execute()) {
-            $data = $sth->fetch();
-        }
+        $data = $results[0];
+        //$sth->bindValue("id", $cluster);
+        //$data = false;
+        //if ($sth->execute()) {
+        //    $data = $sth->fetch();
+        //}
         return $data;
     }
 
@@ -111,38 +122,33 @@ class functions {
         return $sql;
     }
     public static function get_generic_fetch($db, $cluster_id, $sql, $handle_row_fn, $check_only = false) {
-        $sth = $db->prepare($sql);
-        if (!$sth)
+        $params = array(":id" => $cluster_id);
+        $results = $db->query($sql, $params);
+        if (!$results) {
             return $check_only ? 0 : array();
-        $sth->bindValue("id", $cluster_id);
-        $sth->execute();
+        }
         $data = array();
-        while ($row = $sth->fetch()) {
+        foreach ($results as $row) {
             if ($check_only)
                 return $handle_row_fn($row);
             $data_row = $handle_row_fn($row);
-            //if (is_array($data_row))
-                array_push($data, $data_row);
+            array_push($data, $data_row);
         }
         return $check_only ? 0 : $data;
     }
     public static function get_dicing_parent($db, $cluster_id, $ascore = "") {
-//        $sql = "SELECT parent_id FROM dicing WHERE cluster_id = :id";
+        //        $sql = "SELECT parent_id FROM dicing WHERE cluster_id = :id";
         $sql = "SELECT parent_id FROM diced_network WHERE cluster_id = :id";
-        if ($ascore)
+        $params = array(":id" => $cluster_id);
+        if ($ascore) {
             $sql .= " AND ascore = :ascore";
-        $sth = $db->prepare($sql);
-        if (!$sth)
-            return array();
-        $sth->bindValue("id", $cluster_id);
-        if ($ascore)
-            $sth->bindValue("ascore", $ascore);
-        $sth->execute();
-        $row = $sth->fetch();
-        if (isset($row) && isset($row["parent_id"]))
-            return $row["parent_id"];
-        else
+            $params[":ascore"] = $ascore;
+        }
+        $results = $db->query($sql, $params);
+        if (!$results)
             return "";
+        $row = $results[0];
+        return $row["parent_id"];
     }
     // Same as get_data_dir_path but checks for dicing
     public static function get_data_dir_path2($db, $version, $ascore, $cluster_id) {
@@ -248,14 +254,10 @@ class functions {
     
     public static function table_exists($db, $table_name, $column_name = "") {
         $sql = "PRAGMA table_info(:table_name)";
-        $sth = $db->prepare($sql);
-        if (!$sth)
-            return array();
-        $sth->bindValue("table_name", $table_name);
-        $sth->execute();
+        $results = $db->query($sql, array(":table_name" => $table_name));
         $table_exists = 0;
         $column_exists = 0;
-        while ($row = $sth->fetch()) {
+        foreach ($results as $row) {
             $table_exists = 1;
             if (!$column_name || (isset($row[1]) && $row[1] == $column_name)) {
                 $column_exists = 1;

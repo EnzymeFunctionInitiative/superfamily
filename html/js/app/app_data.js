@@ -16,8 +16,8 @@ function AppData(networkId, networkData) {
     if (typeof this.data === "undefined")
         this.data = {};
     this.network_map = networkData.network_map;
-    this.sfld_map = typeof networkData.sfld_map !== "undefined" ? networkData.sfld_map : [];;
-    this.sfld_desc = networkData.sfld_desc;
+    this.subgroup_map = typeof networkData.subgroup_map !== "undefined" ? networkData.subgroup_map : [];;
+    this.subgroup_desc = networkData.subgroup_desc;
     this.enzymecodes = networkData.enzymecodes;
     this.dataDir = this.data.dir;
     this.is_diced = typeof this.data.dicing.parent !== "undefined" && this.data.dicing.parent.length > 0;
@@ -146,6 +146,35 @@ AppData.prototype.getKeggIds = function(version, addKeggIdFn, finishFn) {
         finishFn();
     });
 }
+// Since there are potentially many Alphafold IDs, we get the list of IDs async.
+AppData.prototype.hasAlphafoldIds = function() {
+    // The number of Alphafold IDs is returned with the network JSON, but not the ID list.
+    return typeof this.data.public.has_alphafolds !== "undefined" ? this.data.public.has_alphafolds : false;
+}
+// ASYNC
+AppData.prototype.getAlphafoldIds = function (version, onReceiveDataFn, finishFn) {
+    //return Array.isArray(this.data.public.alphafolds) ? this.data.public.alphafolds : [];
+    var parms = {a: "alphafolds", cid: this.Id};
+    var ascore = this.getAlignmentScore();
+    if (ascore)
+        parms.as = ascore;
+    if (version)
+        parms.v = version;
+    $.get("getdata.php", parms, function(dataStr) {
+        var data = false;
+        try {
+            data = JSON.parse(dataStr);
+        } catch (e) {
+            console.log("Invalid alphafolds data (" + dataStr + ")");
+            console.log(e);
+            data = false;
+        }
+        if (data.valid) {
+            onReceiveDataFn(data.alphafolds);
+        }
+        finishFn();
+    });
+}
 AppData.prototype.getSizes = function(netId) {
     if (netId && typeof this.network_map[netId] !== "undefined") {
         return this.network_map[netId].size;
@@ -197,26 +226,29 @@ AppData.prototype.getDownloadFeatures = function () {
 AppData.prototype.getNetworkMapName = function (networkId) {
     return typeof this.network_map[networkId] !== "undefined" ? this.network_map[networkId].name : networkId;
 }
-AppData.prototype.getNetworkSfldTitle = function (networkId) {
-    if (typeof this.network_map[networkId] !== "undefined" && typeof this.network_map[networkId].sfld_title !== "undefined")
-        return this.network_map[networkId].sfld_title;
+AppData.prototype.getNetworkSubgroupTitle = function (networkId) {
+    if (typeof this.network_map[networkId] !== "undefined" && typeof this.network_map[networkId].subgroup_title !== "undefined")
+        return this.network_map[networkId].subgroup_title;
     else
         return "";
 }
-AppData.prototype.getSfldDesc = function () {
-    return this.data.sfld_desc;
+AppData.prototype.getSubgroupDesc = function () {
+    return this.data.subgroup_desc;
+}
+AppData.prototype.getSubgroups = function () {
+    return this.data.subgroups;
 }
 // Needed for display of clusters that have children
-AppData.prototype.getSfldDescForClusterId = function (id) {
-    return typeof this.sfld_desc[id] !== "undefined" ? this.sfld_desc[id].desc : "";
+AppData.prototype.getSubgroupDescForClusterId = function (id) {
+    return typeof this.subgroup_desc[id] !== "undefined" ? this.subgroup_desc[id].desc : "";
 }
 // Needed for display of clusters that have children
-AppData.prototype.getSfldColor = function (id) {
-    return typeof this.sfld_desc[id] !== "undefined" ? this.sfld_desc[id].color : "";
+AppData.prototype.getSubgroupColor = function (id) {
+    return typeof this.subgroup_desc[id] !== "undefined" ? this.subgroup_desc[id].color : "";
 }
 // Needed for display of clusters that have children
-AppData.prototype.getSfldIds = function (cid) {
-    return typeof this.sfld_map[cid] !== "undefined" ? this.sfld_map[cid] : [];
+AppData.prototype.getSubgroupIds = function (cid) {
+    return typeof this.subgroup_map[cid] !== "undefined" ? this.subgroup_map[cid] : [];
 }
 AppData.prototype.getGndKey = function () {
     return typeof this.data.gnd_key !== "undefined" ? this.data.gnd_key : "";

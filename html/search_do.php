@@ -20,7 +20,7 @@ if ($type == "tax-auto" || $type == "tax-prefetch") {
         exit(0);
     }
     $query = filter_input(INPUT_POST, "query", FILTER_SANITIZE_STRING);
-    $num_hmm_results = filter_input(INPUT_POST, "num_hmm_res", FILTER_SANITIZE_NUMBER);
+    $num_hmm_results = filter_input(INPUT_POST, "num_hmm_res", FILTER_SANITIZE_NUMBER_INT);
 }
 if (!$query && !$id && $type != "tax-prefetch") {
     print json_encode(array("status" => false, "message" => "Invalid input"));
@@ -31,7 +31,7 @@ $version = functions::validate_version(isset($_POST["v"]) ? $_POST["v"] : "");
 
 if (($type == "seq" || $type == "id" || $type == "tax") && ($id && preg_match("/^[A-Za-z0-9]+$/", $id))) {
     $out_dir = settings::get_tmpdir_path() . "/" . $id;
-    $cache_file = get_cache_file($out_dir);
+    $cache_file = functions::get_cache_file($out_dir);
     $json = file_get_contents($cache_file);
     print $json;
     exit(0);
@@ -45,7 +45,8 @@ if ($type == "seq") {
     $job_id = make_id();
     $out_dir = make_out_dir($job_id);
 
-    $data = $search_util->hmm_search($out_dir);
+    //$search_util->add_hmmsearch_job($job_id, $out_dir);
+    $data = $search_util->hmm_search($id, $out_dir);
 
     if (is_array($data)) {
         $data["status"] = true;
@@ -55,10 +56,11 @@ if ($type == "seq") {
     }
 
     $json = json_encode($data);
-    $cache_file = get_cache_file($out_dir);
+    $cache_file = functions::get_cache_file($out_dir);
     file_put_contents($cache_file, $json);
-    
+
     print $json;
+
 } else if ($type == "id") {
     $job_id = make_id();
     $out_dir = make_out_dir($job_id);
@@ -71,13 +73,15 @@ if ($type == "seq") {
     } else {
         $data = array("status" => false, "id" => $job_id);
         $data["status"] = false;
+        $data["message"] = "Invalid ID";
     }
 
     $json = json_encode($data);
-    $cache_file = get_cache_file($out_dir);
+    $cache_file = functions::get_cache_file($out_dir);
     file_put_contents($cache_file, $json);
     
     print $json;
+
 } else if ($type == "tax") {
     $job_id = make_id();
     $out_dir = make_out_dir($job_id);
@@ -95,7 +99,7 @@ if ($type == "seq") {
     }
 
     $json = json_encode($data);
-    $cache_file = get_cache_file($out_dir);
+    $cache_file = functions::get_cache_file($out_dir);
     file_put_contents($cache_file, $json);
 
     print $json;
@@ -120,13 +124,10 @@ function make_id() {
     return $job_id;
 }
 function make_out_dir($job_id) {
-    $out_dir = settings::get_tmpdir_path() . "/" . $job_id;
-    $cache_file = "$out_dir/$cache_file";
+    $out_dir = functions::get_output_dir($job_id);
+    $cache_file = functions::get_cache_file($out_dir);
     mkdir($out_dir);
     return $out_dir;
-}
-function get_cache_file($out_dir) {
-    return "$out_dir/results.json";
 }
     
 

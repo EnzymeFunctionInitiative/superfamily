@@ -12,6 +12,9 @@ class settings {
     public static function get_hmmscan2_path() {
         return defined("__HMMSCAN__") ? __HMMSCAN__ : "";
     }
+    public static function get_hmmscan_env() {
+        return defined("__HMMSCAN_ENV__") ? __HMMSCAN_ENV__ : "";
+    }
     public static function get_hmm_db_dir($version) {
         $dir = self::get_base_dir_path($version);
         $dir = "$dir/".__HMM_DB_DIR_NAME__;
@@ -67,6 +70,10 @@ class settings {
         return __DEFAULT_VERSION__;
     }
 
+    public static function get_database_type() {
+        return defined("__DATABASE_TYPE__") ? __DATABASE_TYPE__ : "sqlite3";
+    }
+
     public static function get_smtp_host() {
         return defined("__SMTP_HOST__") ? __SMTP_HOST__ : "";
     }
@@ -88,6 +95,13 @@ class settings {
 
     public static function get_default_max_hmm_results() {
         return defined("__DEFAULT_MAX_RESULTS__") ? __DEFAULT_MAX_RESULTS__ : 3;
+    }
+
+    public static function get_subgroup_title_prefix() {
+        return defined("__SUBGROUP_TITLE_PREFIX__") ? __SUBGROUP_TITLE_PREFIX__ : "";
+    }
+    public static function get_js_version() {
+        return defined("__JS_VERSION__") ? __JS_VERSION__ : "1";
     }
 }
 

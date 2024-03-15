@@ -1,11 +1,12 @@
 <?php
 require_once(__DIR__ . "/../init.php");
-require_once(__DIR__ . "/../libs/settings.class.inc.php");
-require_once(__DIR__ . "/../libs/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/settings.class.inc.php");
+require_once(__LIB_DIR__ . "/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/database.class.inc.php");
 
 $version = filter_input(INPUT_POST, "v", FILTER_SANITIZE_STRING);
 
-$db = functions::get_database($version);
+$db = new database($version);
 
 // Available actions:
 //   cluster    get cluster data

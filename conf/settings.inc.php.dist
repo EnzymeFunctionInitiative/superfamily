@@ -2,8 +2,9 @@
 
 define("__TITLE__","Superfamily");
 
-define("__HMMSCAN_LEGACY__","LD_LIBRARY_PATH=\$LD_LIBRARY_PATH");
-define("__HMMSCAN__","superfamily-pipeline/bin/hmmscan_multi_wrap.sh");
+define("__HMMSCAN_LEGACY__",__DIR__."/../bin/hmmscan");
+define("__HMMSCAN__",__DIR__."/../bin/hmmscan_multi_wrap.sh");
+define("__HMMSCAN_ENV__","source /TODO_SHELL_SCRIPT");
 
 define("__TEMP_DIR__","");
 define("__SUBMIT_EMAIL__","");
@@ -13,8 +14,10 @@ define("__DATA_BASE_DIR__","");
 define("__DATA_VERSION_FILE__","versions.txt");
 define("__DATA_DB_FILE_NAME__","data.sqlite");
 define("__GND_KEY_FILE_NAME__","gnds/gnd.key");
+define("__DATABASE_TYPE__","hybrid");
 
 define("__DEFAULT_VERSION__","3.0");
+define("__JS_VERSION__","1");
 
 define("__HMM_DB_DIR_NAME__","hmm");
 define("__DEFAULT_HMM_DB__","all.hmm");
@@ -26,4 +29,6 @@ define("__SMTP_USER__","");
 define("__SMTP_PASSWORD__","");
 define("__FROM_EMAIL__","");
 define("__TO_EMAIL__","");
+
+//define("__ENABLE_DEBUG__",true);
 

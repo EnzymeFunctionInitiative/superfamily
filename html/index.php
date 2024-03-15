@@ -1,9 +1,10 @@
 ﻿<?php
 require_once(__DIR__ . "/../init.php");
-require_once(__DIR__ . "/../libs/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/database.class.inc.php");
 
 $version = functions::validate_version();
-$db = functions::get_database($version);
+$db = new database($version);
 $anno = get_anno($db);
 $anno_html = get_anno_html($anno);
 
@@ -20,11 +21,12 @@ echo $html;
 
 
 function get_anno($db) {
-    $anno = array();
     $sql = "SELECT * FROM annotations";
-    $sth = $db->prepare($sql);
-    $sth->execute();
-    while ($row = $sth->fetch()) {
+    $results = $db->query($sql);
+    if (!$results)
+        return array();
+    $anno = array();
+    foreach ($results as $row) {
         $doi = explode("`", $row["doi"]);
         array_push($anno, array($row["uniprot_id"], $doi));
     }

@@ -26,8 +26,13 @@ AppNav.prototype.addBreadcrumb = function() {
                 item = '<li class="breadcrumb-item active" aria-current="page">' + this.appData.getName() + '</li>';
             } else {
                 var parentId = parts.slice(0, i + 1).join("-");
-                var ascore = (i == parts.length - 1 && this.appMeta.Ascore) ? "&as=" + this.appMeta.Ascore: "";
-                item = '<li class="breadcrumb-item"><a href="?id=' + parentId + '&v=' + this.appMeta.Version + ascore + '">';
+                var isDiced = (i == parts.length - 2 && this.appMeta.Ascore);
+                //var ascore = isDiced ? "&as=" + this.appMeta.Ascore : "";
+                var dicedMaster = isDiced ? "&d=l" : "";
+                var url = 'id=' + parentId + dicedMaster;
+                if (this.appMeta.Version)
+                    url += '&v=' + this.appMeta.Version;
+                item = '<li class="breadcrumb-item"><a href="?' + url + '">';
                 var parentNet = this.appData.getNetworkMapName(parentId);
                 if (typeof parentNet !== "undefined")
                     item += parentNet;

@@ -1,12 +1,13 @@
 <?php 
 require_once(__DIR__ . "/../init.php");
-require_once(__DIR__ . "/../libs/settings.class.inc.php");
-require_once(__DIR__ . "/../libs/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/settings.class.inc.php");
+require_once(__LIB_DIR__ . "/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/database.class.inc.php");
 
 //$version = filter_input(INPUT_GET, "v", FILTER_SANITIZE_NUMBER_INT);
 $version = functions::validate_version();
 
-$db = functions::get_database($version);
+$db = new database($version);
 
 $cluster_id = filter_input(INPUT_GET, "cid", FILTER_SANITIZE_STRING);
 $ascore = filter_input(INPUT_GET, "as", FILTER_SANITIZE_NUMBER_INT);
@@ -29,7 +30,7 @@ $title = isset($_GET["title"]) ? $_GET["title"] : "";
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="css/hmm_logo.min.css">
-<script src="js/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="vendor/components/jquery/jquery.min.js" type="text/javascript"></script>
 <script src="js/hmm_logo.js" type="text/javascript"></script>
     <title>Logo</title>
 </head>
