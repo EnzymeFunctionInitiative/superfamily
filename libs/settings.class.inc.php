@@ -36,7 +36,7 @@ class settings {
     public static function get_data_dir_name ($version) {
         return self::get_version_prefix() . "-$version";
     }
-    public static function get_cluster_db_path($version = "") {
+    public static function get_cluster_db_path($version) {
         $dir = self::get_base_dir_path($version);
         return "$dir/" . self::get_db_file_name();
     }
@@ -102,6 +102,9 @@ class settings {
     }
     public static function get_js_version() {
         return defined("__JS_VERSION__") ? __JS_VERSION__ : "1";
+    }
+    public static function get_superfamily_name() {
+        return defined("__SUPERFAMILY_NAME__") ? __SUPERFAMILY_NAME__ : "";
     }
 }
 

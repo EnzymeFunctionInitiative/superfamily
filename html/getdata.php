@@ -291,6 +291,9 @@ $timings["dicing"] = microtime(true) - $start;
     if (!$is_child && $parent_ascore && $parent_ascore_cluster_id && !$ascore)
         $ascore = $parent_ascore;
 
+    $rel_dir = functions::get_rel_data_dir_path($parent_cluster_id, $version, $orig_ascore, $child_cluster_id);
+    $data["dir"] = $rel_dir;
+
     $child_dir_id = $is_child ? $child_cluster_id : "";
     $full_dir = functions::get_data_dir_path($parent_cluster_id, $version, $ascore, $child_dir_id);
     if (file_exists("$full_dir/ssn_sm.png"))
