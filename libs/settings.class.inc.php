@@ -61,13 +61,13 @@ class settings {
     }
 
     public static function get_version_prefix() {
-        return __DATA_VERSION_PREFIX__;
+        return defined("__DATA_VERSION_PREFIX__") ? __DATA_VERSION_PREFIX__ : "";
     }
     public static function get_version_db_file() {
         return self::get_base_dir_path() . "/" . __DATA_VERSION_FILE__;
     }
     public static function get_default_version() {
-        return __DEFAULT_VERSION__;
+        return defined("__DEFAULT_VERSION__") ? __DEFAULT_VERSION__ : "1.0";
     }
 
     public static function get_database_type() {

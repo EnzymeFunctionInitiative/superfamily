@@ -27,6 +27,8 @@ function initApp(appInfo) {
         alignmentScore = requestData.alignment_score;
     if (requestData.version)
         appInfo.version = requestData.version;
+    if (requestData.version_name)
+        appInfo.versionName = requestData.version_name;
     var app = new App(appInfo);
     var args = {a: "cluster", cid: requestId, v: appInfo.version};
     if (alignmentScore)
@@ -58,6 +60,7 @@ function initApp(appInfo) {
 function App(appInfo) {
     this.appMeta = new AppMeta();
     this.appMeta.Version = appInfo.version;
+    this.appMeta.VersionName = appInfo.versionName;
     this.appMeta.SubgroupTitle = appInfo.subgroupTitle;
     this.appMeta.GndKey = appInfo.gndKey;
 }

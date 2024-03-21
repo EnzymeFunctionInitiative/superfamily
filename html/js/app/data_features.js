@@ -326,7 +326,7 @@ AppDataFeatures.prototype.addDownloadFeatures = function (containerId, hideTabSt
         if (false) // check if this is a parent and provide the child ID here
             gndParms += ":" + this.appMeta.Id;
         if (this.appMeta.Version)
-            gndParms += '&rs-ver=rsam-' + this.appMeta.Version;
+            gndParms += '&rs-ver=' + this.appMeta.VersionName + '-' + this.appMeta.Version;
         gndParms += "&key=" + this.appMeta.GndKey;
         var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
         body.append('<tr><td>' + viewBtn + '</td><td>View Genome Neighborhood Diagrams</td><td></td></tr>');

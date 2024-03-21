@@ -31,5 +31,11 @@ define("__SMTP_PASSWORD__","");
 define("__FROM_EMAIL__","");
 define("__TO_EMAIL__","");
 
+define("__DATABASE_TYPE__","mysql");
+define("__MYSQL_HOST__","localhost");
+define("__MYSQL_DATABASE__","");
+define("__MYSQL_USER__","");
+define("__MYSQL_PASSWORD__","");
+
 //define("__ENABLE_DEBUG__",true);
 

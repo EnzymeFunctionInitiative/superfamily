@@ -2,6 +2,7 @@
 require_once(__DIR__ . "/../init.php");
 
 $data_version = functions::validate_version();
+$version_name = settings::get_version_prefix();
 
 if (!$data_version) {
     die("Invalid inputs requested");
@@ -18,6 +19,7 @@ $twig_variables = array(
     "subgroup_title" => $subgroup_title,
     "js_ver" => settings::get_js_version(),
     "data_version" => $data_version,
+    "version_name" => $version_name,
     "page_title", "Exploring the " . settings::get_superfamily_name() . " Superfamily",
 );
 
