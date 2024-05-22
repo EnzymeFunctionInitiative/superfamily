@@ -1,6 +1,7 @@
 <?php
 
 define("__LIB_DIR__",__DIR__ . '/libs');
+define("__BIN_DIR__",__DIR__ . '/bin');
 
 set_include_path(get_include_path() . ':' . __LIB_DIR__);
 
