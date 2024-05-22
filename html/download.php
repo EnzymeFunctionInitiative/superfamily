@@ -73,26 +73,26 @@ function filter_type($type) {
     }
     // The first value in the returned array is the download type; i=direct download (e.g. images), p=packed download (i.e. extract from packed tar file)
     $types = array(
-        "net" => array("i", "ssn_lg.png"),
-        "hmm" => array("p", "hmm.hmm"),
-        "hmmpng" => array("i", "hmm.png"),
-        "hist" => array("i", "length_histogram_lg.png", "length_histogram_uniprot.zip", "length_histogram_uniprot_lg.png"),
-        "hist_filt" => array("i", "length_histogram_filtered_lg.png"),
-        "hist_up" => array("i", "length_histogram_uniprot.zip"),
-        "hist_ur50" => array("i", "length_histogram_uniref50_lg.png", "length_histogram_uniref50.zip"),
-        "msa" => array("p", "msa.afa"),
-        "uniprot_id" => array("p", "uniprot.txt"),
-        "uniref50_id" => array("p", "uniref50.txt"),
-        "uniref90_id" => array("p", "uniref90.txt"),
-        "uniprot_fasta" => array("p", "uniprot_fasta.zip"),
-        "uniref50_fasta" => array("p", "uniref50_fasta.zip"),
-        "uniref90_fasta" => array("p", "uniref90_fasta.zip"),
-        "weblogo" => array("i", "weblogo.png"),
-        "crpo" => array("p", "consensus_residue_${RES}position.txt"),
-        "crpe" => array("p", "consensus_residue_${RES}percentage.txt"),
-        "crid" => array("p", "consensus_residue_${RES}all.zip"),
-        "swissprot" => array("p", "swissprot.txt"),
-        "ssn" => array("i", "ssn.zip", "ssn.xgmml"));
+        "net" => array("i", array("ssn_lg.png")),
+        "hmm" => array("p", array("hmm.hmm")),
+        "hmmpng" => array("i", array("hmm.png")),
+        "hist" => array("i", array("length_histogram_lg.png", "length_histogram_uniprot.zip", "length_histogram_uniprot_lg.png")),
+        "hist_filt" => array("i", array("length_histogram_filtered_lg.png")),
+        "hist_up" => array("i", array("length_histogram_uniprot.zip")),
+        "hist_ur50" => array("i", array("length_histogram_uniref50_lg.png", "length_histogram_uniref50.zip")),
+        "msa" => array("p", array("msa.afa")),
+        "uniprot_id" => array("p", array("uniprot.txt")),
+        "uniref50_id" => array("p", array("uniref50.txt")),
+        "uniref90_id" => array("p", array("uniref90.txt")),
+        "uniprot_fasta" => array("p", array("uniprot_fasta.zip")),
+        "uniref50_fasta" => array("p", array("uniref50_fasta.zip")),
+        "uniref90_fasta" => array("p", array("uniref90_fasta.zip")),
+        "weblogo" => array("i", array("weblogo.png")),
+        "crpo" => array("p", array("consensus_residue_${RES}position.txt")),
+        "crpe" => array("p", array("consensus_residue_${RES}percentage.txt")),
+        "crid" => array("p", array("consensus_residue_${RES}all.zip")),
+        "swissprot" => array("p", array("swissprot.txt")),
+        "ssn" => array("i", array("ssn.zip", "ssn.xgmml")));
     if (isset($types[$type]))
         return $types[$type];
     else

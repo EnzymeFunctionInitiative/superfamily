@@ -4,6 +4,7 @@ require_once(__LIB_DIR__ . "/settings.class.inc.php");
 require_once(__LIB_DIR__ . "/functions.class.inc.php");
 require_once(__LIB_DIR__ . "/tax_data.class.inc.php");
 require_once(__LIB_DIR__ . "/database.class.inc.php");
+require_once(__LIB_DIR__ . "/cluster_file.class.inc.php");
 
 
 //$version = filter_input(INPUT_GET, "v", FILTER_SANITIZE_NUMBER_INT);
@@ -554,7 +555,8 @@ function get_display($db, $cluster_id, $version = "", $ascore = "", $child_id = 
 
 function get_consensus_residues_files($db, $cluster_id, $version = "", $ascore = "", $child_id = "") {
     $cpath = functions::get_data_dir_path($cluster_id, $version, $ascore, $child_id);
-    $files = glob("$cpath/consensus_residue_*_position.txt");
+    $dir_files = cluster_file::get_files($cpath);
+    $files = $dir_files["cons_res"];
     $res = array();
     foreach ($files as $file) {
         preg_match("/^.*consensus_residue_([A-Z])_.*$/", $file, $matches);
@@ -581,51 +583,39 @@ function get_download($db, $cluster_id, $version = "", $ascore = "", $child_id =
     $parent_path = "";
     if ($ascore && $child_id)
         $parent_path = functions::get_data_dir_path2($db, $version, $ascore, $cluster_id);
-    //$cpath = "$basepath/$cluster_id";
-
-    //$cluster_type = get_cluster_type($db, $cluster_id);
-    //if ($cluster_type == "overview" || ($cluster_id && !$child_id))
-    //    return array();
 
     $feat = array();
     $id_fasta = array();
 
     $show_child_feat = $ascore && !$child_id;
 
-    //TODO: missing SSN table
-    //$ssn = functions::get_ssn_path($db, $cluster_id);
-    $ssn = null;
-    if ($ssn)
-        $feat["ssn"] = 1;
-    if (file_exists("$cpath/weblogo.png") || $show_child_feat)
-        $feat["weblogo"] = 1;
-    if (file_exists("$cpath/msa.afa") || $show_child_feat)
-        $feat["msa"] = 1;
-    if (file_exists("$cpath/hmm.hmm") || $show_child_feat)
-        $feat["hmm"] = 1;
-//    if (file_exists("$cpath/gnd.sqlite"))
-//        array_push($feat, "gnd");
     if (file_exists("$cpath/ssn.zip") || file_exists("$cpath/ssn.xgmml") || $show_child_feat)
         $feat["ssn"] = 1;
     else if (!empty($parent_path) && (file_exists("$parent_path/ssn.zip") || $show_child_feat))
         $feat["ssn"] = 1;
-    if (file_exists("$cpath/uniprot.txt") || $show_child_feat)
+    if (file_exists("$cpath/weblogo.png") || $show_child_feat)
+        $feat["weblogo"] = 1;
+
+    $files = cluster_file::get_files($cpath);
+    if (isset($files["msa.afa"]) || $show_child_feat)
+        $feat["msa"] = 1;
+    if (isset($files["hmm.hmm"]) || $show_child_feat)
+        $feat["hmm"] = 1;
+    if (isset($files["uniprot.txt"]) || $show_child_feat)
         $id_fasta["uniprot"] = 1;
-    if (file_exists("$cpath/uniref50.txt") || $show_child_feat)
+    if (isset($files["uniref50.txt"]) || $show_child_feat)
         $id_fasta["uniref50"] = 1;
-    if (file_exists("$cpath/uniref90.txt") || $show_child_feat)
+    if (isset($files["uniref90.txt"]) || $show_child_feat)
         $id_fasta["uniref90"] = 1;
-    if (file_exists("$cpath/swissprot.txt") || $show_child_feat)
+    if (isset($files["swissprot.txt"]) || $show_child_feat)
         $feat["misc"] = 1;
-    $cons_res_files = glob("$cpath/consensus_residue_*_position.txt");
-    if (count($cons_res_files) > 0 || $show_child_feat)
+    if (count($files["cons_res"]) > 0 || $show_child_feat)
         $feat["cons_res"] = 1;
 
     if (!empty($id_fasta))
         $feat["id_fasta"] = $id_fasta;
 
     return $feat;
-    //return array("ssn", "weblogo", "msa", "hmm", "id_fasta", "misc");
 }
 
 function get_generic_fetch($db, $cluster_id, $sql, $handle_row_fn, $check_only = false) {
@@ -643,7 +633,7 @@ function get_kegg($db, $cluster_id, $ascore = "", $check_only = false, $qversion
 }
 
 function get_swissprot($db, $cluster_id, $ascore = "", $check_only = false, $qversion = 0) {
-    $sql = get_generic_join_sql($qversion, "swissprot", "function, GROUP_CONCAT(swissprot.uniprot_id) AS ids", "AND function IS NOT NULL AND function != \"\" GROUP BY function ORDER BY function", $ascore, $check_only);
+    $sql = get_generic_join_sql($qversion, "swissprot", "function, swissprot.uniprot_id AS ids", "AND function IS NOT NULL AND function != \"\" GROUP BY function ORDER BY function", $ascore, $check_only);
     $row_fn = function($row) { return ($row["function"] && $row["ids"]) ? array($row["function"], $row["ids"]) : false; };
     $results = get_generic_fetch($db, $cluster_id, $sql, $row_fn);
     return $results;

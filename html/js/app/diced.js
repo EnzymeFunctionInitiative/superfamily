@@ -104,7 +104,7 @@ AppDiced.prototype.addWalkthrough = function() {
     var createTable = function() {
         var table = $('<table class="table walkthrough"></table>');
         var th = $('<thead></thead>');
-        th.append('<td>Cluster ID</td><td>Num Nodes</td><td>Conv. Ratio</td>');
+        th.append('<td>Cluster ID</td><td>AS</td><td>Num Nodes</td><td>Conv. Ratio</td>');
         var dicedSpCol = $('<td>SwissProt</td>');
         th.append(dicedSpCol);
         dicedSpCol.show();
@@ -130,6 +130,7 @@ AppDiced.prototype.addWalkthrough = function() {
 
         var listItem = $('<tr></tr>');
         listItem.append('<td><a href="' + getUrlFn(navItem.cluster_id, that.appMeta.Version, navItem.ascore) + '">' + navItemName + hasIdText + '</a></td>');
+        listItem.append('<td>' + navItem.ascore + '</td>');
         listItem.append('<td>' + navItem.num_nodes + '</td>');
         var cr = typeof navItem.cr !== "undefined" ? navItem.cr : "";
         listItem.append('<td>' + cr + '</td>');
@@ -187,7 +188,7 @@ AppDiced.prototype.addWalkthrough = function() {
                 }
             }
             if (nextAscore) {
-                var headerBody = $('<tbody class="walkthrough-header"></tbody>').append('<tr><td><h5>' + headingText + ' (AS' + nextAscore + ')</h5></td></tr>');
+                var headerBody = $('<tbody class="walkthrough-header"></tbody>').append('<tr><td><h5>' + headingText + '</h5></td></tr>');
                 table.append(headerBody);
                 table.append(tbody);
                 //$("#clusterAsNavList").append('<div></div>').append('<h5>' + headingText + ' (AS' + nextAscore + ')</h5>').append(table);
