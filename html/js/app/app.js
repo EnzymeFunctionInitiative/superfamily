@@ -106,7 +106,7 @@ App.prototype.init = function(appData, showDicedListPage) {
             apiKey: this.appMeta.GndKey,
             apiExtra: apiExtra,
             appUniRefVersion: this.uniref.getUniRefVersion(),
-            scriptApp: sbScriptDir + "/get_rs_tax_data.php",
+            scriptApp: sbScriptDir + "/get_tax_data.php",
             fastaApp: sbScriptDir + "/get_rs_sunburst_fasta.php",
             hasUniRef: hasUniRef,
             appPrimaryIdTypeText: function(){},
@@ -236,32 +236,36 @@ App.prototype.initClusterPage = function(isLeaf, hideInfoForDiced) {
 // Add information to the placeholders.
 App.prototype.initLeafPage = function(hideInfoForDiced = false) {
     var hasData = this.dataFeat.addDisplayFeatures();
-    if (!hasData)
+    if (!hasData) {
         return;
-    this.dataFeat.addClusterSize("clusterSize");
-    if (!hideInfoForDiced) {
-        this.dataFeat.addConsRes();
-        this.dataFeat.addConvRatio();
     }
 
+    this.dataFeat.addClusterSize("clusterSize");
+
+    if (hideInfoForDiced) {
+        return;
+    }
+
+    this.dataFeat.addConsRes();
+    this.dataFeat.addConvRatio();
     this.dataFeat.addSwissProtFunctions();
     this.dataFeat.addPdb();
-    this.dataFeat.addAnno();
-    if (!hideInfoForDiced)
-        this.dataFeat.addGndFeature();
+    this.dataFeat.addGndFeature();
+
     var feat = this.appData.getDisplayFeatures();
     if (feat.hasOwnProperty("tax")) {
         var that = this;
         $("#dataAvailableSunburst").click(function() {
             $("#sunburst-container").empty();
-            that.sunburst.attachToContainer("sunburst-container");
+            that.sunburst.attachToContainer("sunburst-container")
             that.sunburst.addSunburstFeatureAsync(() => { $("#sunburstModal").modal(); });
         }).enableDataAvailableButton();
     }
+
     $("#displayFeatures").show();
     $("#dataAvailable").show();
 
-    $("#submitAnnoLink").attr("href", $("#submitAnnoLink").attr("href") + "?id=" + this.appMeta.Id);
+    //$("#submitAnnoLink").attr("href", $("#submitAnnoLink").attr("href") + "?id=" + this.appMeta.Id);
 }
 
 
