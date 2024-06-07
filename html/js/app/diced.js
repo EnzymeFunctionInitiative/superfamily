@@ -108,8 +108,8 @@ AppDiced.prototype.addWalkthrough = function() {
         var dicedSpCol = $('<td>SwissProt</td>');
         th.append(dicedSpCol);
         dicedSpCol.show();
-        var dicedAnnoCol = $('<td>Annotation</td>');
-        th.append(dicedAnnoCol);
+        //var dicedAnnoCol = $('<td>Annotation</td>');
+        //th.append(dicedAnnoCol);
         table.append(th);
         return table;
     };
@@ -117,7 +117,7 @@ AppDiced.prototype.addWalkthrough = function() {
     var getListItem = function(navItem, groupIdx, hasId) {
         var navItemName = ucFirst(navItem.cluster_id);
         var spDiv = getPopoverSwissProt(navItem.sp, groupIdx);
-        var annoDiv = getPopoverAnno(navItem.anno, groupIdx);
+        //var annoDiv = getPopoverAnno(navItem.anno, groupIdx);
 
         var hasIdText = "";
         if (hasId) {
@@ -137,9 +137,9 @@ AppDiced.prototype.addWalkthrough = function() {
         var spCell = $('<td></td>');
         spCell.append(spDiv);
         listItem.append(spCell);
-        var annoCell = $('<td></td>');
-        annoCell.append(annoDiv);
-        listItem.append(annoCell);
+        //var annoCell = $('<td></td>');
+        //annoCell.append(annoDiv);
+        //listItem.append(annoCell);
         return listItem;
     };
 
