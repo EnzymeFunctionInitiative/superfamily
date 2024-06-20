@@ -10,6 +10,18 @@ $anno_html = get_anno_html($anno);
 
 
 $twig_variables = array("anno_html" => $anno_html);
+
+$intro_pages = array(
+    array('id' => 'background', 'file' => 'intro/site_specific/local/background.html.twig', 'name' => 'Background', 'default' => 'true'),
+    array('id' => 'cur_release', 'file' => 'intro/site_specific/local/cur_release.html.twig', 'name' => 'Current Release'),
+    array('id' => 'subgroups', 'file' => 'intro/site_specific/local/subgroups.html.twig', 'name' => 'Subgroups'),
+    array('id' => 'func_subgroups', 'file' => 'intro/site_specific/local/func_subgroups.html.twig', 'name' => 'Functionally Diverse Subgroups'),
+    array('id' => 'explore', 'file' => 'intro/site_specific/local/explore.html.twig', 'name' => 'Explore Pages'),
+    array('id' => 'search', 'file' => 'intro/site_specific/local/search.html.twig', 'name' => 'Search Functions'),
+);
+$twig_variables["pages"] = $intro_pages;
+
+
 $loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
 $twig = new \Twig\Environment($loader);
 
