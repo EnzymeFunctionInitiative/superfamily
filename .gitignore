@@ -4,5 +4,6 @@ conf/settings.inc.php
 composer.lock
 /templates/custom
 tracker.twig
-site_specific/local
+/html/img/intro/site_specific/local
+/templates/intro/site_specific/local
 
