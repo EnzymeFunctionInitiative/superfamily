@@ -20,7 +20,7 @@ $twig_variables = array(
     "js_ver" => settings::get_js_version(),
     "data_version" => $data_version,
     "version_name" => $version_name,
-    "page_title", "Exploring the " . settings::get_superfamily_name() . " Superfamily",
+    //"page_title" => "Exploring the " . settings::get_superfamily_name() . " Superfamily",
 );
 
 $html = $twig->render("explore.html.twig", $twig_variables);

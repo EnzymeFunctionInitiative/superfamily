@@ -24,9 +24,11 @@
 <body>
     {% include('navbar.html.twig') %}
 
+    {% if not hide_page_title %}
 	<div class="container">
         <h1 class="text-center">{{ page_title }}</h1>
 	</div>
+    {% endif %}
 
     {% block content %}
     {% endblock %}

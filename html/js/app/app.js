@@ -140,6 +140,10 @@ App.prototype.init = function(appData, showDicedListPage) {
         this.initClusterPage(isLeaf, hideInfoForDiced);
     }
 
+    if (this.appMeta.Id == "fullnetwork") {
+        $(".fullnetwork-text").show();
+    }
+
     this.initUi();
 }
 
@@ -228,8 +232,6 @@ App.prototype.initClusterPage = function(isLeaf, hideInfoForDiced) {
         var row = $("<tr><td>" + info["subgroup_id"] + "</td><td>" + info["desc"] + "</td><td>" + info["color_name"] + "</td><td>" + info["name"] + "</td></tr>");
         subgroupList.append(row);
     });
-    if (Object.keys(subgroups).length > 0)
-        $(".fullnetwork-text").show();
 }
 
 
@@ -349,11 +351,14 @@ App.prototype.getDownloadSize = function (fileType) {
     return "";//'&lt; 1 MB';
 }
 App.prototype.setPageHeaders = function () {
-    document.title = this.appData.getPageTitle();
-    var desc = this.appData.getDescription();
-    if (desc)
-        document.title += ": " + desc;
-    $("#familyTitle").text(document.title);
+    var doc_title = this.appData.getPageTitle();
+    if (doc_title) {
+        document.title = doc_title;
+        var desc = this.appData.getDescription();
+        if (desc)
+            document.title += ": " + desc;
+        $("#familyTitle").text(document.title);
+    }
     var as = this.appMeta.Ascore;
     if (as.length > 0) {
         var hWarn = $('<span class="as-warning"> (Alignment Score ' + as + ')</span>');
