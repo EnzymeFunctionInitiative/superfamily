@@ -49,6 +49,9 @@ class search {
         list($seq_file, $seq_id) = $this->save_sequence($job_id, $out_dir);
 
         $hmmdb = functions::get_hmmdb_path($this->version, "all");
+        if ($hmmdb === false) {
+            return false;
+        }
         $matches_raw = $this->hmm_util->hmmscan($out_dir, $hmmdb[0], $seq_file);
         if ($matches_raw === false) {
             return false;

@@ -53,6 +53,7 @@ if ($type == "seq") {
         $data["id"] = $job_id;
     } else {
         $data["status"] = false;
+        $data["message"] = "Sequenence search failed due to internal error";
     }
 
     $json = json_encode($data);
