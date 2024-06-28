@@ -498,10 +498,10 @@ function get_display_feature_list($db, $cluster_id, $version = "", $ascore = "",
     }
 
     $hist = array();
-    if ($show_all_features) {
         if (file_exists("$cpath/weblogo.png"))
             $feat["weblogo"] = 1;
     
+    if ($show_all_features) {
         $has_proper = false;
         if (file_exists("$cpath/length_histogram_uniprot_lg.png")) {
             array_push($hist, "uniprot");
@@ -514,7 +514,9 @@ function get_display_feature_list($db, $cluster_id, $version = "", $ascore = "",
             array_push($hist, "uniref90");
         if (file_exists("$cpath/length_histogram_uniref50_lg.png"))
             array_push($hist, "uniref50");
-        $feat["length_histogram"] = $hist;
+
+        if (count($hist) > 0)
+            $feat["length_histogram"] = $hist;
     }
 
     return $feat;
@@ -565,11 +567,14 @@ function get_download_feature_list($db, $cluster_id, $version = "", $ascore = ""
     else if (!empty($parent_path) && file_exists("$parent_path/ssn.zip"))
         $feat["ssn"] = 1;
 
-    if (file_exists("$cpath/weblogo.png") && $show_all_features)
+    //if (file_exists("$cpath/weblogo.png") && $show_all_features)
+    if (file_exists("$cpath/weblogo.png"))
         $feat["weblogo"] = 1;
-    if (isset($files["msa.afa"]) && $show_all_features)
+    //if (isset($files["msa.afa"]) && $show_all_features)
+    if (isset($files["msa.afa"]))
         $feat["msa"] = 1;
-    if (isset($files["hmm.hmm"]) && $show_all_features)
+    //if (isset($files["hmm.hmm"]) && $show_all_features)
+    if (isset($files["hmm.hmm"]))
         $feat["hmm"] = 1;
     if (isset($files["uniprot.txt"]))
         $id_fasta["uniprot"] = 1;

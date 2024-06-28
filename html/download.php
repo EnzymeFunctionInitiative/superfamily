@@ -14,7 +14,7 @@ $type_data = filter_type($type);
 if (!is_array($type_data)) {
     die("Error; input is not valid [1]");
 }
-if (!preg_match("/^[cluster0-9\-]+$/", $cluster_id)) {
+if (!preg_match("/^[cluster0-9\-]+$/", $cluster_id) && $cluster_id != "fullnetwork") {
     //TODO: error
     die("Error; input is not valid [2]");
 }
