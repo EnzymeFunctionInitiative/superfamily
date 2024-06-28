@@ -159,9 +159,6 @@ App.prototype.initMasterDicedPage = function(ascores) {
     theUrl += "&d=l";
     $("#dicedListLink").attr("href", theUrl);
 
-    //if (this.appMeta.Ascore)
-    //    $("#dicedAscoreListImageDesc").show();
-
     $("#dicedClusterDesc").show();
     $("#downloadContainer").show();
     $("#dicedAscoreListOverview").show();
@@ -182,10 +179,6 @@ App.prototype.initDicedListPage = function(ascores) {
     $("#dicedDescNextAsLink").attr("href", theUrl);
 
     $("#dicedAscoreListContainer").show();
-    //$("#dicedClusterDesc").show();
-    //$("#dicedAscoreListOverview").show();
-    //$("#dicedDiceIncrements").text(ascores.join(", "));
-    //$("#dicedNumDicings").text(ascores.length);
 
     this.progress.stop();
 }
@@ -207,8 +200,6 @@ App.prototype.initClusterPage = function(isLeaf, hideInfoForDiced) {
         this.dataFeat.checkForKegg();
         this.dataFeat.checkForAlphafoldIds();
         this.initLeafPage(hideInfoForDiced);
-    //} else {
-    //    this.dataFeat.addClusterSize("clusterSize");
     }
 
     // Still more stuff to zoom in to
@@ -265,8 +256,6 @@ App.prototype.initLeafPage = function(hideInfoForDiced = false) {
         $("#displayFeatures").show();
         $("#dataAvailable").show();
     }
-
-    //$("#submitAnnoLink").attr("href", $("#submitAnnoLink").attr("href") + "?id=" + this.appMeta.Id);
 }
 
 
@@ -335,9 +324,6 @@ App.prototype.setPageHeaders = function () {
     var doc_title = this.appData.getClusterTitle();
     if (doc_title) {
         document.title = doc_title;
-        //var desc = this.appData.getDescription();
-        //if (desc)
-        //    document.title += ": " + desc;
         $("#family-title").text(document.title);
     }
     var as = this.appMeta.Ascore;
