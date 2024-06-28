@@ -19,6 +19,7 @@ define("__DATABASE_TYPE__","hybrid");
 define("__DEFAULT_VERSION__","3.0");
 define("__JS_VERSION__","1");
 define("__SUPERFAMILY_NAME__","Superfamily");
+define("__SUBGROUP_TITLE_PREFIX__","");
 
 define("__HMM_DB_DIR_NAME__","hmm");
 define("__DEFAULT_HMM_DB__","all.hmm");

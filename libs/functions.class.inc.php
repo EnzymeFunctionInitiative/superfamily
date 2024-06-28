@@ -92,7 +92,7 @@ class functions {
                 return false;
         };
 
-        if ($check_fn($db, $id, "network", "name"))
+        if ($check_fn($db, $id, "network", "cluster_name"))
             return true;
         else if ($check_fn($db, $id, "diced_network", "cluster_id"))
             return true;
@@ -186,6 +186,12 @@ class functions {
             ob_flush();
             flush();
         }
+    }
+    public static function send_text($text_string, $file_name) {
+        $file_size = strlen($text_string);
+        self::send_headers($file_name, $file_size, "application/octet-stream");
+        ob_clean();
+        echo $text_string;
     }
 
     public static function get_gnd_key ($version) {

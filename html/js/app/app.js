@@ -107,11 +107,12 @@ App.prototype.init = function(appData, showDicedListPage) {
             apiExtra: apiExtra,
             appUniRefVersion: this.uniref.getUniRefVersion(),
             scriptApp: sbScriptDir + "/get_tax_data.php",
-            fastaApp: sbScriptDir + "/get_rs_sunburst_fasta.php",
+            fastaApp: sbScriptDir + "/get_sunburst_fasta.php",
             hasUniRef: hasUniRef,
             appPrimaryIdTypeText: function(){},
             appPostSunburstTextFn: function(){},
             hideFastaDownload: true,
+            useBootstrap: true,
     };
     this.sunburst = new AppSunburst(sbParams);
 
@@ -229,7 +230,7 @@ App.prototype.initClusterPage = function(isLeaf, hideInfoForDiced) {
     var subgroups = this.appData.getSubgroups();
     var subgroupList = $("#subgroupMapping");
     $.each(subgroups, function (i, info) {
-        var row = $("<tr><td>" + info["subgroup_id"] + "</td><td>" + info["desc"] + "</td><td>" + info["color_name"] + "</td><td>" + info["name"] + "</td></tr>");
+        var row = $("<tr><td>" + info["subgroup_id"] + "</td><td>" + info["cluster_desc"] + "</td><td>" + info["cluster_name"] + "</td></tr>");
         subgroupList.append(row);
     });
 }
@@ -238,34 +239,32 @@ App.prototype.initClusterPage = function(isLeaf, hideInfoForDiced) {
 // Add information to the placeholders.
 App.prototype.initLeafPage = function(hideInfoForDiced = false) {
     var hasData = this.dataFeat.addDisplayFeatures();
-    if (!hasData) {
-        return;
-    }
 
     this.dataFeat.addClusterSize("clusterSize");
 
-    if (hideInfoForDiced) {
-        return;
+    if (hasData) {
+        this.dataFeat.addSwissProtFunctions();
+        this.dataFeat.addPdb();
+        this.dataFeat.addGndFeature();
+    
+        var feat = this.appData.getDisplayFeatures();
+        if (feat.hasOwnProperty("tax")) {
+            var that = this;
+            $("#dataAvailableSunburst").click(function() {
+                $("#sunburst-container").empty();
+                that.sunburst.attachToContainer("sunburst-container")
+                that.sunburst.addSunburstFeatureAsync(() => { $("#sunburstModal").modal(); });
+            }).enableDataAvailableButton();
+        }
+    
+        if (!hideInfoForDiced) {
+            this.dataFeat.addConsRes();
+            this.dataFeat.addConvRatio();
+        }
+    
+        $("#displayFeatures").show();
+        $("#dataAvailable").show();
     }
-
-    this.dataFeat.addConsRes();
-    this.dataFeat.addConvRatio();
-    this.dataFeat.addSwissProtFunctions();
-    this.dataFeat.addPdb();
-    this.dataFeat.addGndFeature();
-
-    var feat = this.appData.getDisplayFeatures();
-    if (feat.hasOwnProperty("tax")) {
-        var that = this;
-        $("#dataAvailableSunburst").click(function() {
-            $("#sunburst-container").empty();
-            that.sunburst.attachToContainer("sunburst-container")
-            that.sunburst.addSunburstFeatureAsync(() => { $("#sunburstModal").modal(); });
-        }).enableDataAvailableButton();
-    }
-
-    $("#displayFeatures").show();
-    $("#dataAvailable").show();
 
     //$("#submitAnnoLink").attr("href", $("#submitAnnoLink").attr("href") + "?id=" + this.appMeta.Id);
 }
@@ -273,14 +272,14 @@ App.prototype.initLeafPage = function(hideInfoForDiced = false) {
 
 App.prototype.initSubGroupPage = function() {
     var clusterTableDiv = $('<div id="clusterTable"></div>');
-    this.addSubgroupTable(clusterTableDiv);
+    this.addChildrenTable(clusterTableDiv);
     $("#subgroupTable").append(clusterTableDiv);
     $("#subgroupTable").show();
 }
 
 
 // Add a table of all of the clusters that derive from the current view.
-App.prototype.addSubgroupTable = function (div) {
+App.prototype.addChildrenTable = function (div) {
     var table = $('<table class="table table-hover w-auto"></table>');
 
     var that = this;
@@ -292,7 +291,7 @@ App.prototype.addSubgroupTable = function (div) {
     if (kids.length == 0)
         return;
 
-    var hasUniRef50 = this.uniref.getUniRefVersion(false) == 50 ? true : false;
+    var hasUniRef50 = this.appData.getUniRefVersion(false) == 50 ? true : false;
 
     var headHtml = '<thead><tr class="text-center"><th>Cluster</th>';
     if (this.appMeta.Id != "fullnetwork") //TODO: HACK
@@ -303,36 +302,18 @@ App.prototype.addSubgroupTable = function (div) {
 
     $.each(kids, function (i, data) {
         var row = $('<tr data-node-id="' + data.id + '"></tr>');
-        var size = that.appData.getSizes(data.id);
-        var subgroupIds = that.appData.getSubgroupIds(data.id);
-        var subgroupDesc = that.appData.getNetworkSubgroupTitle(data.id);
-        var subgroupDisplayFn = function (subgroupId, desc) {
-            return "<span style=\"color: " + that.appData.getSubgroupColor(subgroupId) + ";\">" + desc + "</span>";
-        };
-        if (!subgroupDesc) {
-            for (var i = 0; i < subgroupIds.length; i++) {
-                var subgroupId = subgroupIds[i];
-                var subgroupIdStr = subgroupId ? " [" + subgroupId + "]" : "";
-                if (subgroupDesc.length)
-                    subgroupDesc += '; ';
-                subgroupDesc += subgroupDisplayFn(subgroupId, that.appData.getSubgroupDescForClusterId(subgroupId));
-                //subgroupDesc += subgroupDisplayFn(subgroupId, that.appData.getSubgroupDescForClusterId(subgroupId) + subgroupIdStr);
-            }
-        } else {
-            var subgroupIdStr = subgroupIds.join("; ");
-            if (subgroupIdStr)
-                subgroupIdStr = " [" + subgroupIdStr + "]";
-            subgroupDesc = subgroupDisplayFn(subgroupIds[0], subgroupDesc);
-            //subgroupDesc = subgroupDisplayFn(subgroupIds[0], subgroupDesc + subgroupIdStr);
-        }
-        var rowHtml = "<td>" + data.name + "</td>";
+
+        var color = data.color ? "color: " + data.color + ";" : "";
+        var subgroupDesc = "<span style=\"" + color + "\">" + data.cluster_desc + "</span>";
+        var rowHtml = "<td>" + data.cluster_name + "</td>";
         if (that.appMeta.Id != "fullnetwork") //TODO: HACK
             rowHtml += "<td>" + subgroupDesc + "</td>";
-        rowHtml += "<td>" + commify(size.uniprot) + "</td><td>" + commify(size.uniref90) + "</td>";
+
+        rowHtml += "<td>" + commify(data.size.uniprot) + "</td><td>" + commify(data.size.uniref90) + "</td>";
         if (hasUniRef50) {
             rowHtml += "<td>";
-            if (size.uniref50 > 0)
-                rowHtml += commify(size.uniref50);
+            if (data.size.uniref50 > 0)
+                rowHtml += commify(data.size.uniref50);
             rowHtml += "</td>";
         }
         row.append(rowHtml);
@@ -351,18 +332,18 @@ App.prototype.getDownloadSize = function (fileType) {
     return "";//'&lt; 1 MB';
 }
 App.prototype.setPageHeaders = function () {
-    var doc_title = this.appData.getPageTitle();
+    var doc_title = this.appData.getClusterTitle();
     if (doc_title) {
         document.title = doc_title;
-        var desc = this.appData.getDescription();
-        if (desc)
-            document.title += ": " + desc;
-        $("#familyTitle").text(document.title);
+        //var desc = this.appData.getDescription();
+        //if (desc)
+        //    document.title += ": " + desc;
+        $("#family-title").text(document.title);
     }
     var as = this.appMeta.Ascore;
     if (as.length > 0) {
         var hWarn = $('<span class="as-warning"> (Alignment Score ' + as + ')</span>');
-        $("#familyTitle").append(hWarn);
+        $("#family-title").append(hWarn);
     }
 }
 App.prototype.initUi = function () {

@@ -184,7 +184,7 @@ AppDataFeatures.prototype.addGndFeature = function() {
 }
 
 AppDataFeatures.prototype.addClusterSize = function (divId) {
-    var size = this.appData.getCurrentSizes();
+    var size = this.appData.getSize();
     if (size === false)
         return false;
     $("#"+divId).append('UniProt: <b>' + commify(size.uniprot) + '</b>, UniRef90: <b>' + commify(size.uniref90) + '</b>');

@@ -45,28 +45,23 @@ if ($action == "kegg") {
         $data["alphafolds"] = $alphafolds;
     }
 } else if ($action == "cluster") {
-    $timings = array();
-    $all_start = microtime(true);
-    $cluster = get_cluster($db, $cluster_id, $ascore, $version, $qversion, $timings);
+    $cluster = get_cluster_data($db, $cluster_id, $ascore, $version, $qversion);
     if ($cluster === false) {
         $data["valid"] = false;
         $data["message"] = "Cluster error.";
     } else {
+        $data["breadcrumb"] = get_breadcrumb_network_names($db, $cluster_id);
         $data["cluster"] = $cluster;
         if (count($cluster["regions"]) || count($cluster["children"]) || count($cluster["dicing"]["children"])) {
-            $data["network_map"] = get_all_network_names($db);
+            $data["subgroup_map"] = get_subgroups($db);
             $data["enzymecodes"] = get_enzyme_codes($db);
         } else {
-            $data["network_map"] = get_breadcrumb_network_names($db, $cluster_id);
             $data["subgroup_map"] = array();
             $data["enzymecodes"] = array();
         }
 
         $data["gnd_key"] = functions::get_gnd_key($version);
     }
-    $total_time = microtime(true) - $all_start;
-    $timings["total"] = $total_time;
-    $data["timing"] = $timings;
 } else if ($action == "tax") {
     $tax = tax_data::get_tax_data($db, $cluster_id, $ascore, $qversion);
     if ($tax  === false) {
@@ -182,7 +177,7 @@ function get_diced_nav($db, $cluster_id, $ascore, $forward, $qversion) {
 }
 
 
-function get_cluster($db, $cluster_id, $ascore, $version, $qversion, &$timings) {
+function get_cluster_data($db, $cluster_id, $ascore, $version, $qversion) {
     $data = array(
         "size" => array(
             "uniprot" => 0,
@@ -191,8 +186,8 @@ function get_cluster($db, $cluster_id, $ascore, $version, $qversion, &$timings) 
         ),
         "alignment_score" => "",
         "default_alignment_score" => "",
-        "name" => "",
-        "desc" => "",
+        "cluster_name" => "",
+        "cluster_desc" => "",
         "image" => "",
         "title" => "",
         "display" => array(),
@@ -227,9 +222,7 @@ function get_cluster($db, $cluster_id, $ascore, $version, $qversion, &$timings) 
 
     $parent_cluster_id = functions::get_dicing_parent($db, $cluster_id, $ascore);
 
-$start = microtime(true);
     $data["alt_ssn"] = get_alt_ssns($db, $cluster_id);
-$timings["get_alt_ssns"] = microtime(true) - $start;
 
     $parent_ascore = "";
     $parent_ascore_cluster_id = "";
@@ -246,7 +239,6 @@ $timings["get_alt_ssns"] = microtime(true) - $start;
         $data["dicing"]["default_subcluster"] = $parent_ascore_cluster_id;
     }
 
-$start = microtime(true);
     $data["dicing"]["children"] = array();
     if ($ascore) {
         $data["dicing"]["children"] = get_dicing_children($db, $cluster_id, $ascore);
@@ -280,13 +272,13 @@ $start = microtime(true);
     } else {
         $parent_cluster_id = $cluster_id;
     }
-$timings["dicing"] = microtime(true) - $start;
 
     $info = get_network_info($db, $cluster_id, $is_child, $parent_cluster_id);
-    $data["name"] = $info["name"];
-    $data["title"] = $info["title"];
-    $data["desc"] = $info["desc"];
-    $data["subgroup_desc"] = $info["subgroup_desc"];
+    $data["cluster_name"] = $info["cluster_name"];
+    $data["cluster_title"] = $info["cluster_title"];
+    $data["cluster_desc"] = $info["cluster_desc"];
+
+    $show_all_features = $ascore || (!$ascore && count($data["alt_ssn"]) == 0 && $data["cluster_desc"]);
 
     $orig_ascore = $ascore;
     if (!$is_child && $parent_ascore && $parent_ascore_cluster_id && !$ascore)
@@ -315,47 +307,39 @@ $timings["dicing"] = microtime(true) - $start;
             $data["image"] = "ssn_lg.png";
     }
 
-$start = microtime(true);
     $data["public"]["has_kegg"] = get_kegg($db, $cluster_id, $ascore, true, $qversion);
-$timings["get_kegg"] = microtime(true) - $start;
 
     $data["public"]["has_alphafolds"] = get_alphafolds($db, $cluster_id, $ascore, true, $qversion);
 
     $data["size"] = get_sizes($db, $cluster_id, $ascore, $is_child);
 
-    $data["conv_ratio"] = get_conv_ratio($db, $cluster_id, $ascore, $is_child);
-
-$start = microtime(true);
     $data["public"]["swissprot"] = get_swissprot($db, $cluster_id, $ascore, false, $qversion);
-$timings["get_swissprot"] = microtime(true) - $start;
 
-$start = microtime(true);
     $data["public"]["pdb"] = get_pdb($db, $cluster_id, $ascore, $qversion);
-$timings["get_pdb"] = microtime(true) - $start;
 
-$start = microtime(true);
     $data["families"]["tigr"] = get_tigr($db, $cluster_id, $ascore, $qversion);
-$timings["get_tigr"] = microtime(true) - $start;
 
-$start = microtime(true);
     $data["public"]["anno"] = get_annotations($db, $cluster_id, $ascore, $qversion);
 
-    $data["display"] = get_display($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
-
-    $data["download"] = get_download($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
+    if ($show_all_features) {
+        $data["display"] = get_display_feature_list($db, $parent_cluster_id, $version, $ascore, $child_cluster_id, $show_all_features);
+        $data["download"] = get_download_feature_list($db, $parent_cluster_id, $version, $ascore, $child_cluster_id, $show_all_features);
+        $data["cons_res_files"] = get_consensus_residues_files($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
+        $data["cons_res"] = get_consensus_residues($db, $cluster_id, $ascore, $is_child);
+        $data["conv_ratio"] = get_conv_ratio($db, $cluster_id, $ascore, $is_child);
+    } else {
+        $data["display"] = get_display_feature_list($db, $parent_cluster_id, $version, "", $child_cluster_id, false, $data["cluster_desc"] ? true : false);
+        $data["download"] = get_download_feature_list($db, $parent_cluster_id, $version, "", $child_cluster_id, false);
+        $data["cons_res_files"] = array();
+        $data["cons_res"] = array();
+        $data["conv_ratio"] = 0;
+    }
 
     $data["regions"] = array(); //get_regions($db, $cluster_id);
 
     $data["children"] = get_children($db, $cluster_id);
 
-    $data["cons_res_files"] = get_consensus_residues_files($db, $parent_cluster_id, $version, $ascore, $child_cluster_id);
-
-    $data["cons_res"] = get_consensus_residues($db, $cluster_id, $ascore, $is_child);
-
     $data["dir"] = functions::get_rel_data_dir_path($parent_cluster_id, $version, $orig_ascore, $child_cluster_id);
-
-    $data["subgroups"] = get_subgroups($db, $cluster_id);
-$timings["other"] = microtime(true) - $start;
 
     if ($orig_ascore)
         $data["alignment_score"] = $orig_ascore;
@@ -380,79 +364,71 @@ $timings["other"] = microtime(true) - $start;
 function get_network_info_subgroup_sql($extra_cols = "", $extra_join = "") {
     if ($extra_cols)
         $extra_cols = ", $extra_cols";
-    //$sql = "SELECT network.cluster_id AS cluster_id, network.title AS title, network.name AS name, network.desc AS desc, subgroup_map.subgroup_id AS subgroup_id, subgroup_desc.subgroup_desc AS subgroup_desc "
-    $sql = "SELECT network.cluster_id AS cluster_id, network.title AS title, network.name AS name, network.desc AS description"
-        . $extra_cols 
-        . " FROM network"
-//        . " LEFT JOIN subgroup_map ON network.cluster_id = subgroup_map.cluster_id"
-//        . " LEFT JOIN subgroup_desc ON subgroup_map.subgroup_id = subgroup_desc.subgroup_id"
-        . " " . $extra_join
-        ;
+    $sql = "SELECT network.cluster_id AS cluster_id, cluster_name, cluster_desc, subgroup_id $extra_cols FROM network $extra_join";
     return $sql;
 }
+
 function get_network_info_title($row, $subgroup_only = false, $child_cluster_id = "") {
-    $title_prefix = settings::get_subgroup_title_prefix();
-    $title = !$subgroup_only ? $row["name"] : "";
+    // Start with the cluster name
+    //$title = !$subgroup_only ? $row["cluster_name"] : "";
+    $title = $row["cluster_name"];
+
+    // Add the child on to the breadcrumb
     if ($child_cluster_id)
         $title .= ' / Mega' . $child_cluster_id;
-    if ($row["title"] && isset($row["subgroup_id"])) {
-        $subgroup_id_repl = "";
-        if ($subgroup_only) {
-            $subgroup_id_repl = " [" . $row["subgroup_id"] . "]";
-            $title .= $row["title"]; 
-        } else {
-            $subgroup_id_repl = " / ";
-            $title .= ": $title_prefix Subgroup " . $row["subgroup_id"];
-            $title .= " / " . $row["title"];
-        }
-        if (preg_match("/<SUBGROUP>/", $title)) {
-            $title = preg_replace("/<SUBGROUP>/", $row["subgroup_desc"] . $subgroup_id_repl, $title);
-        }
-    } elseif (isset($row["subgroup_id"])) {
-        if (!$subgroup_only)
-            $title .= ": $title_prefix Subgroup " . $row["subgroup_id"] . " / ";
-        $title .= $row["subgroup_desc"];
-    } elseif ($row["title"]) {
-        $title .= (!$subgroup_only ? ": " : "") . $row["title"];
+
+    if (!$subgroup_only and $row["cluster_desc"]) {
+        return "$title: " . $row["cluster_desc"];
+    } else {
+        return $title;
     }
-    return $title;
 }
+
+// cluster_desc is the subgroup or network-custom description of the subgroup
+// cluster_name is the name of the cluster (e.g. Megacluster-3-3-1)
+// cluster_title is the name + desc
 function get_network_info($db, $cluster_id, $is_child, $parent_cluster_id) {
-    $sql = get_network_info_subgroup_sql() . " WHERE network.cluster_id = :id";
+    $sql = "SELECT network.cluster_id AS cluster_id, cluster_name, cluster_desc, subgroup_id FROM network WHERE network.cluster_id = :id";
     $params = array();
     if ($is_child)
         $params[":id"] = $parent_cluster_id;
     else
         $params[":id"] = $cluster_id;
     $results = $db->query($sql, $params);
+
     if ($results) {
         $row = $results[0];
         $child_cluster_id = $is_child ? $cluster_id : "";
-        $title = get_network_info_title($row, false, $child_cluster_id);
+        $cluster_title = get_network_info_title($row, false, $child_cluster_id);
         $subgroup_id = isset($row["subgroup_id"]) ? $row["subgroup_id"] : "";
-        return array("cluster_id" => $row["cluster_id"], "name" => $row["name"], "title" => $title, "desc" => $row["description"], "subgroup_id" => $subgroup_id, "subgroup_desc" => $row["title"]);
+        $desc = $row["cluster_desc"];
+        return array("cluster_id" => $row["cluster_id"], "cluster_name" => $row["cluster_name"], "cluster_title" => $cluster_title, "cluster_desc" => $desc, "subgroup_id" => $subgroup_id);
     } else {
-        return array("cluster_id" => $cluster_id, "name" => "", "title" => "", "desc" => "", "subgroup_id" => "", "subgroup_desc" => "");
+        return array("cluster_id" => $cluster_id, "cluster_name" => "", "cluster_title" => "", "subgroup_id" => "", "cluster_desc" => "");
     }
 }
-function get_subgroups($db, $cluster_id) {
-    if ($cluster_id == "fullnetwork")
-        $cluster_id = "cluster";
+
+// Get the subgroups that are associated with the cluster and children.
+function get_subgroups($db) {
+    // All clusters
+    $cluster_id = "cluster";
+
     $data = array();
-    $sql = "SELECT network.cluster_id AS cluster_id, network.subgroup_id AS subgroup_id, network.title AS title, network.name AS name, network.desc AS net_desc, subgroup_desc, subgroup_color FROM network LEFT JOIN subgroup_desc ON network.subgroup_id = subgroup_desc.subgroup_id WHERE cluster_id LIKE :id AND network.subgroup_id IS NOT NULL AND network.subgroup_id != '' ORDER BY subgroup_id";
+    $sql = "SELECT N.*, S.uniprot, S.uniref50, S.uniref90 FROM network AS N LEFT JOIN size AS S ON N.cluster_id = S.cluster_id WHERE N.cluster_id LIKE :id AND N.subgroup_id IS NOT NULL AND N.subgroup_id != '' ORDER BY N.subgroup_id";
+    //$sql = "SELECT * FROM network WHERE cluster_id LIKE :id AND subgroup_id IS NOT NULL AND subgroup_id != '' ORDER BY subgroup_id";
     $results = $db->query($sql, array(":id" => "$cluster_id-%"));
     if (!$results)
         return $data;
-    $subgroup_only = false;
+
     foreach ($results as $row) {
         if ($row["cluster_id"] == "fullnetwork")
             continue;
-        $desc = $row["subgroup_desc"];
-        if (!$desc)
-            $desc = $row["net_desc"];
-        //TODO: $row["subgroup_color_name"]
-        $data[$row["cluster_id"]] = array("subgroup_id" => $row["subgroup_id"], "name" => $row["name"], "desc" => $desc, "color" => $row["subgroup_color"], "color_name" => "");
+        $desc = $row["cluster_desc"];
+        $data[$row["cluster_id"]] = array("subgroup_id" => $row["subgroup_id"], "cluster_name" => $row["cluster_name"], "cluster_desc" => $desc, "color" => "", "color_name" => "",
+            "size" => array("uniprot" => $row["uniprot"], "uniref50" => $row["uniref50"], "uniref90" => $row["uniref90"]));
     }
+
+    // Remove any parents if there are ones in the dataset (e.g. only include children)
     $keys = array_keys($data);
     foreach ($keys as $id) {
         $p = explode("-", $id);
@@ -461,6 +437,7 @@ function get_subgroups($db, $cluster_id) {
             unset($data[$parent]);
     }
 
+    // Sort the hash by subgroup ID first then by alpha
     $sortFn = function($a, $b) use($data) {
         if (is_numeric($data[$a]["subgroup_id"]) && is_numeric($data[$b]["subgroup_id"])) {
             return $data[$a]["subgroup_id"] <=> $data[$b]["subgroup_id"];
@@ -477,47 +454,35 @@ function get_subgroups($db, $cluster_id) {
 
     return $data;
 }
+
 function get_all_network_names($db) {
-    $sql = get_network_info_subgroup_sql("uniprot, uniref50, uniref90", "LEFT JOIN size ON network.cluster_id = size.cluster_id");
+    $sql = "SELECT network.cluster_id AS cluster_id, cluster_name, cluster_desc, S.uniprot, S.uniref50, S.uniref90, subgroup_id FROM network LEFT JOIN size as S WHERE network.cluster_id = :id";
     $results = $db->query($sql);
     $subgroup_only = true;
     foreach ($results as $row) {
-        $subgroup_title = get_network_info_title($row, $subgroup_only);
-        $data[$row["cluster_id"]] = array("name" => $row["name"], "subgroup_title" => $subgroup_title, "size" => array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]));
+        $desc = get_network_info_title($row, $subgroup_only);
+        $data[$row["cluster_id"]] = array("cluster_name" => $row["cluster_name"], "cluster_desc" => $desc, "subgroup_id" => $row["subgroup_id"], "size" => array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]));
     }
     return $data;
 }
+
+// Get the trail of clusters (e.g. if the input cluster is cluster-3-3-1, return data for cluster-3-3 and cluster-3)
 function get_breadcrumb_network_names($db, $cluster_id) {
     $data = array();
     $subgroup_only = true;
-    $prim_sql = get_network_info_subgroup_sql("uniprot, uniref50, uniref90", "LEFT JOIN size ON network.cluster_id = size.cluster_id");
+    $parent_sql = "SELECT network.cluster_id AS cluster_id, cluster_name FROM network";
     $parts = explode("-", $cluster_id);
     for ($i = count($parts)-2; $i > 0; $i--) {
         $cid = implode("-", array_slice($parts, 0, $i+1));
-        $sql = "$prim_sql WHERE network.cluster_id = '$cid'";
+        $sql = "$parent_sql WHERE network.cluster_id = '$cid'";
         $results = $db->query($sql);
         $row = $results[0];
-        $subgroup_title = get_network_info_title($row, $subgroup_only);
-        $data[$row["cluster_id"]] = array("name" => $row["name"], "subgroup_title" => $subgroup_title, "size" => array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]));
+        array_unshift($data, array("cluster_id" => $row["cluster_id"], "cluster_name" => $row["cluster_name"]));
     }
     return $data;
 }
 
-function get_subgroup_desc($db) {
-    $sql = "SELECT network.cluster_id AS cluster_id, network.title AS title, network.name AS name, network.desc AS net_desc, subgroup_desc.subgroup_desc, subgroup_color FROM network LEFT JOIN subgroup_desc ON network.subgroup_id = subgroup_desc.subgroup_id";
-    //$sql = "SELECT * FROM subgroup_desc";
-    $results = $db->query($sql);
-    $data = array();
-    $subgroup_only = true;
-    foreach ($results as $row) {
-        $subgroup_title = get_network_info_title($row, $subgroup_only);
-        //TODO: $row["subgroup_color_name"]
-        $data[$row["cluster_id"]] = array("name" => $row["name"], "subgroup_title" => $subgroup_title, "color" => $row["subgroup_color"], "color_name" => "");
-    }
-    return $data;
-}
-
-function get_display($db, $cluster_id, $version = "", $ascore = "", $child_id = "") {
+function get_display_feature_list($db, $cluster_id, $version = "", $ascore = "", $child_id = "", $show_all_features = true, $show_tax = true) {
     $cpath = functions::get_data_dir_path($cluster_id, $version, $ascore, $child_id);
     //$cpath = "$basepath/$cluster_id";
 
@@ -526,29 +491,31 @@ function get_display($db, $cluster_id, $version = "", $ascore = "", $child_id = 
     //    return array();
 
     $feat = array();
-    $hist = array();
-    if (file_exists("$cpath/weblogo.png"))
-        $feat["weblogo"] = 1;
-
-    $has_proper = false;
-    if (file_exists("$cpath/length_histogram_uniprot_lg.png")) {
-        array_push($hist, "uniprot");
-        $has_proper = true;
+    if ($show_tax) {
+        $feat["cluster_id"] = $cluster_id;
+        $feat["tax"] = 1;
+        $feat["gnd"] = 1;
     }
-    if (file_exists("$cpath/length_histogram_lg.png") && !$has_proper)
-        array_push($hist, "uniprot_leg");
 
-    if (file_exists("$cpath/length_histogram_uniref90_lg.png"))
-        array_push($hist, "uniref90");
-    if (file_exists("$cpath/length_histogram_uniref50_lg.png"))
-        array_push($hist, "uniref50");
-    $feat["length_histogram"] = $hist;
-
-    //TODO: does it actually exist?
-    $feat["gnd"] = 1;
-    $feat["cluster_id"] = $cluster_id;
-
-    $feat["tax"] = 1;
+    $hist = array();
+    if ($show_all_features) {
+        if (file_exists("$cpath/weblogo.png"))
+            $feat["weblogo"] = 1;
+    
+        $has_proper = false;
+        if (file_exists("$cpath/length_histogram_uniprot_lg.png")) {
+            array_push($hist, "uniprot");
+            $has_proper = true;
+        }
+        if (file_exists("$cpath/length_histogram_lg.png") && !$has_proper)
+            array_push($hist, "uniprot_leg");
+        
+        if (file_exists("$cpath/length_histogram_uniref90_lg.png"))
+            array_push($hist, "uniref90");
+        if (file_exists("$cpath/length_histogram_uniref50_lg.png"))
+            array_push($hist, "uniref50");
+        $feat["length_histogram"] = $hist;
+    }
 
     return $feat;
 }
@@ -578,39 +545,56 @@ function get_consensus_residues($db, $cluster_id, $ascore = "", $is_child = fals
     //return (count($result) > 0 ? $result[0] : 0);
 }
 
-function get_download($db, $cluster_id, $version = "", $ascore = "", $child_id = "") {
+function get_download_feature_list($db, $cluster_id, $version = "", $ascore = "", $child_id = "", $show_all_features = true) {
     $cpath = functions::get_data_dir_path($cluster_id, $version, $ascore, $child_id);
     $parent_path = "";
     if ($ascore && $child_id)
         $parent_path = functions::get_data_dir_path2($db, $version, $ascore, $cluster_id);
 
+    $files = cluster_file::get_files($cpath);
+
     $feat = array();
+    //$feat = array("weblogo" => 0, "msa" => 0, "hmm" => 0, "misc" => 0, "cons_res" => 0);
     $id_fasta = array();
 
-    $show_child_feat = $ascore && !$child_id;
+    //var_dump($files);
+    //$feat["AAA"] = "$cluster_id $ascore $child_id $parent_path $show_all_features";
 
-    if (file_exists("$cpath/ssn.zip") || file_exists("$cpath/ssn.xgmml") || $show_child_feat)
+    if (file_exists("$cpath/ssn.zip") || file_exists("$cpath/ssn.xgmml"))
         $feat["ssn"] = 1;
-    else if (!empty($parent_path) && (file_exists("$parent_path/ssn.zip") || $show_child_feat))
+    else if (!empty($parent_path) && file_exists("$parent_path/ssn.zip"))
         $feat["ssn"] = 1;
-    if (file_exists("$cpath/weblogo.png") || $show_child_feat)
+
+    if (file_exists("$cpath/weblogo.png") && $show_all_features)
         $feat["weblogo"] = 1;
-
-    $files = cluster_file::get_files($cpath);
-    if (isset($files["msa.afa"]) || $show_child_feat)
+    if (isset($files["msa.afa"]) && $show_all_features)
         $feat["msa"] = 1;
-    if (isset($files["hmm.hmm"]) || $show_child_feat)
+    if (isset($files["hmm.hmm"]) && $show_all_features)
         $feat["hmm"] = 1;
-    if (isset($files["uniprot.txt"]) || $show_child_feat)
+    if (isset($files["uniprot.txt"]))
         $id_fasta["uniprot"] = 1;
-    if (isset($files["uniref50.txt"]) || $show_child_feat)
+    if (isset($files["uniref50.txt"]))
         $id_fasta["uniref50"] = 1;
-    if (isset($files["uniref90.txt"]) || $show_child_feat)
+    if (isset($files["uniref90.txt"]))
         $id_fasta["uniref90"] = 1;
-    if (isset($files["swissprot.txt"]) || $show_child_feat)
+    if (isset($files["swissprot.txt"]) && $show_all_features)
         $feat["misc"] = 1;
-    if (count($files["cons_res"]) > 0 || $show_child_feat)
+    if (count($files["cons_res"]) > 0 && $show_all_features)
         $feat["cons_res"] = 1;
+    //if (isset($files["msa.afa"]) && !$show_basic_features)
+    //    $feat["msa"] = 1;
+    //if (isset($files["hmm.hmm"]) && !$show_basic_features)
+    //    $feat["hmm"] = 1;
+    //if (isset($files["uniprot.txt"]) && $show_all_features)
+    //    $id_fasta["uniprot"] = 1;
+    //if (isset($files["uniref50.txt"]) && $show_all_features)
+    //    $id_fasta["uniref50"] = 1;
+    //if (isset($files["uniref90.txt"]) && $show_all_features)
+    //    $id_fasta["uniref90"] = 1;
+    //if (isset($files["swissprot.txt"]) && !$show_basic_features)
+    //    $feat["misc"] = 1;
+    //if (count($files["cons_res"]) > 0 && !$show_basic_features)
+    //    $feat["cons_res"] = 1;
 
     if (!empty($id_fasta))
         $feat["id_fasta"] = $id_fasta;
@@ -701,12 +685,15 @@ function get_cluster_type($db, $cluster_id) {
 
 function get_children($db, $cluster_id) {
     //$sql = functions::get_generic_sql("network", "*", "ORDER BY cluster_id");
-    $sql = "SELECT cluster_id, name FROM network WHERE parent_id = :id ORDER BY cluster_id";
+    $sql = "SELECT N.*, S.uniprot, S.uniref50, S.uniref90 FROM network AS N LEFT JOIN size AS S ON N.cluster_id = S.cluster_id WHERE N.parent_id = :id ORDER BY N.cluster_id";
     //cluster_id TEXT, region_id TEXT, region_index INT, name TEXT, number TEXT, coords TEXT
     $row_fn = function($row) {
         $data = array();
         $data["id"] = $row["cluster_id"];
-        $data["name"] = $row["name"];
+        $data["cluster_name"] = $row["cluster_name"];
+        $data["size"] = array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]);
+        $data["subgroup_id"] = $row["subgroup_id"];
+        $data["cluster_desc"] = $row["cluster_desc"];
         return $data;
     };
     $rows = get_generic_fetch($db, $cluster_id, $sql, $row_fn);
@@ -733,7 +720,7 @@ function get_regions($db, $cluster_id) {
     $row_fn = function($row) {
         $data = array();
         $data["id"] = $row["region_id"];
-        $data["name"] = $row["name"];
+        $data["cluster_name"] = $row["cluster_name"];
         $data["number"] = $row["number"];
         $data["coords"] = array_map(function($c) { return floatval($c); }, explode(",", $row["coords"]));
         return $data;

@@ -71,7 +71,7 @@ class search {
                 if ($dm !== false) {
                     foreach ($dm as $cluster => $cluster_raw) {
                         $cluster_data = array();
-                        $sql = "SELECT network.name FROM diced_network LEFT JOIN network ON diced_network.parent_id = network.cluster_id WHERE diced_network.parent_id = :cluster";
+                        $sql = "SELECT network.cluster_name AS name FROM diced_network LEFT JOIN network ON diced_network.parent_id = network.cluster_id WHERE diced_network.parent_id = :cluster";
                         $results = $this->db->query($sql, array(":cluster" => $cluster));
                         $parent = $results ? $results[0]["name"] : "";
                         foreach ($cluster_raw as $ascore => $dmatches_raw) {
@@ -141,7 +141,7 @@ class search {
         $sql = 
               " SELECT SZ.uniprot AS uniprot, SZ.uniref90 AS uniref90,"
               . " CR.conv_ratio AS conv_ratio,"
-              . " $name_table.name AS name"
+              . " $name_table.cluster_name AS name"
               . " FROM ${table_prefix}size AS SZ"
               . $join_sql
               . " WHERE SZ.cluster_id = :cluster"
@@ -187,7 +187,7 @@ class search {
         $ascore_sql = "SELECT DID.cluster_id AS cluster_id, DID.ascore AS ascore,"
             . " DS.uniprot AS uniprot, DS.uniref90 AS uniref90,"
             . " CR.conv_ratio AS conv_ratio,"
-            . " NET.name AS name"
+            . " NET.cluster_name AS name"
             . " FROM diced_id_mapping AS DID"
             . " LEFT JOIN diced_size AS DS ON (DID.cluster_id = DS.cluster_id AND DID.ascore = DS.ascore)"
             . " LEFT JOIN diced_conv_ratio AS CR ON (DID.cluster_id = CR.cluster_id AND DID.ascore = CR.ascore)"
@@ -350,7 +350,7 @@ class search {
         $cluster_id = $results[0]["cluster_id"];
         $out_row = array("cluster" => $cluster_id, "organism" => $species, "uniprot_id" => $id, "status" => $status, "name" => "", "parent" => "");
 
-        $sql = "SELECT name AS name FROM network WHERE cluster_id = :cluster_id";
+        $sql = "SELECT cluster_name AS name FROM network WHERE cluster_id = :cluster_id";
         $results = $this->db->query($sql, array(":cluster_id" => $cluster_id));
         if ($results)
             $out_row["name"] = $results[0]["name"];

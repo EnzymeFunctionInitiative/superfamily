@@ -61,6 +61,9 @@ SearchRender.prototype.addClusterRow = function(D, hasEvalue, ascore) {
     //if (parentNetName.toLowerCase().startsWith("mega"))
     //    netName = "Mega" + netName;
 
+    if (!convRatio)
+        convRatio = "n/a";
+
     var row = $('<tr></tr>');
     row.append('<td><a href="' + this.util.getResultsUrl(clusterId, ascore) + '">' + netName + '</a></td>');
     if (hasEvalue)

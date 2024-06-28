@@ -15,10 +15,9 @@ function AppData(networkId, networkData) {
     this.data = networkData.cluster;
     if (typeof this.data === "undefined")
         this.data = {};
-    this.network_map = networkData.network_map;
     this.subgroup_map = typeof networkData.subgroup_map !== "undefined" ? networkData.subgroup_map : [];;
-    this.subgroup_desc = networkData.subgroup_desc;
     this.enzymecodes = networkData.enzymecodes;
+    this.breadcrumb = networkData.breadcrumb;
     this.dataDir = this.data.dir;
     this.is_diced = typeof this.data.dicing.parent !== "undefined" && this.data.dicing.parent.length > 0;
     if (typeof this.data.public === "undefined")
@@ -31,14 +30,14 @@ AppData.prototype.getAlignmentScore = function() {
     //this.data.alignment_score = "22";
     return typeof this.data.alignment_score !== "undefined" ? this.data.alignment_score : "";
 }
-AppData.prototype.getPageTitle = function() {
-    return typeof this.data.title !== "undefined" ? this.data.title : "Title";
+AppData.prototype.getClusterTitle = function() {
+    return typeof this.data.cluster_title !== "undefined" ? this.data.cluster_title : "";
 }
 AppData.prototype.getDescription = function() {
     return typeof this.data.desc !== "undefined" ? this.data.desc : "";
 }
 AppData.prototype.getName = function() {
-    return typeof this.data.name !== "undefined" ? this.data.name : "family";
+    return typeof this.data.cluster_name !== "undefined" ? this.data.cluster_name : "family";
 }
 AppData.prototype.getImage = function() {
     return this.data.image;
@@ -48,6 +47,9 @@ AppData.prototype.getRegions = function() {
 }
 AppData.prototype.getChildren = function() {
     return Array.isArray(this.data.children) ? this.data.children : [];
+}
+AppData.prototype.getUniRefVersion = function() {
+    return typeof this.data.uniref_version !== "undefined" ? this.data.uniref_version : 0;
 }
 AppData.prototype.getTigr = function() {
     return Array.isArray(this.data.families.tigr) ? this.data.families.tigr : [];
@@ -175,15 +177,8 @@ AppData.prototype.getAlphafoldIds = function (version, onReceiveDataFn, finishFn
         finishFn();
     });
 }
-AppData.prototype.getSizes = function(netId) {
-    if (netId && typeof this.network_map[netId] !== "undefined") {
-        return this.network_map[netId].size;
-    } else {
-        return 0;
-    }
-}
-AppData.prototype.getCurrentSizes = function() {
-    if (typeof this.data.size !== "undefined" && this.data.size.uniprot > 0) {
+AppData.prototype.getSize = function() {
+    if (this.data.size.uniprot > 0) {
         return this.data.size;
     } else {
         return false;
@@ -222,35 +217,17 @@ AppData.prototype.getDownloadFeatures = function () {
     return typeof this.data.download !== "undefined" ? this.data.download : {};
     //return Array.isArray(this.data.download) ? this.data.download : [];
 }
-// Needed for breadcrumb and other things
-AppData.prototype.getNetworkMapName = function (networkId) {
-    return typeof this.network_map[networkId] !== "undefined" ? this.network_map[networkId].name : networkId;
-}
-AppData.prototype.getNetworkSubgroupTitle = function (networkId) {
-    if (typeof this.network_map[networkId] !== "undefined" && typeof this.network_map[networkId].subgroup_title !== "undefined")
-        return this.network_map[networkId].subgroup_title;
-    else
-        return "";
-}
 AppData.prototype.getSubgroupDesc = function () {
-    return this.data.subgroup_desc;
+    return this.data.cluster_desc;
 }
 AppData.prototype.getSubgroups = function () {
-    return this.data.subgroups;
-}
-// Needed for display of clusters that have children
-AppData.prototype.getSubgroupDescForClusterId = function (id) {
-    return typeof this.subgroup_desc[id] !== "undefined" ? this.subgroup_desc[id].desc : "";
-}
-// Needed for display of clusters that have children
-AppData.prototype.getSubgroupColor = function (id) {
-    return typeof this.subgroup_desc[id] !== "undefined" ? this.subgroup_desc[id].color : "";
-}
-// Needed for display of clusters that have children
-AppData.prototype.getSubgroupIds = function (cid) {
-    return typeof this.subgroup_map[cid] !== "undefined" ? this.subgroup_map[cid] : [];
+    return this.subgroup_map;
 }
 AppData.prototype.getGndKey = function () {
     return typeof this.data.gnd_key !== "undefined" ? this.data.gnd_key : "";
 }
+AppData.prototype.getBreadcrumb = function () {
+    return this.breadcrumb;
+}
+
 

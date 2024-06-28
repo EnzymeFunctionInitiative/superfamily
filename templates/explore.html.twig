@@ -32,7 +32,7 @@
             <nav aria-label="breadcrumb" id="exploreBreadcrumb">
             </nav>
             <div class="container">
-                <h1 class="text-center" id="familyTitle"></h1>
+                <h1 class="text-center" id="family-title"></h1>
                 <div class="fullnetwork-text" style="display: none">
                     <p>
                     {% include 'site_specific/explore_title_info.html.twig' | raw %}
@@ -120,7 +120,7 @@
                 <div class="btn btn-primary"><a id="dicedListLink" href="">Access the series of diced SSNs.</a></div>
                 </p>
                 <p>
-                Information  about <span class="diced-desc-cluster-id">Cluster</span> is provided  below.
+                Information about <span class="diced-desc-cluster-id">Cluster</span> is provided  below.
                 </p>
             </div>
         </div>
@@ -278,40 +278,13 @@
         </div> <!-- /container -->
         
         <div class="container fullnetwork-text" style="display: none">
-            <p>The table provides a (mega)cluster directory for locating the SFLD subgroups:</p>
+            <p>The table provides a (mega)cluster directory for locating the {{subgroup_titles}} subgroups:</p>
 
-            <table class="table table-sm w-75">
+            <table class="table table-sm w-100">
                 <thead>
-                    <th>SFLD Subgroup</th><th>Subgroup</th><th>Color</th><th>(Mega)cluster</th>
+                    <th>{{subgroup_title}} Subgroup ID</th><th>Subgroup</th><th>(Mega)cluster</th>
                 </thead>
                 <tbody id="subgroupMapping">
-
-                    <!--
-                    <tr><td>1</td><td>7-carboxy-7-deazaguanine synthase-like </td><td>Teal</td><td>Mega-3</td></tr>
-                    <tr><td>2</td><td>Coproporphyrinogen III oxidase-like </td><td>Red</td><td>Mega-2</td></tr>
-                    <tr><td>3</td><td>Antiviral proteins (viperin) </td><td>-- </<td>Mega-1</td></tr>
-                    <tr><td>4</td><td>Avilamycin synthase </td><td>Pink</td><td>--</td></tr>
-                    <tr><td>5</td><td>B12-binding domain containing </td><td>Blue</td><td>Mega-2</td></tr>
-                    <tr><td>6</td><td>BATS domain containing </td><td>Orange</td><td>Mega-4</td></tr>
-                    <tr><td>7</td><td>DesII-like </td><td>Mauve</td><td>Mega-1</td></tr>
-                    <tr><td>8</td><td>ELP3/YhcC </td><td>Black</td><td>Mega-2</td></tr>
-                    <tr><td>9</td><td>F420, menaquinone cofactor biosynthesis  </td><td>Purple</td><td>Mega-4</td></tr>
-                    <tr><td>10</td><td>FeMo-cofactor biosynthesis protein </td><td>Mint green</td><td>Mega-1</td></tr>
-                    <tr><td>11</td><td>Lipoyl synthase like </td><td>Yellow</td><td>Cluster-8</td></tr>
-                    <tr><td>12</td><td>Methylthiotransferase </td><td>Verdun green</td><td>Mega-2</td></tr>
-                    <tr><td>13</td><td>Methyltransferase Class A </td><td>Dark brown</td><td>Cluster-6</td></tr>
-                    <tr><td>14</td><td>Methyltransferase Class D </td><td>Light pink</td><td>Mega-1</td></tr>
-                    <tr><td>15</td><td>Organic radical activating enzymes </td><td>Cyan</td><td>Mega-3</td></tr>
-                    <tr><td>16</td><td>PLP-dependent </td><td>Dark green</td><td>Cluster-7</td></tr>
-                    <tr><td>17</td><td>SPASM/twitch domain containing </td><td>Magenta</td><td>Mega-1</td></tr>
-                    <tr><td>18</td><td>Spectinomycin biosynthesis </td><td>White</td><td>--</td></tr>
-                    <tr><td>19</td><td>Spore photoproduct lyase </td><td>Green</td><td>Mega-5</td></tr>
-                    <tr><td>20</td><td>tRNA wybutosine-synthesizing </td><td>Brown</td><td>Cluster-9</td></tr>
-                    <tr><td></td><td>Protein MJ0683-like </td><td>Electric lime</td><td>Mega-5</td></tr>
-                    <tr><td></td><td>Uncharacterized protein family UPF0313 </td><td>Olive</td><td>Cluster-10</td></tr>
-                    <tr><td></td><td>DUF5131 </td><td>Light purple</td><td>Mega-5</td></tr>
-                    <tr><td></td><td>3',8-Cyclase/Mo cofactor synthesis </td><td>Dodger blue</td><td>Mega-1</td></tr>
-                    -->
                 </tbody>
             </table>
         </div>
