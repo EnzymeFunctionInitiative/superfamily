@@ -218,6 +218,7 @@ function get_cluster_data($db, $cluster_id, $ascore, $version, $qversion) {
         "alt_ssn" => array(),
         "cons_res" => array(),
         "dir" => "",
+        "diced" => 0,
     );
 
     $parent_cluster_id = functions::get_dicing_parent($db, $cluster_id, $ascore);
@@ -277,6 +278,7 @@ function get_cluster_data($db, $cluster_id, $ascore, $version, $qversion) {
     $data["cluster_name"] = $info["cluster_name"];
     $data["cluster_title"] = $info["cluster_title"];
     $data["cluster_desc"] = $info["cluster_desc"];
+    $data["diced"] = $info["diced"];
 
     $show_all_features = $ascore || (!$ascore && count($data["alt_ssn"]) == 0 && $data["cluster_desc"]);
 
@@ -388,7 +390,7 @@ function get_network_info_title($row, $subgroup_only = false, $child_cluster_id 
 // cluster_name is the name of the cluster (e.g. Megacluster-3-3-1)
 // cluster_title is the name + desc
 function get_network_info($db, $cluster_id, $is_child, $parent_cluster_id) {
-    $sql = "SELECT network.cluster_id AS cluster_id, cluster_name, cluster_desc, subgroup_id FROM network WHERE network.cluster_id = :id";
+    $sql = "SELECT cluster_name, cluster_desc, subgroup_id, diced FROM network WHERE network.cluster_id = :id";
     $params = array();
     if ($is_child)
         $params[":id"] = $parent_cluster_id;
@@ -396,16 +398,21 @@ function get_network_info($db, $cluster_id, $is_child, $parent_cluster_id) {
         $params[":id"] = $cluster_id;
     $results = $db->query($sql, $params);
 
+    $data = array("cluster_id" => $cluster_id, "cluster_name" => "", "cluster_title" => "", "subgroup_id" => "", "cluster_desc" => "", "diced" => 0);
     if ($results) {
         $row = $results[0];
         $child_cluster_id = $is_child ? $cluster_id : "";
         $cluster_title = get_network_info_title($row, false, $child_cluster_id);
         $subgroup_id = isset($row["subgroup_id"]) ? $row["subgroup_id"] : "";
         $desc = $row["cluster_desc"];
-        return array("cluster_id" => $row["cluster_id"], "cluster_name" => $row["cluster_name"], "cluster_title" => $cluster_title, "cluster_desc" => $desc, "subgroup_id" => $subgroup_id);
-    } else {
-        return array("cluster_id" => $cluster_id, "cluster_name" => "", "cluster_title" => "", "subgroup_id" => "", "cluster_desc" => "");
+        $data["cluster_name"] = $row["cluster_name"];
+        $data["cluster_title"] = $cluster_title;
+        $data["cluster_desc"] = $desc;
+        $data["subgroup_id"] = $subgroup_id;
+        $data["diced"] = $row["diced"];
     }
+
+    return $data;
 }
 
 // Get the subgroups that are associated with the cluster and children.
@@ -699,6 +706,7 @@ function get_children($db, $cluster_id) {
         $data["size"] = array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]);
         $data["subgroup_id"] = $row["subgroup_id"];
         $data["cluster_desc"] = $row["cluster_desc"];
+        $data["diced"] = $row["diced"];
         return $data;
     };
     $rows = get_generic_fetch($db, $cluster_id, $sql, $row_fn);

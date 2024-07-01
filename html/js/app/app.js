@@ -294,7 +294,12 @@ App.prototype.addChildrenTable = function (div) {
 
         var color = data.color ? "color: " + data.color + ";" : "";
         var subgroupDesc = "<span style=\"" + color + "\">" + data.cluster_desc + "</span>";
-        var rowHtml = "<td>" + data.cluster_name + "</td>";
+
+        var url = getUrlFn(data.id, that.appMeta.Version);
+        var linkHtml = '<a href="' + url + '">' + data.cluster_name + '</a>';
+        if (data.diced == 1)
+            linkHtml = '<button class="btn btn-primary btn-sm">' + linkHtml + '</button>';
+        var rowHtml = "<td>" + linkHtml + "</td>";
         if (that.appMeta.Id != "fullnetwork") //TODO: HACK
             rowHtml += "<td>" + subgroupDesc + "</td>";
 
