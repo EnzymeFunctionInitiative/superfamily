@@ -298,7 +298,7 @@ App.prototype.addChildrenTable = function (div) {
         var url = getUrlFn(data.id, that.appMeta.Version);
         var linkHtml = '<a href="' + url + '">' + data.cluster_name + '</a>';
         if (data.diced == 1)
-            linkHtml = '<button class="btn btn-primary btn-sm">' + linkHtml + '</button>';
+            linkHtml = '<button class="btn btn-primary btn-sm">Diced ' + linkHtml + '</button>';
         var rowHtml = "<td>" + linkHtml + "</td>";
         if (that.appMeta.Id != "fullnetwork") //TODO: HACK
             rowHtml += "<td>" + subgroupDesc + "</td>";
