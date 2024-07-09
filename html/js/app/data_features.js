@@ -1,9 +1,10 @@
 
 
-function AppDataFeatures(appData, appMeta, url) {
+function AppDataFeatures(appData, appMeta, url, progress) {
     this.appData = appData;
     this.appMeta = appMeta;
     this.url = url;
+    this.progress = progress;
 }
 
 
@@ -33,36 +34,81 @@ AppDataFeatures.prototype.addTigrFamilies  = function () {
 }
 AppDataFeatures.prototype.checkForKegg = function () {
     if (!this.appData.hasKeggIds())
-        return;
+        return false;
     var that = this;
     //$("#keggList").append("<div>This cluster contains " + parseInt(this.appData.getKeggCount()).toLocaleString() + " KEGG-annotated sequences.</div>");
     $("#dataAvailableKegg").click(function () {
+        that.progress.start();
         that.appData.getKeggIds(that.appMeta.Version, function (id) {
             $("#keggIdList").append('<a href="https://www.genome.jp/dbget-bin/www_bget?' + id + '">' + id + '</a><br>');
             $("#keggIdListClip").append(id + "\n");
         }, function () {
+            that.progress.stop();
             $("#keggIdModal").modal();
         });
     });
     $("#otherAnnoContainer").show();
     $("#dataAvailableKegg").enableDataAvailableButton();
+    return true;
+}
+AppDataFeatures.prototype.checkForAlphafoldIds = function () {
+    if (!this.appData.hasAlphafoldIds())
+        return false;
+    var that = this;
+    $("#dataAvailableAlphafold").click(function () {
+        that.progress.start();
+        that.appData.getAlphafoldIds(that.appMeta.Version, function (data) {
+            that.addAlphafoldIds(data);
+        }, function () {
+            that.progress.stop();
+            $("#alphafoldModal").modal();
+            $("#dataAvailableAlphafold").click(function() { $("#alphafoldModal").modal(); }).enableDataAvailableButton();
+        });
+    });
+    $("#otherAnnoContainer").show();
+    $("#dataAvailableAlphafold").enableDataAvailableButton();
+    return true;
+}
+AppDataFeatures.prototype.addAlphafoldIds = function (af) {
+    if (af.length == 0)
+        return false;
+    //var table = $('<table class="table table-sm w-auto"></table>');
+    //table.append('<thead><tr><th>UniProt ID</th><th>Alphafold ID</th></thead>');
+    //var body = $('<tbody></tbody>');
+    //table.append(body);
+    //$("#alphafoldIdList").append(table);
+    for (var i = 0; i < af.length; i++) {
+        var id = af[i];
+        //var row = $("<tr></tr>");
+        var link = '<a href="https://alphafold.ebi.ac.uk/search/text/' + id + '" target="_blank">' + id + '</a><br>';
+        $("#alphafoldIdList").append(link);
+        //row.append("<td>" + link + "</td>");
+        //row.append("<td>" + '<a href="' + dois[j] + '" target="_blank">' + dois[j] + '</a></td>');
+        //$("#alphafoldIdList").append(uniprotId + ' <a href="' + dois[j] + '">' + dois[j] + '</a><br>');
+        //body.append(row);
+        //$("#alphafoldIdListClip").append(uniprotId + "\t" + dois[j] + "\n");
+        $("#alphafoldIdListClip").append(id + "\n");
+    }
+    return true;
 }
 AppDataFeatures.prototype.addSwissProtFunctions = function () {
     var list = this.appData.getSwissProtFunctions();
     if (list === false || list.length == 0)
-        return;
+        return false;
 
     var ecodes = this.appData.getEnzymeCodes();
     var ecFn = function(code) {
+        var codeDesc = "";
         if (code) {
-            var codeDesc = ecodes[code];
+            codeDesc = ecodes[code];
             var linkCode = '<a href="https://enzyme.expasy.org/EC/' + code + '">' + code + '</a>';
             if (typeof codeDesc !== "undefined")
                 codeDesc = '<span data-toggle="tooltip" title="' + codeDesc + '">' + linkCode + '</span>';
             else
                 codeDesc = linkCode;
-            desc += " (" + codeDesc + ")";
+            //desc += " (" + codeDesc + ")";
         }
+        return codeDesc;
     };
     var clipFn = function (desc, spItemIds) {
         $('#spModalIdListClip').append(desc + "\n" + spItemIds);
@@ -73,11 +119,12 @@ AppDataFeatures.prototype.addSwissProtFunctions = function () {
     $("#spFunctions").append(ul);
     $("#spFunctions ul li span").css({ "font-style": "italic" });
     $("#dataAvailableSp").click(function() { $("#spModal").modal(); }).enableDataAvailableButton();
+    return true;
 }
 AppDataFeatures.prototype.addPdb = function () {
     var pdb = this.appData.getPdb();
     if (pdb.length == 0)
-        return;
+        return false;
     for (var i = 0; i < pdb.length; i++) {
         var ids = pdb[i][0].split(',');
         for (var j = 0; j < ids.length; j++) {
@@ -88,11 +135,12 @@ AppDataFeatures.prototype.addPdb = function () {
     }
     $("#pdbIdModal").modal();
     $("#dataAvailablePdb").click(function() { $("#pdbModal").modal(); }).enableDataAvailableButton();
+    return true;
 }
 AppDataFeatures.prototype.addAnno = function () {
     var anno = this.appData.getAnno();
     if (anno.length == 0)
-        return;
+        return false;
     var table = $('<table class="table table-sm w-auto"></table>');
     table.append('<thead><tr><th>UniProt ID</th><th>DOI</th></thead>');
     var body = $('<tbody></tbody>');
@@ -113,11 +161,12 @@ AppDataFeatures.prototype.addAnno = function () {
     }
     $("#annoIdModal").modal();
     $("#dataAvailableAnno").click(function() { $("#annoModal").modal(); }).enableDataAvailableButton();
+    return true;
 }
 AppDataFeatures.prototype.addGndFeature = function() {
     var feat = this.appData.getDisplayFeatures();
     if (!feat.hasOwnProperty("gnd") || this.appData.getChildren().length > 0)
-        return;
+        return false;
 
     var that = this.appMeta;
     $("#dataAvailableGnd").click(function() {
@@ -131,30 +180,33 @@ AppDataFeatures.prototype.addGndFeature = function() {
         //TODO: get the URL from a config var or something
         window.open('https://efi.igb.illinois.edu/efi-gnt/view_diagrams.php?' + gndParms);
     }).enableDataAvailableButton();
+    return true;
 }
 
 AppDataFeatures.prototype.addClusterSize = function (divId) {
-    var size = this.appData.getCurrentSizes();
+    var size = this.appData.getSize();
     if (size === false)
-        return;
+        return false;
     $("#"+divId).append('UniProt: <b>' + commify(size.uniprot) + '</b>, UniRef90: <b>' + commify(size.uniref90) + '</b>');
     if (size.uniref50 > 0)
         $("#"+divId).append(', UniRef50: <b>' + commify(size.uniref50) + '</b>');
     $("#clusterSizeContainer").show();
+    return true;
 }
 AppDataFeatures.prototype.addConvRatio = function () {
     var cr = this.appData.getConvRatio();
     if (typeof cr.conv_ratio === "undefined" || cr === false || cr.conv_ratio == 0)
-        return;
+        return false;
     $("#convRatio").text(cr.conv_ratio);
     $("#ssnConvRatio").text(cr.ssn_conv_ratio);
     $("#convRatioContainer").show();
     $("#clusterSizeContainer").show();
+    return true;
 }
 AppDataFeatures.prototype.addConsRes = function () {
     var cs = this.appData.getConsensusResidues();
     if (typeof cs === "undefined" || cs === false)
-        return;
+        return false;
     var consResContents = "";
     var showConsRes = false;
     if (Array.isArray(cs)) {
@@ -172,8 +224,11 @@ AppDataFeatures.prototype.addConsRes = function () {
         showConsRes = true;
     }
     $("#consensusResidue").append(consResContents);
-    if (showConsRes)
+    if (showConsRes) {
         $("#consensusResidueContainer").show();
+        return true;
+    }
+    return false;
 }
 
 
@@ -207,12 +262,11 @@ AppDataFeatures.prototype.addDisplayFeatures = function () {
 
             // Then image
             mainDiv.append('<div></div>')
-                .append('<img src="' + that.appMeta.DataDir + '/length_histogram' + fileName + '_sm.png" alt="Length histogram for ' + that.appMeta.Id + '" class="display-img-width">');
+                .append('<img src="' + that.appMeta.DataDir + '/length_histogram' + fileName + '_lg.png" alt="Length histogram for ' + that.appMeta.Id + '" class="display-img-width">');
 
             return mainDiv;
         }
 
-        console.log(feat.length_histogram);
         for (var i = 0; i < feat.length_histogram.length; i++) {
             var theDiv;
             if (feat.length_histogram[i] == "uniprot")
@@ -236,7 +290,7 @@ AppDataFeatures.prototype.addDownloadFeatures = function (containerId, hideTabSt
     if (feat.length == 0)
         return false;
 
-    var isDiced = this.appData.getDicedParent().length > 0;
+    var isDiced = this.appData.getIsDiced();
 
     var table = $('<table class="table table-sm text-center w-auto"></table>');
     table.append('<thead><tr><th>Download</th><th>File Type</th></thead>');//<th>Size</th></thead>');
@@ -272,7 +326,7 @@ AppDataFeatures.prototype.addDownloadFeatures = function (containerId, hideTabSt
         if (false) // check if this is a parent and provide the child ID here
             gndParms += ":" + this.appMeta.Id;
         if (this.appMeta.Version)
-            gndParms += '&rs-ver=' + this.appMeta.Version;
+            gndParms += '&rs-ver=' + this.appMeta.VersionName + '-' + this.appMeta.Version;
         gndParms += "&key=" + this.appMeta.GndKey;
         var viewBtn = '<a href="https://efi.igb.illinois.edu/dev/efi-gnt/view_diagrams.php?' + gndParms + '" target="_blank"><button class="btn btn-primary btn-sm">View GNDs</button></a>';
         body.append('<tr><td>' + viewBtn + '</td><td>View Genome Neighborhood Diagrams</td><td></td></tr>');
@@ -329,6 +383,7 @@ AppDataFeatures.prototype.addDownloadFeatures = function (containerId, hideTabSt
     }
 
     $("#"+containerId).append(table);
+    return true;
 }
 
 AppDataFeatures.prototype.getDownloadButton = function (fileType) {

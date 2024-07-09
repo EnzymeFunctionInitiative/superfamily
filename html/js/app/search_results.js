@@ -16,7 +16,7 @@ SearchResults.prototype.searchSeqFn = function(id = "") {
     var that = this;
     var seq = $("#searchSeq").val();
     var version = this.util.getVersion();
-    var progress = new Progress($("#progressLoader"));
+    var progress = new ProgressBarTimer($("#searchSeqProgressContainer"), 30, 30);
     progress.start();
     var parms = {t: "seq", v: version};
     if (typeof id !== "function")
@@ -156,7 +156,7 @@ SearchResults.prototype.searchTaxFn = function(id = "") {
                     td.append(alink);
                     tr.append(td);
                     tr.append('<td>' + D.organism + '</td>');
-                    tr.append('<td>' + D.status + '</td>');
+                    tr.append('<td>' + (D.status == "sp" ? "SwissProt" : "TrEMBL") + '</td>');
                     body.append(tr);
                 }
                 $("#searchResults").append(table);

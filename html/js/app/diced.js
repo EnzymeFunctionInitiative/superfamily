@@ -19,7 +19,8 @@ AppDiced.prototype.initDicedSsnOverview = function(ascores) {
     for (var i = 0; i < ascores.length; i++) {
         var as = ascores[i];
         var fileName = this.appData.getImage();
-        var filePath = this.appMeta.DataDir + '/dicing-' + as + '/' + fileName + '_sm.png';
+        var filePath = this.appMeta.DataDir + '/dicing-' + as + '/' + fileName;
+        //TODO: var filePath = this.appMeta.DataDir + '/dicing-' + as + '/' + fileName + '_sm.png';
         var style = i == 0 ? "active" : "";
         var style2 = i == 0 ? "show" : "";
 
@@ -53,7 +54,7 @@ AppDiced.prototype.addAscoreTabs = function() {
 AppDiced.prototype.initDicedDescText = function(nextAs) {
     $(".diced-desc-cluster-id").text(this.appData.getName());
     $(".diced-desc-default-as").text(nextAs);
-    $(".diced-desc-sfld").text(this.appData.getSfldDesc());
+    $(".diced-desc-subgroup").text(this.appData.getSubgroupDesc());
     $(".diced-desc-next-as").text(nextAs);
 }
 
@@ -103,12 +104,12 @@ AppDiced.prototype.addWalkthrough = function() {
     var createTable = function() {
         var table = $('<table class="table walkthrough"></table>');
         var th = $('<thead></thead>');
-        th.append('<td>Cluster ID</td><td>Num Nodes</td><td>Conv. Ratio</td>');
+        th.append('<td>Cluster ID</td><td>AS</td><td>Num Nodes</td><td>Conv. Ratio</td>');
         var dicedSpCol = $('<td>SwissProt</td>');
         th.append(dicedSpCol);
         dicedSpCol.show();
-        var dicedAnnoCol = $('<td>Annotation</td>');
-        th.append(dicedAnnoCol);
+        //var dicedAnnoCol = $('<td>Annotation</td>');
+        //th.append(dicedAnnoCol);
         table.append(th);
         return table;
     };
@@ -116,7 +117,7 @@ AppDiced.prototype.addWalkthrough = function() {
     var getListItem = function(navItem, groupIdx, hasId) {
         var navItemName = ucFirst(navItem.cluster_id);
         var spDiv = getPopoverSwissProt(navItem.sp, groupIdx);
-        var annoDiv = getPopoverAnno(navItem.anno, groupIdx);
+        //var annoDiv = getPopoverAnno(navItem.anno, groupIdx);
 
         var hasIdText = "";
         if (hasId) {
@@ -129,15 +130,16 @@ AppDiced.prototype.addWalkthrough = function() {
 
         var listItem = $('<tr></tr>');
         listItem.append('<td><a href="' + getUrlFn(navItem.cluster_id, that.appMeta.Version, navItem.ascore) + '">' + navItemName + hasIdText + '</a></td>');
+        listItem.append('<td>' + navItem.ascore + '</td>');
         listItem.append('<td>' + navItem.num_nodes + '</td>');
         var cr = typeof navItem.cr !== "undefined" ? navItem.cr : "";
         listItem.append('<td>' + cr + '</td>');
         var spCell = $('<td></td>');
         spCell.append(spDiv);
         listItem.append(spCell);
-        var annoCell = $('<td></td>');
-        annoCell.append(annoDiv);
-        listItem.append(annoCell);
+        //var annoCell = $('<td></td>');
+        //annoCell.append(annoDiv);
+        //listItem.append(annoCell);
         return listItem;
     };
 
@@ -186,7 +188,7 @@ AppDiced.prototype.addWalkthrough = function() {
                 }
             }
             if (nextAscore) {
-                var headerBody = $('<tbody class="walkthrough-header"></tbody>').append('<tr><td><h5>' + headingText + ' (AS' + nextAscore + ')</h5></td></tr>');
+                var headerBody = $('<tbody class="walkthrough-header"></tbody>').append('<tr><td><h5>' + headingText + '</h5></td></tr>');
                 table.append(headerBody);
                 table.append(tbody);
                 //$("#clusterAsNavList").append('<div></div>').append('<h5>' + headingText + ' (AS' + nextAscore + ')</h5>').append(table);
@@ -228,10 +230,11 @@ AppDiced.prototype.addClusterSelect = function(isParent) {
     } else {
         nextBtn.addClass("disabled");
     }
-    
+
     var idCb = $('<select id="sel-sibling-id" class="form-control w-auth mx-2"></select>');
     var curId = idParts[idParts.length-1];
     var ids = nav.siblings.ids;
+    ids.sort(sortClusterIds);
     var parentNum = idParts.slice(1, idParts.length-1).join("-");
     for (var i = 0; i < ids.length; i++) {
         var isSel = ids[i] == curId ? "selected" : "";
@@ -243,5 +246,23 @@ AppDiced.prototype.addClusterSelect = function(isParent) {
     
     $("#dicedNav").append(prevBtn).append(idCb).append(nextBtn);
 }
+
+
+function sortClusterIds(a, b) {
+    var aa = a.split("-");
+    var bb = b.split("-");
+    var maxIdx = aa.length > bb.length ? bb.length : aa.length;
+    for (var i = 0; i < maxIdx; i++) {
+        var aaa = +aa[i];
+        var bbb = +bb[i];
+        if (aaa < bbb)
+            return -1;
+        else if (aaa > bbb)
+            return 1;
+    }
+    return 0;
+}
+
+
 
 

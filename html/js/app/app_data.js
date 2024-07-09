@@ -15,11 +15,11 @@ function AppData(networkId, networkData) {
     this.data = networkData.cluster;
     if (typeof this.data === "undefined")
         this.data = {};
-    this.network_map = networkData.network_map;
-    this.sfld_map = networkData.sfld_map;
-    this.sfld_desc = networkData.sfld_desc;
+    this.subgroup_map = typeof networkData.subgroup_map !== "undefined" ? networkData.subgroup_map : [];;
     this.enzymecodes = networkData.enzymecodes;
+    this.breadcrumb = networkData.breadcrumb;
     this.dataDir = this.data.dir;
+    this.is_diced = typeof this.data.dicing.parent !== "undefined" && this.data.dicing.parent.length > 0;
     if (typeof this.data.public === "undefined")
         this.data.public = {};
     if (typeof this.data.families === "undefined")
@@ -30,14 +30,14 @@ AppData.prototype.getAlignmentScore = function() {
     //this.data.alignment_score = "22";
     return typeof this.data.alignment_score !== "undefined" ? this.data.alignment_score : "";
 }
-AppData.prototype.getPageTitle = function() {
-    return typeof this.data.title !== "undefined" ? this.data.title : "Title";
+AppData.prototype.getClusterTitle = function() {
+    return typeof this.data.cluster_title !== "undefined" ? this.data.cluster_title : "";
 }
 AppData.prototype.getDescription = function() {
     return typeof this.data.desc !== "undefined" ? this.data.desc : "";
 }
 AppData.prototype.getName = function() {
-    return typeof this.data.name !== "undefined" ? this.data.name : "family";
+    return typeof this.data.cluster_name !== "undefined" ? this.data.cluster_name : "family";
 }
 AppData.prototype.getImage = function() {
     return this.data.image;
@@ -48,11 +48,31 @@ AppData.prototype.getRegions = function() {
 AppData.prototype.getChildren = function() {
     return Array.isArray(this.data.children) ? this.data.children : [];
 }
+AppData.prototype.getUniRefVersion = function() {
+    return typeof this.data.uniref_version !== "undefined" ? this.data.uniref_version : 0;
+}
 AppData.prototype.getTigr = function() {
     return Array.isArray(this.data.families.tigr) ? this.data.families.tigr : [];
 }
+AppData.prototype.getIsDiced = function() {
+    return this.is_diced;
+}
 AppData.prototype.getDicedParent = function() {
-    return (typeof this.data.dicing !== "undefined" && typeof this.data.dicing.parent !== "undefined") ? this.data.dicing.parent : "";
+    var parentId = "";
+    var defaultId = "";
+    var parentImage = "";
+    if (typeof this.data.dicing !== "undefined") {
+        if (typeof this.data.dicing.parent !== "undefined")
+            parentId = this.data.dicing.parent;
+        if (typeof this.data.dicing.default_subcluster !== "undefined")
+            defaultId = this.data.dicing.default_subcluster;
+        if (typeof this.data.dicing.parent_image !== "undefined")
+            parentImage = this.data.dicing.parent_image;
+    }
+    if (parentId && defaultId)
+        return {parent: parentId, default: defaultId, parent_image: parentImage};
+    else
+        return parentId;
 }
 AppData.prototype.getDicedChildren = function() {
     return (typeof this.data.dicing !== "undefined" && Array.isArray(this.data.dicing.children)) ? this.data.dicing.children : [];
@@ -128,15 +148,37 @@ AppData.prototype.getKeggIds = function(version, addKeggIdFn, finishFn) {
         finishFn();
     });
 }
-AppData.prototype.getSizes = function(netId) {
-    if (netId && typeof this.network_map[netId] !== "undefined") {
-        return this.network_map[netId].size;
-    } else {
-        return 0;
-    }
+// Since there are potentially many Alphafold IDs, we get the list of IDs async.
+AppData.prototype.hasAlphafoldIds = function() {
+    // The number of Alphafold IDs is returned with the network JSON, but not the ID list.
+    return typeof this.data.public.has_alphafolds !== "undefined" ? this.data.public.has_alphafolds : false;
 }
-AppData.prototype.getCurrentSizes = function() {
-    if (typeof this.data.size !== "undefined" && this.data.size.uniprot > 0) {
+// ASYNC
+AppData.prototype.getAlphafoldIds = function (version, onReceiveDataFn, finishFn) {
+    //return Array.isArray(this.data.public.alphafolds) ? this.data.public.alphafolds : [];
+    var parms = {a: "alphafolds", cid: this.Id};
+    var ascore = this.getAlignmentScore();
+    if (ascore)
+        parms.as = ascore;
+    if (version)
+        parms.v = version;
+    $.get("getdata.php", parms, function(dataStr) {
+        var data = false;
+        try {
+            data = JSON.parse(dataStr);
+        } catch (e) {
+            console.log("Invalid alphafolds data (" + dataStr + ")");
+            console.log(e);
+            data = false;
+        }
+        if (data.valid) {
+            onReceiveDataFn(data.alphafolds);
+        }
+        finishFn();
+    });
+}
+AppData.prototype.getSize = function() {
+    if (this.data.size.uniprot > 0) {
         return this.data.size;
     } else {
         return false;
@@ -175,35 +217,17 @@ AppData.prototype.getDownloadFeatures = function () {
     return typeof this.data.download !== "undefined" ? this.data.download : {};
     //return Array.isArray(this.data.download) ? this.data.download : [];
 }
-// Needed for breadcrumb and other things
-AppData.prototype.getNetworkMapName = function (networkId) {
-    return typeof this.network_map[networkId] !== "undefined" ? this.network_map[networkId].name : networkId;
+AppData.prototype.getSubgroupDesc = function () {
+    return this.data.cluster_desc;
 }
-AppData.prototype.getNetworkSfldTitle = function (networkId) {
-    if (typeof this.network_map[networkId] !== "undefined" && typeof this.network_map[networkId].sfld_title !== "undefined")
-        return this.network_map[networkId].sfld_title;
-    else
-        return "";
-}
-AppData.prototype.getSfldDesc = function () {
-    return this.data.sfld_desc;
-}
-AppData.prototype.getSfldId = function () {
-    return this.data.sfld_id;
-}
-// Needed for display of clusters that have children
-AppData.prototype.getSfldDescForClusterId = function (id) {
-    return typeof this.sfld_desc[id] !== "undefined" ? this.sfld_desc[id].desc : "";
-}
-// Needed for display of clusters that have children
-AppData.prototype.getSfldColor = function (id) {
-    return typeof this.sfld_desc[id] !== "undefined" ? this.sfld_desc[id].color : "";
-}
-// Needed for display of clusters that have children
-AppData.prototype.getSfldIds = function (cid) {
-    return typeof this.sfld_map[cid] !== "undefined" ? this.sfld_map[cid] : [];
+AppData.prototype.getSubgroups = function () {
+    return this.subgroup_map;
 }
 AppData.prototype.getGndKey = function () {
     return typeof this.data.gnd_key !== "undefined" ? this.data.gnd_key : "";
 }
+AppData.prototype.getBreadcrumb = function () {
+    return this.breadcrumb;
+}
+
 

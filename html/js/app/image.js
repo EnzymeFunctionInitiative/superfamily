@@ -18,7 +18,8 @@ AppImage.prototype.setClusterImage = function (onFinishFn) {
         ;//TODO:
     else
         img
-            .attr("src", this.appMeta.DataDir + "/" + fileName + "_sm.png")
+            //TODO: .attr("src", this.appMeta.DataDir + "/" + fileName + "_sm.png")
+            .attr("src", this.appMeta.DataDir + "/" + fileName)
             .on("load", function () { that.addClusterHotspots(img); that.progress.stop(); onFinishFn(); })
             .on("error", function () { that.progress.stop(); });
     $("#downloadClusterImage").click(function (e) {
@@ -26,10 +27,12 @@ AppImage.prototype.setClusterImage = function (onFinishFn) {
         window.location.href = that.url.getDownloadUrl("net");
     });
 }
-AppImage.prototype.setDicedClusterImage = function (dicedParent, onFinishFn) {
+AppImage.prototype.setDicedClusterImage = function (dicedParentObj, onFinishFn) {
     var that = this;
+    var dicedParent = dicedParentObj.parent_image;
     var imgPath = this.appMeta.DataDir + "/../" + dicedParent;
-    $("#diced_parentImg").attr("src", imgPath + "_sm.png");
+    //TODO: $("#diced_parentImg").attr("src", imgPath + "_sm.png");
+    $("#diced_parentImg").attr("src", imgPath);
     $("#diced_clusterParentImgContainer").show();
     $("#diced_toggleParentImg").click(function() {
         if (!$(this).data("hidden") || $(this).data("hidden") == false) {
@@ -46,7 +49,7 @@ AppImage.prototype.setDicedClusterImage = function (dicedParent, onFinishFn) {
     });
     $("#diced_downloadParentImage").click(function (e) {
         e.preventDefault();
-        window.location.href = that.url.getDownloadUrl("net", dicedParent);
+        window.location.href = that.url.getDownloadUrl("net", dicedParentObj.parent);
     });
 }
 // This should be called on the image

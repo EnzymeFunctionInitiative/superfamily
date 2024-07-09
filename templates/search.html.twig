@@ -15,35 +15,32 @@
 {% block content %}
 
         <div class="container" id="searchUi">
-            <input type="hidden" name="version" id="version" value="3.0">
+            <input type="hidden" name="version" id="version" value="{{data_version}}">
 
             <div>
                 <h3>Find by UniProt ID</h3>
                 <p>
-                Input a UniProt ID to identify its cluster.
+                Input a UniProt ID to identify its subgroup/"diced" cluster.
                 </p>
 
                 <p>
-                For all but Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain),
-                Megacluster-2-1 (SFLD Subgroup 5, B12-binding domain), Megacluster-2-2 (SFLD
-                Subgroup 2, anaerobic coproporphyrinogen-III oxidase-like), or Cluster-7 ((SFLD
-                Subgroup 16, PLP-dependent), the search opens the Explore page for the cluster
-                that contains the user-specified UniProt ID. 
+                For subgroups that are not "diced" (SSNs as a function of
+                increasing alignment score), the search opens the Explore page
+                for the subgroup that contains the user-specified UniProt ID. 
                 </p>
-                
+
                 <p>
-                For Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain), Megacluster-2-1
-                (SFLD Subgroup 5, B12-binding domain), Megacluster-2-2 (SFLD Subgroup 2,
-                anaerobic coproporphyrinogen-III oxidase-like), or Cluster-7 ((SFLD Subgroup
-                16, PLP-dependent), the search identifies the cluster (if ≥3 nodes/UniRef50
-                IDs) in each “diced” SSN that contains the ID.  The number of UniProt IDs,
-                number of cluster nodes, and UniProt ID convergence ratio (CR; described on the
-                Subgroups tab) are provided for each identified cluster.
+                For "diced" subgroups, the search identifies the cluster in
+                each "diced" SSN that contains the ID (&ge;3 UniRef IDs/nodes).
+                The number of UniProt IDs, number of cluster nodes, and UniProt
+                ID convergence ratio (CR; described on the Subgroups tab) are
+                provided for each identified cluster. 
                 </p>
-                
+
                 <p>
-                In the generation of the megaclusters and clusters, some UniProt IDs for a
-                singleton may be deleted. The Search will report: "ID not found". 
+                In the generation of the megaclusters and clusters, some
+                UniProt IDs for singletons may be deleted. The Search will
+                report: "ID not found". 
                 </p>
 
                 <div id="searchIdErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
@@ -57,58 +54,45 @@
                 <h3>Find by Sequence</h3>
 
                 <p>
-                Input a sequence to find clusters that contain homologues. The sequence is used
-                to query the HMMs for the clusters (≥3 UniRef IDs/nodes).  
+                Input a sequence to find subgroups/"diced" clusters that
+                contain homologues. The sequence is used to query the HMMs for
+                the subgroups/"diced" clusters (&ge;3 UniRef IDs/nodes). 
                 </p>
-                
+
                 <p>
-                The results reports matches for the “top” three clusters if the e-value is
-                ≤1e-10. The cluster is a link to the Explore page for the cluster.
+                The results reports matches for the "top" three
+                subgroups/"diced" clusters if the e-value is &le;1e-10. The
+                cluster is a link to the Explore page for the cluster. 
                 </p>
-                
+
                 <p>
-                For Megacluster-1-1 (SFLD Subgroup-17, SPASM/Twitch domain), Megacluster-2-1
-                (SFLD Subgroup 5, B12-binding domain), Megacluster-2-2 (SFLD Subgroup 2,
-                anaerobic coproporphyrinogen-III oxidase-like), or Cluster-7 ((SFLD Subgroup
-                16, PLP-dependent), the second section reports matches for clusters in the
-                “diced” SSNs; the clusters with the three smallest e-values are listed. The
-                number of UniProt IDs, number of cluster nodes, and UniProt ID convergence
-                ratio (CR; described on the Subgroups tab) are provided for each identified
-                cluster.  
+                For "diced" subgroups (SSNs as a function of increasing
+                alignment score), the second section reports matches for
+                clusters in the "diced" SSNs; the clusters with the three
+                smallest e-values are listed. The number of UniProt IDs, number
+                of cluster nodes, and UniProt ID convergence ratio (CR;
+                described on the Subgroups tab) are provided for each
+                identified cluster. 
                 </p>
-                
+
                 <p>
-                The “Exploring Subgroups” subtab under the “Functionally Diverse Subgroups” tab
-                provides advice about interpreting the search results for these subgroups.
+                The "Exploring Subgroups" subtab under the "Functionally
+                Diverse Subgroups" tab provides advice about interpreting the
+                search results for these subgroups. 
                 </p>
 
                 <div id="searchSeqErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>
                 <div class="form-group">
                     <textarea class="form-control w-75" id="searchSeq" cols="70" rows="10"></textarea>
                 </div>
-                <div class="mt-1"><button class="btn btn-primary btn-sm" id="searchSeqBtn">Find Clusters</button></div>
-            </div>
-
-            <div>
-                <h3>GND Lookup</h3>
-                <p>
-                The <a href="https://efi.igb.illinois.edu/efi-gnt">EFI-GNT web tools</a>
-                allow users to lookup genome neighborhood diagrams (GNDs) for lists of UniProt IDs.
-                Users may find it convenient to be able to access the GNDs for members of the RSS within RadicalSAM.org.
-                </p>
-
-                <p>
-                The GND Viewer can be accessed with the button below.  The input is a list of UniProt IDs.   The GNDs will be displayed.  
-
-                <!--</p>
-<div style="font-size: 1.3em; color: red; margin-left:30px">
-    RadicalSAM.org and the EFI tools (<a href="https://efi.igb.illinois.edu">https://efi.igb.illinois.edu</a>)
-    have been restructured to correct problems with the back-end system architecture.  The feature to search GNDs by
-    UniProt ID is not yet available.
-</div>
-                -->
-
-<div class="mt-1"><a href="https://efi.igb.illinois.edu/efi-gnt/gnd_lookup.php" target="_blank"><button class="btn btn-primary btn-sm">GND Viewer</button></a></div>
+                <div class="mt-1">
+                    <button class="btn btn-primary btn-sm" id="searchSeqBtn">Find Clusters</button>
+                </div>
+                <div class="mt-1" id="searchSeqProgressContainer" style="display: none">
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" id="searchSeqProgressBar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
             </div>
 
             <div>
@@ -119,17 +103,19 @@
                 </p>
 
                 <p>
-                If only the genus is entered, a pop-up list of matching genus-species-strains
-                is provided for selection of the desired genus/species/strain. If the genus and
-                species are entered, a pop-up list of matching genus-species-strains is
-                provided for selection of the desired genus/species/strain. 
+                If only the genus is entered, a pop-up list of matching
+                genus-species-strains is provided for selection of the desired
+                genus/species/strain. If the genus and species are entered, a
+                pop-up list of matching genus-species-strains is provided for
+                selection of the desired genus/species/strain. 
                 </p>
-                
+
                 <p>
-                The search provides a list of sequences in the RSS.   The list provides the
-                UniProt ID (link to the UniProt page for sequence), UniProt description,
-                organism name, UniProt annotation status (SwissProt or TrEMBL), and link to its
-                Explore page.  
+                The search provides a list of organism’s sequences in the RSS.
+                The list provides the UniProt ID (link to the UniProt page for
+                sequence), Cluster [link to the Explore page(s) containing the
+                UniProt ID], organism name, and UniProt annotation status
+                (SwissProt or TrEMBL).
                 </p>
 
                 <div id="searchTaxTermErrorMsg" style="display: none" class="m-1 p-2 mb-3 rounded alert-warning search-error"></div>

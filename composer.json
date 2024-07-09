@@ -2,16 +2,21 @@
     "repositories" : [
         {
             "type": "vcs",
-            "url": "https://www.github.com/IGBIllinois/IGBIllinois-php"
+            "url": "https://www.github.com/igbillinois/igbillinois-php"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/EnzymeFunctionInitiative/sunburst.git"
         }
     ],
 	"require": {
-        "igbillinois/igbillinois-php": ">=1.2",
 		"components/jquery": ">=3.5.0",
         "components/jqueryui": "1.12.1",
 		"twbs/bootstrap": "4.4.1",
 		"fortawesome/font-awesome": "5.12.1",
-		"twig/twig": "^3.0"
+		"twig/twig": "^3.0",
+        "igbillinois/igbillinois-php": "dev-main",
+        "efiillinois/sunburst": "main-dev"
     },
     "scripts": {
         "post-update-cmd": [
@@ -21,8 +26,12 @@
             "cp -R vendor/twbs/bootstrap html/vendor/twbs/",
             "cp -R vendor/components/jquery html/vendor/components/",
             "cp -R vendor/components/jqueryui html/vendor/components/",
-            "cp -R vendor/fortawesome/font-awesome html/vendor/fortawesome/"
+            "cp -R vendor/fortawesome/font-awesome html/vendor/fortawesome/",
+
+            "mkdir -p html/vendor/efiillinois/sunburst/php",
+            "mkdir -p html/vendor/efiillinois/sunburst/web",
+            "cp -R vendor/efiillinois/sunburst/php/* html/vendor/efiillinois/sunburst/php",
+            "cp -R vendor/efiillinois/sunburst/web/* html/vendor/efiillinois/sunburst/web"
         ]
     }
 }
-

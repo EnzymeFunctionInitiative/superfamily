@@ -19,10 +19,10 @@ function applyRowClickableFn(version) {
             goToUrlFn(id, version, alignmentScore);
         });
 }
-function getPageClusterId() {
+function getPageClusterId(defaultVersion) {
     var paramStr = window.location.search.substring(1);
     var params = paramStr.split("&");
-    var reqId = "", version = DEFAULT_VERSION, as = "", dicedList = false;
+    var reqId = "", version = defaultVersion, as = "", dicedList = false;
     for (var i = 0; i < params.length; i++) {
         var parts = params[i].split("=");
         if (parts[0] === "id")

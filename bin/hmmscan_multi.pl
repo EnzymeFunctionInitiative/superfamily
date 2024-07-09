@@ -9,14 +9,7 @@ use Capture::Tiny 'capture';
 use Getopt::Long;
 use Data::Dumper;
 
-my $hmmScan = "/var/www/radicalsam.org/bin/hmmscan";
-
-# HACK while fixing the server
-#if (not checkForHmmscan()) {
-#    die "Please load HMMER before running this script.";
-#}
-
-my ($seqFile, $dbListFile, $numTasks, $tempDir, $outputFile, $debug);
+my ($seqFile, $dbListFile, $numTasks, $tempDir, $outputFile, $debug, $hmmscanBin);
 my $result = GetOptions(
     "seq-file=s"        => \$seqFile,
     "db-list-file=s"    => \$dbListFile,
@@ -24,15 +17,20 @@ my $result = GetOptions(
     "temp-dir=s"        => \$tempDir,
     "output-file=s"     => \$outputFile,
     "debug"             => \$debug,
+    "hmmscan=s"         => \$hmmscanBin,
 );
 
+
+if ((not $hmmscanBin or not -f $hmmscanBin) and not checkForHmmscan()) {
+    die "Please load HMMER before running this script.";
+}
 
 die "Need --seq-file" if not -f ($seqFile//"");
 die "Need --db-list-file" if not -f ($dbListFile//"");
 die "Need --temp-dir" if not -d ($tempDir//"");
 
 $numTasks = 1 if not $numTasks;
-my $hmmCommand = "hmmscan";
+my $hmmCommand = $hmmscanBin;
 
 
 my @hmms = getHmmList($dbListFile, $numTasks);

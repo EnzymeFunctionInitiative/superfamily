@@ -1,10 +1,12 @@
 
-function AppMeta(clusterId, version, alignmentScore, gndKey, dataDir) {
-    this.Version = version;
-    this.Ascore = alignmentScore;
-    this.Id = clusterId;
-    this.GndKey = gndKey;
-    this.DataDir = dataDir;
+function AppMeta() {
+    this.Version = "";
+    this.VersionName = "";
+    this.Ascore = 0;
+    this.Id = "";
+    this.GndKey = "";
+    this.DataDir = "";
+    this.SubgroupTitle = "";
 }
 
 

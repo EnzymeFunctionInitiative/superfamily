@@ -2,75 +2,11 @@
 {% set page_title = '' %}
 {% set page_active = 'index' %}
 
+
 {% block content %}
         <div class="container">
             <div class="container">
-                <p>
-                The radical SAM superfamily (RSS) is arguably the largest and most functionally
-                diverse enzyme superfamily.  Many functions (and intriguing reaction
-                mechanisms) have been discovered; many more remain to be discovered! 
-                </p>
-                
-                <p>
-                RadicalSAM.org is designed to leverage “top-down” discovery of function using
-                the EFI’s genomic enzymology web tools.  The sequence similarity network (SSN)
-                for the RSS is too large to be analyzed with Cytoscape and the RAM available on
-                most computers so has been inaccessible to RSS community.   
-                </p>
-                
-                <p>
-                We generated the SSN for the entire RSS using a computer with 768GB RAM and
-                segregated it into clusters for 1) the 20 subgroups curated by the
-                Structure-Function Linkage Database (SFLD) and 2) many additional subgroups not
-                curated by the SFLD.   
-                </p>
-                
-                <p>
-                For each subgroup, RadicalSAM.org provides: 
-                </p>
-                
-                <ol>
-                    <li>
-                    The SSN, multiple sequence alignment (MSA), WebLogo, hidden Markov model (HMM),
-                    length histogram, phylogenetic distribution, SwissProt annotations, and number
-                    and locations of conserved Cys residues.  
-                    </li>
-
-                    <li>
-                    Genome neighborhood diagrams (GNDs) that provide metabolic pathway context for
-                    inference of functions. 
-                    </li>
-                    
-                    <li>
-                    UniProt accession IDs and FASTA sequences that can be used with EFI-EST,
-                    EFI-GNT, and EFI-CGFP for user-specific applications.    
-                    </li>
-                    
-                    <li>
-                    For four large and functionally diverse subgroups, the ability to “walk”
-                    through a series of SSNs generated at increasing alignment scores.  The progeny
-                    (walking forward) and progenitors of a cluster (walking backward) can be
-                    identified, allowing the discovery of related functions and/or substrate
-                    specificities. 
-                    </li>
-                </ol>
-
-                <p>
-                We encourage users to submit experimentally characterized functional
-                annotations for sequences that have not yet been curated by SwissProt so that
-                these can be made available to the RSS community. 
-                </p>
-
-                <p>
-                A Perspective has been accepted for publication in ACS Bio &amp; Med Chem Au describing RadicalSAM.org.
-                If you use RadicalSAM.org, please cite us:
-                </p>
-                <p style="padding-left: 30px; margin-bottom: 30px">
-                    Nils Oberg, Timothy W. Precord, Douglas A. Mitchell, and John A. Gerlt,
-                    <b>RadicalSAM.org:  A Resource to Interpret Sequence-Function Space and Discover New Radical SAM Enzyme Chemistry</b>,
-                    ACS Bio & Med Chem Aug 2021 <!--??????. -->
-                    <a href="https://doi.org/10.1021/acsbiomedchemau.1c00048">https://doi.org/10.1021/acsbiomedchemau.1c00048</a>
-                </p>
+{% include 'intro/site_specific/intro_header.html.twig' %}
             </div>
             <div class="container">
 {% include 'intro/intro_pages.html.twig' %}

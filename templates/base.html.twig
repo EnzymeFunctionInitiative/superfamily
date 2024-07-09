@@ -8,7 +8,7 @@
     <title>{% if page_title is defined %} {{ page_title }} | {% endif %} RadicalSAM.org</title>
 
 	<link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
-    <link href="css/custom.css?v=5" rel="stylesheet">
+    <link href="css/custom.css?v=6" rel="stylesheet">
     <link href="css/font/css/all.css" rel="stylesheet" />
 {% if extra_css is defined %}
 {% for item in extra_css %}
@@ -24,9 +24,11 @@
 <body>
     {% include('navbar.html.twig') %}
 
+    {% if not hide_page_title %}
 	<div class="container">
         <h1 class="text-center">{{ page_title }}</h1>
 	</div>
+    {% endif %}
 
     {% block content %}
     {% endblock %}
@@ -43,13 +45,15 @@
                 </div>
                 <div class="">
                 </div>
-                <!--
-                <div class="w-100">
-                    Please credit us: RadicalSAM.org; <span class="pl-2"></span> Gerlt, Mitchell, and Oberg, 2021; <span class="pl-2"></span> <a href="https://efi.igb.illinois.edu">EFI</a> at <a href="https://igb.illinois.edu">Institute for Genomic Biology, University of Illinois</a>
+                <div class="w-100 mt-3">
+                    <p>
+                    RadicalSAM.org is now supported by a Research Resource from the National Institute of General Medical Sciences (R24GM1411196-01).  Please cite your use of the RadicalSAM.org:
+                    </p>
+                    <p style="margin-left: 50px;">
+                    Nils Oberg, Timothy W. Precord, Douglas A. Mitchell, and John A. Gerlt, RadicalSAM.org: A Resource to Interpret Sequence-Function Space and Discover New Radical SAM Enzyme Chemistry, ACS Bio &amp; Med Chem 2021 <a href="https://doi.org/10.1021/acsbiomedchemau.1c00048">https://doi.org/10.1021/acsbiomedchemau.1c00048</a>
+                    </p>
                 </div>
-                -->
                 <div class="">
-                    <br>
                     <!-- &copy; University of Illinois Board of Trustees -->
                     &copy; John A. Gerlt, Douglas A. Mitchell, and Nils Oberg
                 </div>

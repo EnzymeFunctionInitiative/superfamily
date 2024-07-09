@@ -4,4 +4,10 @@ conf/settings.inc.php
 composer.lock
 /templates/custom
 tracker.twig
+/html/img/intro/site_specific/local
+/templates/intro/site_specific/local
+*.swp
+*.swo
+old
+*.bak
 

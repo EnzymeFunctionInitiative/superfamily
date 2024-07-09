@@ -56,22 +56,22 @@ class superfamily {
 		if ($row)
 			return $row;
 		else
-		return array("cluster_id" => $cluster_id, "name" => "", "title" => "", "desc" => "");
+    		return array("cluster_id" => $cluster_id, "name" => "", "title" => "", "desc" => "");
 	}
 
 	public static function get_all_network_names($db) {
-		$sql = "SELECT network.cluster_id, name, uniprot, uniref50, uniref90 FROM network LEFT JOIN size on network.cluster_id = size.cluster_id";
+		$sql = "SELECT network.cluster_id, cluster_name, uniprot, uniref50, uniref90 FROM network LEFT JOIN size on network.cluster_id = size.cluster_id";
 		$sth = $db->prepare($sql);
 		$sth->execute();
 		$data = array();
 		while ($row = $sth->fetch()) {
-			$data[$row["cluster_id"]] = array("name" => $row["name"], "size" => array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]));
+			$data[$row["cluster_id"]] = array("name" => $row["cluster_name"], "size" => array("uniprot" => $row["uniprot"], "uniref90" => $row["uniref90"], "uniref50" => $row["uniref50"]));
 		}
 		return $data;
 	}
 
-	public static function get_sfld_map($db) {
-		$sql = "SELECT * FROM sfld_map";
+	public static function get_subgroup_map($db) {
+		$sql = "SELECT * FROM subgroup_map";
 		$sth = $db->prepare($sql);
 		$sth->execute();
 		$data = array();
@@ -79,18 +79,18 @@ class superfamily {
 			$cid = $row["cluster_id"];
 			if (!is_array($data[$cid]))
 				$data[$cid] = array();
-				array_push($data[$cid], $row["sfld_id"]);
+				array_push($data[$cid], $row["subgroup_id"]);
 		}
 		return $data;
 	}
 
-	public static function get_sfld_desc($db) {
-		$sql = "SELECT * FROM sfld_desc";
+	public static function get_subgroup_desc($db) {
+		$sql = "SELECT * FROM subgroup_desc";
 		$sth = $db->prepare($sql);
 		$sth->execute();
 		$data = array();
 		while ($row = $sth->fetch()) {
-			$data[$row["sfld_id"]] = array("desc" => $row["sfld_desc"], "color" => $row["sfld_color"]);
+			$data[$row["subgroup_id"]] = array("desc" => $row["subgroup_desc"], "color" => $row["subgroup_color"]);
 		}
 		return $data;
 	}
@@ -167,7 +167,7 @@ class superfamily {
     		$row_fn = function($row) {
 			$data = array();
 			$data["id"] = $row["region_id"];
-			$data["name"] = $row["name"];
+			$data["name"] = $row["cluster_name"];
 			$data["number"] = $row["number"];
 			$data["coords"] = array_map(function($c) { return floatval($c); }, explode(",", $row["coords"]));
 			return $data;
@@ -190,7 +190,7 @@ class superfamily {
 	}
 
 	public static function validate_cluster_id($db, $id) {
-		$sql = "SELECT name FROM network WHERE cluster_id = :id";
+		$sql = "SELECT cluster_name FROM network WHERE cluster_id = :id";
 		$sth = $db->prepare($sql);
 		$sth->bindValue("id", $id);
 		if (!$sth->execute())
@@ -203,4 +203,3 @@ class superfamily {
 
 }
 
-?>

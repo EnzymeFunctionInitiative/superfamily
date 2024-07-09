@@ -1,12 +1,14 @@
 <?php 
 require_once(__DIR__ . "/../init.php");
-require_once(__DIR__ . "/../libs/settings.class.inc.php");
-require_once(__DIR__ . "/../libs/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/settings.class.inc.php");
+require_once(__LIB_DIR__ . "/functions.class.inc.php");
+require_once(__LIB_DIR__ . "/database.class.inc.php");
+require_once(__LIB_DIR__ . "/cluster_file.class.inc.php");
 
-//$version = filter_input(INPUT_GET, "v", FILTER_SANITIZE_NUMBER_INT);
+
 $version = functions::validate_version();
 
-$db = functions::get_database($version);
+$db = new database($version);
 
 $cluster_id = filter_input(INPUT_GET, "cid", FILTER_SANITIZE_STRING);
 $ascore = filter_input(INPUT_GET, "as", FILTER_SANITIZE_NUMBER_INT);
@@ -17,8 +19,15 @@ if (!$cluster_id || !functions::validate_cluster_id($db, $cluster_id)) {
 }
 
 $basepath = functions::get_data_dir_path2($db, $version, $ascore, $cluster_id);
-$hmm_path = "$basepath/hmm.json";
-$json = file_get_contents($hmm_path);
+
+$files = cluster_file::get_files($basepath);
+if (isset($files["hmm.json"])) {
+    $cluster_file = new cluster_file($basepath, "hmm.json");
+    $json = stream_get_contents($cluster_file->get_handle());
+} else {
+    echo json_encode(array("valid" => false, "message" => "Invalid data."));
+    exit(0);
+}
 
 $title = isset($_GET["title"]) ? $_GET["title"] : "";
 
@@ -29,7 +38,7 @@ $title = isset($_GET["title"]) ? $_GET["title"] : "";
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="css/hmm_logo.min.css">
-<script src="js/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="vendor/components/jquery/jquery.min.js" type="text/javascript"></script>
 <script src="js/hmm_logo.js" type="text/javascript"></script>
     <title>Logo</title>
 </head>

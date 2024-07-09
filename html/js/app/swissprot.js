@@ -1,6 +1,6 @@
 
 function getPopoverSwissProt(sp, groupIdx) {
-    var processFn = function () { return addSwissProtList(sp, function(){}, function(){}, groupIdx); };
+    var processFn = function () { return addSwissProtList(sp, function(code){return "";}, function(p1,p2){}, groupIdx); };
     return getPopoverDiv(sp, "SwissProt", processFn, false);
 }
 
@@ -45,9 +45,9 @@ function addSwissProtList(list, enzymeCodeFn, clipFn, groupIdx) {
         var parts = list[i][0].split("||");
         var desc = parts[0];
         if (parts.length > 0 && typeof parts[1] !== "undefined") 
-            desc += enzymeCodeFn(parts[1]);
+            desc += " " + enzymeCodeFn(parts[1]);
         var spItemIds = list[i][1].split(",").map(x => makeUniProtLink(x)).join("<br>\n");
-        ul.append('<li data-toggle="collapse" data-target="#spListItem' + groupIdx + '-' + i + '">' + desc + '<div class="collapse sp-list-item" id="spListItem' + groupIdx + '-' + i + '">' + spItemIds + '</div>' + '</li>');
+        ul.append('<li data-toggle="collapse" data-target="#spListItem' + groupIdx + '-' + i + '">' + desc + ' <div class="collapse sp-list-item" id="spListItem' + groupIdx + '-' + i + '">' + spItemIds + '</div>' + '</li>');
         spItemIds = "\t" + list[i][1].split(",").join("\n\t") + "\n";
         clipFn(desc, spItemIds);
     }

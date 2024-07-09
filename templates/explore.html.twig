@@ -1,22 +1,28 @@
+{% set hide_page_title = true %}
 {% extends "base.html.twig" %}
-{% set page_title = 'Exploring the Radical SAM Superfamily' %}
 {% set page_active = 'explore' %}
+{% set page_title = 'Explore' %}
 {% set extra_js = [
-                      'js/app/progress.js?v=1',
-                          'js/app/util.js?v=1',
-                     'js/app/swissprot.js?v=3',
-                        'js/app/uniref.js?v=1',
-                      'js/app/sunburst.js?v=2',
-                    'js/app/navigation.js?v=3',
-                 'js/app/data_features.js?v=8',
-                      'js/app/app_meta.js?v=2',
-                         'js/app/image.js?v=1',
-                           'js/app/url.js?v=1',
-                         'js/app/diced.js?v=5',
-                      'js/app/app_data.js?v=14',
-                           'js/app/app.js?v=48',
-                    'js/sunburst/sunburst-chart.min.js', 'js/sunburst/circlepack-chart.min.js', 'js/sunburst/sunburst_helpers.js',
-                    'js/imageMapResizer.min.js', 'js/jquery.maphilight.min.js', 'js/jquery.lazy.min.js'
+                      'js/app/progress.js?v='~js_ver,
+                          'js/app/util.js?v='~js_ver,
+                     'js/app/swissprot.js?v='~js_ver,
+                        'js/app/uniref.js?v='~js_ver,
+                    'js/app/navigation.js?v='~js_ver,
+                 'js/app/data_features.js?v='~js_ver,
+                      'js/app/app_meta.js?v='~js_ver,
+                         'js/app/image.js?v='~js_ver,
+                           'js/app/url.js?v='~js_ver,
+                         'js/app/diced.js?v='~js_ver,
+                      'js/app/app_data.js?v='~js_ver,
+                           'js/app/app.js?v='~js_ver,
+                    
+                    'vendor/efiillinois/sunburst/web/js/sunburst-chart.min.js?v=1',
+                    'vendor/efiillinois/sunburst/web/js/sunburst-helpers.js',
+                    'vendor/efiillinois/sunburst/web/js/sunburst-taxonomy2.js?v=9',
+                    'vendor/efiillinois/sunburst/web/js/progress.js',
+                    'js/imageMapResizer.min.js',
+                    'js/jquery.maphilight.min.js',
+                    'js/jquery.lazy.min.js'
                   ] %}
 
 
@@ -26,13 +32,10 @@
             <nav aria-label="breadcrumb" id="exploreBreadcrumb">
             </nav>
             <div class="container">
-                <h1 class="text-center" id="familyTitle"></h1>
+                <h1 class="text-center" id="family-title"></h1>
                 <div class="fullnetwork-text" style="display: none">
                     <p>
-                    The SSN for the RSS was generated and segregated into five megaclusters (containing &gt;1 SFLD subgroup) and five clusters (1 SFLD
-                    subgroup).  These are shown in the image.   The megaclusters then were separately segregated to obtain their component SFLD
-                    subgroups as well as uncharacterized subgroups.  The details for this segregation are provided in the Subgroups tab on the
-                    RadicalSAM.org home page.
+                    {% include 'site_specific/explore_title_info.html.twig' | raw %}
                     </p>
                 </div>
             </div>
@@ -65,10 +68,11 @@
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableKegg">KEGG</button>
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailablePdb">PDB</button>
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableTigr">TIGR</button>
-                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailablePubs">Pubs</button>
-                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableAnno">Anno</button>
+                            <!--<button class="btn btn-outline-secondary disabled" type="button" id="dataAvailablePubs">Pubs</button>-->
+                            <!--<button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableAnno">Anno</button>-->
+                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableAlphafold">Alphafold</button>
                             <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableSunburst">Taxonomy</button>
-                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableGnd" data-toggle="tooltip" title="Genome Neighborhood Diagram">Genome Neighborhood Diagram</button>
+                            <button class="btn btn-outline-secondary disabled" type="button" id="dataAvailableGnd" title="Genome Neighborhood Diagram">Genome Neighborhood Diagram</button>
                         </div>
                         <div style="clear:both"></div>
                         <div id="clusterSizeContainer" style="display: none">
@@ -90,8 +94,6 @@
 
         <div class="container">
             <div class="alert alert-danger" role="alert" id="loadError" style="display: none"></div>
-            <p class="text-center" id="clusterDesc">
-            </p>
             <div id="dicedClusterDesc" style="display: none">
                 <p><span class="diced-desc-cluster-id">Cluster</span> is large and functionally diverse.
                 A single alignment score threshold cannot  be used to segregate
@@ -118,7 +120,7 @@
                 <div class="btn btn-primary"><a id="dicedListLink" href="">Access the series of diced SSNs.</a></div>
                 </p>
                 <p>
-                Information  about <span class="diced-desc-cluster-id">Cluster</span> is provided  below.
+                Information about <span class="diced-desc-cluster-id">Cluster</span> is provided  below.
                 </p>
             </div>
         </div>
@@ -276,37 +278,13 @@
         </div> <!-- /container -->
         
         <div class="container fullnetwork-text" style="display: none">
-            <p>The table provides a (mega)cluster directory for locating the SFLD subgroups:</p>
+            <p>The table provides a (mega)cluster directory for locating the {{subgroup_titles}} subgroups:</p>
 
-            <table class="table table-sm w-75">
+            <table class="table table-sm w-100">
                 <thead>
-                    <th>SFLD Subgroup</th><th>Subgroup</th><th>Color</th><th>(Mega)cluster</th>
+                    <th>{{subgroup_title}} Subgroup ID</th><th>Subgroup</th><th>(Mega)cluster</th>
                 </thead>
-                <tbody>
-                    <tr><td>1</td><td>7-carboxy-7-deazaguanine synthase-like </td><td>Teal</td><td>Mega-3</td></tr>
-                    <tr><td>2</td><td>Coproporphyrinogen III oxidase-like </td><td>Red</td><td>Mega-2</td></tr>
-                    <tr><td>3</td><td>Antiviral proteins (viperin) </td><td>--</td><td>Mega-1</td></tr>
-                    <tr><td>4</td><td>Avilamycin synthase </td><td>Pink</td><td>--</td></tr>
-                    <tr><td>5</td><td>B12-binding domain containing </td><td>Blue</td><td>Mega-2</td></tr>
-                    <tr><td>6</td><td>BATS domain containing </td><td>Orange</td><td>Mega-4</td></tr>
-                    <tr><td>7</td><td>DesII-like </td><td>Mauve</td><td>Mega-1</td></tr>
-                    <tr><td>8</td><td>ELP3/YhcC </td><td>Black</td><td>Mega-2</td></tr>
-                    <tr><td>9</td><td>F420, menaquinone cofactor biosynthesis  </td><td>Purple</td><td>Mega-4</td></tr>
-                    <tr><td>10</td><td>FeMo-cofactor biosynthesis protein </td><td>Mint green</td><td>Mega-1</td></tr>
-                    <tr><td>11</td><td>Lipoyl synthase like </td><td>Yellow</td><td>Cluster-8</td></tr>
-                    <tr><td>12</td><td>Methylthiotransferase </td><td>Verdun green</td><td>Mega-2</td></tr>
-                    <tr><td>13</td><td>Methyltransferase Class A </td><td>Dark brown</td><td>Cluster-6</td></tr>
-                    <tr><td>14</td><td>Methyltransferase Class D </td><td>Light pink</td><td>Mega-1</td></tr>
-                    <tr><td>15</td><td>Organic radical activating enzymes </td><td>Cyan</td><td>Mega-3</td></tr>
-                    <tr><td>16</td><td>PLP-dependent </td><td>Dark green</td><td>Cluster-7</td></tr>
-                    <tr><td>17</td><td>SPASM/twitch domain containing </td><td>Magenta</td><td>Mega-1</td></tr>
-                    <tr><td>18</td><td>Spectinomycin biosynthesis </td><td>White</td><td>--</td></tr>
-                    <tr><td>19</td><td>Spore photoproduct lyase </td><td>Green</td><td>Mega-5</td></tr>
-                    <tr><td>20</td><td>tRNA wybutosine-synthesizing </td><td>Brown</td><td>Cluster-9</td></tr>
-                    <tr><td></td><td>Protein MJ0683-like </td><td>Electric lime</td><td>Mega-5</td></tr>
-                    <tr><td></td><td>Uncharacterized protein family UPF0313 </td><td>Olive</td><td>Cluster-10</td></tr>
-                    <tr><td></td><td>DUF5131 </td><td>Light purple</td><td>Mega-5</td></tr>
-                    <tr><td></td><td>3',8-Cyclase/Mo cofactor synthesis </td><td>Dodger blue</td><td>Mega-1</td></tr>
+                <tbody id="subgroupMapping">
                 </tbody>
             </table>
         </div>
@@ -411,20 +389,20 @@
             </div>
         </div>
     </div>
-    <div id="annoModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-md" role="document">
+    <div id="alphafoldModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Annotations for Proteins in Cluster</h5>
+                    <h5 class="modal-title">Alphafold IDs</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    <div id="annoIdList">
+                    <div id="alphafoldIdList" class="modal-colwrap-3">
                     </div>
-                    <textarea id="annoIdListClip" style="display: none"></textarea>
+                    <textarea id="alphafoldIdListClip" style="display: none"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default mr-auto copy-btn" data-id="annoIdListClip">Copy <i class="far fa-copy"></i></button>
+                    <button type="button" class="btn btn-default mr-auto copy-btn" data-id="alphafoldIdListClip">Copy <i class="far fa-copy"></i></button>
                     <button type="button" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -437,60 +415,7 @@
                     <h5 class="modal-title">Species in Cluster</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <div class="modal-body text-center modal-sunburst" id="sunburstChartContainer">
-                    <div id="sunburstChart">
-                    </div>
-                    <div id="sunburstIdNums" class="cluster-size cluster-size-sm float-right">
-                    </div>
-                    <div style="clear: both">
-                        Click on a region to zoom into that part of the taxonomic hierarchy.  Clicking on the
-                        center circle will zoom out to the next highest level.
-                    </div>
-<!--
-                    <div>
-                        <canvas id="sunburstPngCanvas" width="600" height="600"></canvas>
-                    </div>
--->
-                </div>
-                <div class="modal-footer">
-                    <div class="mr-auto">
-                        <div class="p-2" data-toggle="tooltip" title="By default the full set of UniProt IDs is downloaded. By selecting this option, only the UniRef50 IDs will be downloaded.">
-                            ID type: 
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniProt" value="uniprot" checked>
-                                <label class="form-check-label" for="sunburstIdTypeUniProt">UniProt</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniRef90" value="uniref90">
-                                <label class="form-check-label" for="sunburstIdTypeUniRef90">UniRef90</label>
-                            </div>
-                            <div class="form-check form-check-inline" id="sunburstIdTypeUniRef50Container">
-                                <input class="form-check-input" type="radio" name="sunburstIdType" id="sunburstIdTypeUniRef50" value="uniref50">
-                                <label class="form-check-label" for="sunburstIdTypeUniRef50">UniRef50</label>
-                            </div>
-<!--
-                            <select class="form-control w-50" data-toggle="tooltip" title="By default the full set of UniProt IDs is downloaded. By selecting this option, only the UniRef50 IDs will be downloaded.">
-                                <option value="uniprot" selected>UniProt (default)</option>
-                                <option value="uniref50">UniRef50</option>
-                                <option value="uniref90">UniRef90</option>
-                            </select>
--->
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-default btn-secondary" data-toggle="tooltip" title="Download the UniProt IDs that are visible in the sunburst diagram" id="sunburstDlIds">Prepare ID Download</button>
-                            <button type="button" class="btn btn-default btn-secondary mr-auto" data-toggle="tooltip" title="Download the FASTA sequences that are visible in the sunburst diagram" id="sunburstDlFasta">Prepare FASTA Download</button>
-                            <!--<button type="button" class="btn btn-default mr-auto" data-toggle="tooltip" title="Download a SVG file of the sunburst diagram" id="sunburstSvg">Download SVG</button>-->
-                        </div>
-                    </div>
-                    <div class="mt-auto">
-                        <button type="button" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-            <div id="sunburstProgressLoader" class="progress-loader-tax" style="display: none">
-                <div>Please wait, this may take a while...
-                <div><i class="fas fa-spinner fa-spin"></i></div>
-                </div>
+                <div id="sunburst-container" style="padding: 20px"></div>
             </div>
         </div>
     </div>
@@ -516,7 +441,8 @@
             var progress = new Progress($("#progressLoader"));
             progress.start();
 
-            initApp("3.0", "{{gnd_key}}");
+            var appInfo = {version: "{{data_version}}", versionName: "{{version_name}}", gndKey: "{{gnd_key}}", subgroupTitle: "{{subgroup_title}}"};
+            initApp(appInfo);
             $('.lazy').Lazy();
     
             $('[data-toggle="tooltip"]').tooltip();

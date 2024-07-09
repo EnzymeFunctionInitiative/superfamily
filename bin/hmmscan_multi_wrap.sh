@@ -1,8 +1,7 @@
 #!/bin/bash
 
-#module load Perl
-#module load HMMER/3.2.1-IGB-gcc-4.9.4
+bin_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-/var/www/radicalsam.org/bin/hmmscan_multi.pl "$@"
+perl $bin_dir/hmmscan_multi.pl "$@"
 
 

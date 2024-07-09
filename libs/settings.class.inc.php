@@ -12,6 +12,9 @@ class settings {
     public static function get_hmmscan2_path() {
         return defined("__HMMSCAN__") ? __HMMSCAN__ : "";
     }
+    public static function get_hmmscan_env() {
+        return defined("__HMMSCAN_ENV__") ? __HMMSCAN_ENV__ : "";
+    }
     public static function get_hmm_db_dir($version) {
         $dir = self::get_base_dir_path($version);
         $dir = "$dir/".__HMM_DB_DIR_NAME__;
@@ -33,7 +36,7 @@ class settings {
     public static function get_data_dir_name ($version) {
         return self::get_version_prefix() . "-$version";
     }
-    public static function get_cluster_db_path($version = "") {
+    public static function get_cluster_db_path($version) {
         $dir = self::get_base_dir_path($version);
         return "$dir/" . self::get_db_file_name();
     }
@@ -58,13 +61,17 @@ class settings {
     }
 
     public static function get_version_prefix() {
-        return __DATA_VERSION_PREFIX__;
+        return defined("__DATA_VERSION_PREFIX__") ? __DATA_VERSION_PREFIX__ : "";
     }
     public static function get_version_db_file() {
         return self::get_base_dir_path() . "/" . __DATA_VERSION_FILE__;
     }
     public static function get_default_version() {
-        return __DEFAULT_VERSION__;
+        return defined("__DEFAULT_VERSION__") ? __DEFAULT_VERSION__ : "1.0";
+    }
+
+    public static function get_database_type() {
+        return defined("__DATABASE_TYPE__") ? __DATABASE_TYPE__ : "sqlite3";
     }
 
     public static function get_smtp_host() {
@@ -88,6 +95,16 @@ class settings {
 
     public static function get_default_max_hmm_results() {
         return defined("__DEFAULT_MAX_RESULTS__") ? __DEFAULT_MAX_RESULTS__ : 3;
+    }
+
+    public static function get_subgroup_title_prefix() {
+        return defined("__SUBGROUP_TITLE_PREFIX__") ? __SUBGROUP_TITLE_PREFIX__ : "";
+    }
+    public static function get_js_version() {
+        return defined("__JS_VERSION__") ? __JS_VERSION__ : "1";
+    }
+    public static function get_superfamily_name() {
+        return defined("__SUPERFAMILY_NAME__") ? __SUPERFAMILY_NAME__ : "";
     }
 }
 
