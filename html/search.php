@@ -11,7 +11,10 @@ $loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
 $twig = new \Twig\Environment($loader);
 $twig->addGlobal("version", $data_version);
 
-$twig_variables = array("data_version" => $data_version);
+$twig_variables = array(
+    "data_version" => $data_version,
+    "js_ver" => settings::get_js_version(),
+);
 $html = $twig->render("search.html.twig", $twig_variables);
 
 echo $html;
