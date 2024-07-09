@@ -169,6 +169,8 @@ class search {
                 $parts = explode("-", $match[0]);
                 $the_name = $the_name . "-" . $parts[count($parts)-1];
             }
+            $out_row = array("cluster" => $match[0], "evalue" => $match[1], "num_up" => $row["uniprot"], "num_ur" => $row["uniref90"], "cr" => $row["conv_ratio"], "name" => $the_name);
+            array_push($data, $out_row);
         }
         return $data;
     }
