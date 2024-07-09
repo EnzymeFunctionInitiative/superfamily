@@ -5,6 +5,9 @@ use warnings;
 
 $SIG{INT} = $SIG{TERM} = sub { exit; };
 
+use FindBin;
+use lib "$FindBin::Bin/perl";
+
 use Capture::Tiny 'capture';
 use Getopt::Long;
 use Data::Dumper;

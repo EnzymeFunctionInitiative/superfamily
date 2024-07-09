@@ -51,7 +51,9 @@ class hmm_util {
         $out_file = "$out_dir/$out_file_name";
 
         $hmmscan_bin = settings::get_hmmscan_path();
-        $cmd = settings::get_hmmscan_env() . "\n";
+        $cmd = settings::get_hmmscan_env();
+        if ($cmd)
+            $cmd .= "\n";
         $cmd .= "$hmmscan --seq-file $seq_file --db-list-file $hmmdb --temp-dir $temp_dir --output-file $out_file --num-tasks 10 --hmmscan $hmmscan_bin";
         $cmd_output = "";
         $cmd_results = 0;
