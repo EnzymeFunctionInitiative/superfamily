@@ -314,7 +314,7 @@ AppDataFeatures.prototype.addDownloadFeatures = function (containerId, hideTabSt
             if (this.appMeta.Ascore)
                 logoParms += '&as=' + this.appMeta.Ascore;
             if (this.appMeta.Version)
-                logoParms += '&v=' + this.appMeta.Version;
+                logoParms += '&v='  + this.appMeta.Version;
             var logoBtn = '<button class="btn btn-primary btn-sm hmm-logo" data-logo="' + logoParms + '">View HMM</button>';
             body.append('<tr><td>' + logoBtn + '</td><td>View HMM in SkyLign</td><td></td></tr>');
         }
