@@ -19,4 +19,7 @@ AppUrl.prototype.getDownloadUrl = function(type, networkId = "") {
     return url;
 }
 
+AppUrl.prototype.getGndUrl = function (gndParams) {
+    return this.appMeta.GndUrl + "?" + gndParams;
+}
 

@@ -7,6 +7,7 @@ function AppMeta() {
     this.GndKey = "";
     this.DataDir = "";
     this.SubgroupTitle = "";
+    this.GndUrl = "";
 }
 
 

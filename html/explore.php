@@ -9,6 +9,7 @@ if (!$data_version) {
 }
 
 $gnd_key = functions::get_gnd_key($data_version);
+$gnd_url = settings::get_gnd_url();
 $subgroup_title = settings::get_subgroup_title_prefix();
 
 $loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
@@ -16,6 +17,7 @@ $twig = new \Twig\Environment($loader);
 
 $twig_variables = array(
     "gnd_key" => $gnd_key,
+    "gnd_url" => $gnd_url,
     "subgroup_title" => $subgroup_title,
     "js_ver" => settings::get_js_version(),
     "data_version" => $data_version,
