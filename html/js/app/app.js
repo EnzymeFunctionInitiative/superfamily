@@ -63,6 +63,7 @@ function App(appInfo) {
     this.appMeta.VersionName = appInfo.versionName;
     this.appMeta.SubgroupTitle = appInfo.subgroupTitle;
     this.appMeta.GndKey = appInfo.gndKey;
+    this.appMeta.GndUrl = appInfo.gndUrl;
 }
 
 

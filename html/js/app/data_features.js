@@ -168,17 +168,17 @@ AppDataFeatures.prototype.addGndFeature = function() {
     if (!feat.hasOwnProperty("gnd") || this.appData.getChildren().length > 0)
         return false;
 
-    var that = this.appMeta;
+    var that = this;
+    var meta = this.appMeta;
     $("#dataAvailableGnd").click(function() {
-        var gndParms = 'rs-id=' + that.Id;
-        if (that.Ascore)
-            gndParms += ":" + that.Ascore;
-        if (that.Version)
-            gndParms += '&rs-ver=rsam-' + that.Version;
-        if (that.GndKey)
-            gndParms += '&key=' + that.GndKey;
-        //TODO: get the URL from a config var or something
-        window.open('https://efi.igb.illinois.edu/efi-gnt/view_diagrams.php?' + gndParms);
+        var gndParms = 'rs-id=' + meta.Id;
+        if (meta.Ascore)
+            gndParms += ":" + meta.Ascore;
+        if (meta.Version)
+            gndParms += '&rs-ver=rsam-' + meta.Version;
+        if (meta.GndKey)
+            gndParms += '&key=' + meta.GndKey;
+        window.open(that.url.getGndUrl(gndParms));
     }).enableDataAvailableButton();
     return true;
 }

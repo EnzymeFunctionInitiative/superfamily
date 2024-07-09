@@ -59,6 +59,9 @@ class settings {
         $key_path = self::get_base_dir_path($version) . "/" . __GND_KEY_FILE_NAME__;
         return $key_path;
     }
+    public static function get_gnd_url() {
+        return defined("__GND_URL__") ? __GND_URL__ : "";
+    }
 
     public static function get_version_prefix() {
         return defined("__DATA_VERSION_PREFIX__") ? __DATA_VERSION_PREFIX__ : "";
