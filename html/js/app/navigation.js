@@ -24,7 +24,7 @@ AppNav.prototype.addBreadcrumb = function() {
         var parentId = bc[i].cluster_id;
         var isDiced = (i == bc.length - 2 && this.appMeta.Ascore);
         //var ascore = isDiced ? "&as=" + this.appMeta.Ascore : "";
-        var dicedMaster = isDiced ? "&d=l" : "";
+        var dicedMaster = ""; //(isDiced && i > bc.length-2) ? "&d=l" : "";
         var url = 'id=' + parentId + dicedMaster;
         if (this.appMeta.Version)
             url += '&v=' + this.appMeta.Version;
